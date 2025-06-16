@@ -1,0 +1,6 @@
+/**
+ * 共享样式，主要为了调整element-plus
+ */
+body {
+  --el-border-radius-base: 12px;
+}
