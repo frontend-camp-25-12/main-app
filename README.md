@@ -162,13 +162,28 @@ src/                  # 源码目录
 {
   "id": "your.plugin.id",                // 插件唯一标识符
   "name": "插件名称",                     // 插件名称
+  "description": "插件描述",              // （可选）插件描述
   "version": "1.0.0",                    // 插件版本
-  "window": {                            // （可选）窗口配置
-    "width": 800,                        // （可选）窗口宽度
-    "height": 600,                       // （可选）窗口高度
-    "disableTransition": false,           // （可选）禁用窗口动画
-    "frame": true,                        // （可选）是否显示窗口边框，默认true
-    "transparent": false                  // （可选）是否透明窗口，默认false
-  }
+  "window": {                              // （可选）窗口配置
+    "width": 800,                          // （可选）窗口宽度
+    "height": 600,                         // （可选）窗口高度
+    "disableTransition": false,            // （可选）禁用窗口动画
+    "frame": true,                         // （可选）是否显示窗口边框，默认true
+    "transparent": false,                  // （可选）是否透明窗口，默认false
+    "resizable": true                      // （可选）是否允许调整窗口大小，默认true
+  },
+  "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入
+    {
+      "code": "featureCode",              // 功能代码，用于在onPluginEnter时，区分不同功能
+      "cmds": [                            // 可触发这个feature的命令列表
+        "search",                        // 定义一个命令叫search
+        {                                    // 也可以定义正则匹配的命令
+          "type": "regex",                // 对于正则匹配命令，固定为'regex'
+          "label": "命令显示名",           // 匹配成功后命令的显示名称
+          "match": "\\d+"                // 正则匹配字符串（不含/和flag）
+        }
+      ]
+    }
+  ]
 }
 ```
