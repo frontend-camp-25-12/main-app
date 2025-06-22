@@ -189,6 +189,16 @@ class WindowManager {
       }
     }
   }
+
+  /**
+   * 发送ipc到指定窗口
+   */
+  async emitTo(pluginId: string, channel: string, ...args: any[]) {
+    const window = this.getWindow(pluginId);
+    if (window && window.window && !window.window.isDestroyed()) {
+      window.window.webContents.send(channel, ...args);
+    }
+  }
 }
 
 export const windowManager = new WindowManager();

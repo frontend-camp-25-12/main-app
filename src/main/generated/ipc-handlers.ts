@@ -2,6 +2,7 @@
 import { app, ipcMain } from 'electron';
 import { serviceInstance } from '../ipc-service';
 import { windowManager } from '../plugins/window';
+import { PluginMetadata } from '../../share/plugins/type'
 
 
 app.on('ready', () => {
@@ -27,7 +28,5 @@ app.on('ready', () => {
 });
 
 export namespace ipcEmit {
-  function settingsChanged(test) {
-    windowManager.emitInternal('settings-changed', test);                  
-  }
+
 }

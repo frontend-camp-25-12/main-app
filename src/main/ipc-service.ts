@@ -3,7 +3,9 @@ import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
 /**
  * 插件服务类
- * 在这里定义的on开头的public方法会自动生成对应的IPC接口
+ * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
+ * emit开头的方法，将自动生成ipcMain.emit和ipcRenderer.on方法包装，用于向所有插件广播
+ * emitInternal开头的方法，用于向内部插件广播
  */
 export class IpcService {
   /**
@@ -33,8 +35,6 @@ export class IpcService {
   async onPluginSearch(query: string): Promise<SearchResult[]> {
     return pluginSearch.search(query);
   }
-
-  async emitInternalSettingsChanged(test: number): Promise<void> { }
 }
 
 export const serviceInstance = new IpcService();

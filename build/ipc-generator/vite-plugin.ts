@@ -58,6 +58,14 @@ function generateIpcCode(options: {
   }
 }
 
+function generateChannelName(name: string, type: IpcType): string {
+  return name
+    .substring(type.length)
+    .replace(/([A-Z])/g, '-$1')
+    .toLowerCase()
+    .replace(/^-/, '');
+}
+
 function extractMethodsFromService(filePath: string): IpcMethod[] {
   const sourceCode = fs.readFileSync(filePath, 'utf-8');
 
@@ -110,31 +118,19 @@ function extractMethodsFromService(filePath: string): IpcMethod[] {
           if (methodName.startsWith(IpcType.On)) {
             //  'on' 开头的方法，方向为renderer调用main方法
             // 生成channel名称：去掉'on'前缀，转换为kebab-case
-            channelName = methodName
-              .substring(IpcType.On.length)
-              .replace(/([A-Z])/g, '-$1')
-              .toLowerCase()
-              .replace(/^-/, '');
+            channelName = generateChannelName(methodName, IpcType.On);
 
             type = IpcType.On;
           } else if (methodName.startsWith(IpcType.EmitInternal)) {
             // 'emitInternal' 开头的方法，方向为main调用renderer方法，并仅发送到内部插件
-            channelName = methodName
-              .substring(IpcType.EmitInternal.length)
-              .replace(/([A-Z])/g, '-$1')
-              .toLowerCase()
-              .replace(/^-/, '');
+            channelName = generateChannelName(methodName, IpcType.EmitInternal);
             generatedMethodName = firstToLowerCase(methodName
               .substring(IpcType.EmitInternal.length))
 
             type = IpcType.EmitInternal;
           } else if (methodName.startsWith(IpcType.Emit)) {
             // 'emit' 开头的方法，方向为main调用renderer方法，并广播地发送到所有插件
-            channelName = methodName
-              .substring(IpcType.Emit.length)
-              .replace(/([A-Z])/g, '-$1')
-              .toLowerCase()
-              .replace(/^-/, '');
+            channelName = generateChannelName(methodName, IpcType.Emit);
             generatedMethodName = firstToLowerCase(methodName
               .substring(IpcType.Emit.length))
             type = IpcType.Emit;
@@ -164,6 +160,7 @@ function generateMainIpcCode(methods: IpcMethod[], outputPath: string) {
 import { app, ipcMain } from 'electron';
 import { serviceInstance } from '../ipc-service';
 import { windowManager } from '../plugins/window';
+import { PluginMetadata } from '../../share/plugins/type'
 
 `;
   const handlers: string[] = [], emits: string[] = [];
@@ -183,6 +180,11 @@ import { windowManager } from '../plugins/window';
     } else if (method.type === 'emitInternal') {
       emits.push(`  function ${method.name}(${params}) {
     windowManager.emitInternal('${method.channelName}'${paramList});                  
+  }`);
+    }
+    if (method.type === 'emit') {
+      emits.push(`  function ${method.name}To(id: PluginMetadata['id'], ${params}) {
+    windowManager.emitTo(id, '${method.channelName}'${paramList});
   }`);
     }
   }
@@ -219,7 +221,8 @@ function generatePreloadIpcCode(methods: IpcMethod[], outputPath: string) {
    */
   async ${methodName}(${params}): ${method.returnType} {
     return electronAPI.ipcRenderer.invoke('${method.channelName}'${invokeParams});
-  }`;    } else if (method.type === 'emitInternal') {
+  }`;
+    } else if (method.type === 'emitInternal' || method.type === 'emit') {
       // 生成监听函数
       let methodName = method.name;
       methodName = 'on' + methodName.charAt(0).toUpperCase() + methodName.slice(1);
@@ -234,8 +237,6 @@ function generatePreloadIpcCode(methods: IpcMethod[], outputPath: string) {
     electronAPI.ipcRenderer.on('${method.channelName}', (_event${method.parameters.length ? ', ' + callbackArgs : ''}) => callback(${callbackArgs}));
   }`;
     }
-    // emit 类型暂不处理
-    return '';
   }).filter(Boolean).join('\n\n');
 
   // 导入部分
