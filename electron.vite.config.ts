@@ -5,6 +5,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { glob } from 'glob'
+import { ipcGeneratorPlugin } from './build/vite-plugin-ipc-generator'
 
 /**
  * 约定在src/renderer/src/windows目录下的index.html文件，作为每个窗口的入口
@@ -17,7 +18,14 @@ const entries = glob.sync('src/renderer/src/windows/**/index.html').reduce((acc,
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()]
+    plugins: [
+      externalizeDepsPlugin(),
+      ipcGeneratorPlugin({
+        serviceClassPath: resolve('src/main/ipc-service.ts'),
+        mainOutputPath: resolve('src/main/generated/ipc-handlers.ts'),
+        preloadOutputPath: resolve('src/preload/generated/ipc-api.ts')
+      })
+    ]
   },
   preload: {
     plugins: [externalizeDepsPlugin()]

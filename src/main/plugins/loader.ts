@@ -1,11 +1,10 @@
 import path, { join } from "path";
 import { PluginMetadata } from "../../share/plugins/type.js";
 import fs from "fs";
-import { app, ipcMain } from "electron";
-import { IpcChannel } from "../../share/ipcChannel.js";
 import { builtinPlugins } from "./builtin.js";
 import { windowManager } from "./window.js";
 import { PluginDefinitionSchema } from "../../share/plugins/type.zod.d.js";
+import { app } from "electron";
 
 const pluginPath = [
 ];
@@ -123,25 +122,6 @@ export class PluginManager {
 export const pluginManager = new PluginManager();
 pluginManager.loadPlugins();
 
-/**
- * 先用最简单、没依赖的方法做Ipc，后面看看有没有更好的办法
- */
 app.on('ready', () => {
-
-  /**
-   * TODO: 当前硬编码成一启动就打开插件入口窗口，后面再看情况吧
-   */
-  pluginManager.open(builtinPlugins[0].id)
-
-  ipcMain.handle(IpcChannel.PluginList, async () => {
-    return pluginManager.list();
-  });
-
-  ipcMain.handle(IpcChannel.PluginAdd, async (_event, dir: string) => {
-    return pluginManager.add(dir);
-  });
-
-  ipcMain.handle(IpcChannel.PluginOpen, async (_event, name: string) => {
-    return pluginManager.open(name);
-  });
+  pluginManager.open('builtin.entrance');
 });

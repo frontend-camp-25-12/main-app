@@ -9,3 +9,15 @@ export interface PluginMetadata extends PluginDefinition {
     hidden?: boolean;   // 是否在插件列表中隐藏
   }
 }
+
+export interface SearchResult {
+  id: PluginMetadata['id'];
+  name?: MatchRange;
+  description?: MatchRange;
+  feature: {
+    code: string;
+    matchedCmdLabel: string[];
+  }[];
+  score: number; // 匹配分数
+}
+

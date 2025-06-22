@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElButton, ElInput, ElText, ElNotification, ElScrollbar } from 'element-plus';
-import { IpcChannel } from '../../../../share/ipcChannel';
-import { PluginMetadata } from '../../../../share/plugins/type';
+import { PluginMetadata, SearchResult } from '../../../../share/plugins/type';
 import icon from '../../../../../resources/icon.png';
 
 const pluginList = ref<Record<string, PluginMetadata>>({});
@@ -11,7 +10,7 @@ const searchInput = ref('');
 let fullPluginList: typeof pluginList.value = {};
 
 const fetchPlugins = async () => {
-  const data = await window.electron.ipcRenderer.invoke(IpcChannel.PluginList);
+  const data = await window.ipcApi.pluginList();
   pluginList.value = data || {};
   fullPluginList = data || {};
 };
@@ -19,7 +18,7 @@ const fetchPlugins = async () => {
 const handleAddPlugin = async () => {
   if (!pluginPath.value.trim()) return;
   try {
-    await window.electron.ipcRenderer.invoke(IpcChannel.PluginAdd, pluginPath.value.trim());
+    await window.ipcApi.pluginAdd(pluginPath.value.trim());
     pluginPath.value = '';
     await fetchPlugins();
     ElNotification.success({
@@ -39,7 +38,7 @@ const handleAddPlugin = async () => {
 };
 
 const handleOpenPlugin = async (id: string) => {
-  await window.electron.ipcRenderer.invoke(IpcChannel.PluginOpen, id);
+  await window.ipcApi.pluginOpen(id);
 };
 
 const handleSearchInput = async () => {
@@ -48,8 +47,11 @@ const handleSearchInput = async () => {
     pluginList.value = fullPluginList;
     return;
   }
-  const filteredPlugins = await window.electron.ipcRenderer.invoke(IpcChannel.PluginSearch, query);
-  pluginList.value = filteredPlugins.map(search => fullPluginList[search.id]);
+  const filteredPlugins = await window.ipcApi.pluginSearch(query);
+  pluginList.value = filteredPlugins.reduce((acc: Record<string, PluginMetadata>, search: SearchResult) => {
+    acc[search.id] = fullPluginList[search.id];
+    return acc;
+  }, {});
 };
 
 onMounted(() => {

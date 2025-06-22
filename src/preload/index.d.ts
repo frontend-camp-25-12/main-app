@@ -1,8 +1,9 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
+import { IpcApi } from './generated/ipc-api'
 
 declare global {
   interface Window {
     electron: ElectronAPI
-    api: Record<string, any>
+    ipcApi: IpcApi
   }
 }

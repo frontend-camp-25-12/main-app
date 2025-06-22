@@ -8,8 +8,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
-    ElScrollBar: typeof import('element-plus/es')['ElScrollBar']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

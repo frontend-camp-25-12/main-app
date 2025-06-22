@@ -1,21 +1,9 @@
 import PinyinMatch from 'pinyin-match';
-import { PluginMetadata } from '../../share/plugins/type.js';
+import { SearchResult } from '../../share/plugins/type.js';
 import { pluginManager } from './loader.js';
-import { app, ipcMain } from 'electron';
 import { rMerge } from "ranges-merge";
 
 type MatchRange = [number, number][];  // 直接搜索插件名称或描述时，返回匹配的字符范围用来高亮
-export interface SearchResult {
-  id: PluginMetadata['id'];
-  name?: MatchRange;
-  description?: MatchRange;
-  feature: {
-    code: string;
-    matchedCmdLabel: string[];
-  }[];
-  score: number; // 匹配分数
-}
-
 
 enum MatchTypeScore {
   REGEX = 200, // 正则匹配
@@ -147,9 +135,3 @@ export class PluginSearch {
 }
 
 export const pluginSearch = new PluginSearch();
-
-app.on('ready', () => {
-  ipcMain.handle('plugin-search', async (_event, query: string) => {
-    return pluginSearch.search(query);
-  });
-});
