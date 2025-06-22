@@ -46,8 +46,8 @@ onMounted(() => {
 
 <template>
   <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-    <ElInput v-model="pluginPath" placeholder="开发：输入插件文件夹路径，例如附带的demo插件./demo-plugin"
-      @keyup.enter="handleAddPlugin" style="flex: 1" />
+    <ElInput v-model="pluginPath" placeholder="开发：输入插件文件夹路径，例如附带的demo插件./demo-plugin" @keyup.enter="handleAddPlugin"
+      style="flex: 1" />
     <ElButton type="primary" :disabled="!pluginPath.trim()" @click="handleAddPlugin">
       添加插件
     </ElButton>
@@ -56,7 +56,7 @@ onMounted(() => {
     <template v-for="(plugin, id) in pluginList" :key="id">
       <div v-if="!plugin?.internal?.hidden" class="plugin-item" @click="handleOpenPlugin(id)">
         <img width="40" :src="icon" alt="Plugin Icon" class="plugin-icon" />
-        <ElText truncated size="large">{{ plugin.name }}</ElText>
+        <ElText :line-clamp="2">{{ plugin.name }}</ElText>
       </div>
     </template>
   </div>
@@ -67,20 +67,30 @@ onMounted(() => {
 .plugin-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 16px;
+  gap: 8px;
 }
 
 .plugin-item {
+  height: 78px;
   cursor: pointer;
-  padding: 16px;
+  padding: 12px 4px;
   border-radius: var(--el-border-radius-base);
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+
+  .el-text {
+    transition: color 0.2s ease;
+  }
 }
 
 .plugin-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  .el-text {
+    --el-text-color: var(--el-color-primary);
+  }
 }
 </style>
