@@ -15,7 +15,7 @@ export const builtinPlugins: PluginMetadata[] = [
     },
     window: {
       disableTransition: true,
-      height: 300
+      height: 360
     }
   },
   {

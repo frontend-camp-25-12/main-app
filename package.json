@@ -24,6 +24,7 @@
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
     "element-plus": "^2.10.2",
+    "pinyin-match": "^1.2.8",
     "vue-router": "^4.5.1",
     "zod": "^3.25.64"
   },

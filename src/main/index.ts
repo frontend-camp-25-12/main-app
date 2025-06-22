@@ -1,6 +1,6 @@
 import { app} from 'electron'
 import { electronApp, optimizer} from '@electron-toolkit/utils'
-import './plugins/loader'
+import './plugins/index'
 
 
 // 当前窗口的加载在src\main\plugins\loader.ts中处理

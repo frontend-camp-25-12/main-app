@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { ElButton, ElInput, ElText, ElNotification } from 'element-plus';
+import { ref, onMounted, computed } from 'vue';
+import { ElButton, ElInput, ElText, ElNotification, ElScrollbar } from 'element-plus';
 import { IpcChannel } from '../../../../share/ipcChannel';
 import { PluginMetadata } from '../../../../share/plugins/type';
 import icon from '../../../../../resources/icon.png';
 
 const pluginList = ref<Record<string, PluginMetadata>>({});
 const pluginPath = ref('');
+const searchInput = ref('');
+let fullPluginList: typeof pluginList.value = {};
 
 const fetchPlugins = async () => {
   const data = await window.electron.ipcRenderer.invoke(IpcChannel.PluginList);
   pluginList.value = data || {};
+  fullPluginList = data || {};
 };
 
 const handleAddPlugin = async () => {
@@ -39,32 +42,71 @@ const handleOpenPlugin = async (id: string) => {
   await window.electron.ipcRenderer.invoke(IpcChannel.PluginOpen, id);
 };
 
+const handleSearchInput = async () => {
+  const query = searchInput.value.trim();
+  if (!query) {
+    pluginList.value = fullPluginList;
+    return;
+  }
+  const filteredPlugins = await window.electron.ipcRenderer.invoke(IpcChannel.PluginSearch, query);
+  pluginList.value = filteredPlugins;
+};
+
 onMounted(() => {
   fetchPlugins();
 });
 </script>
 
 <template>
-  <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-    <ElInput v-model="pluginPath" placeholder="开发：输入插件文件夹路径，例如附带的demo插件./demo-plugin" @keyup.enter="handleAddPlugin"
-      style="flex: 1" />
-    <ElButton type="primary" :disabled="!pluginPath.trim()" @click="handleAddPlugin">
-      添加插件
-    </ElButton>
-  </div>
-  <div v-if="Object.keys(pluginList).length" class="plugin-grid">
-    <template v-for="(plugin, id) in pluginList" :key="id">
-      <div v-if="!plugin?.internal?.hidden" class="plugin-item" @click="handleOpenPlugin(id)">
-        <img width="40" :src="icon" alt="Plugin Icon" class="plugin-icon" />
-        <ElText :line-clamp="2">{{ plugin.name }}</ElText>
+  <div class="plugin-container">
+    <div style="display: flex; gap: 8px;">
+      <ElInput v-model="pluginPath" placeholder="开发：输入插件文件夹路径，例如附带的demo插件./demo-plugin" @keyup.enter="handleAddPlugin"
+        style="flex: 1" />
+      <ElButton type="primary" :disabled="!pluginPath.trim()" @click="handleAddPlugin">
+        添加插件
+      </ElButton>
+    </div>
+    <ElInput v-model="searchInput" class="cmd-input" placeholder="Hi" @input="handleSearchInput"
+      @keyup.enter="handleSearchInput" size="large" />
+    <span class="plugin-category" v-if="searchInput.length">命令匹配</span>
+    <span class="plugin-category" v-else>已安装插件</span>
+    <ElScrollbar class="plugin-grid-container">
+      <div v-if="Object.keys(pluginList).length" class="plugin-grid">
+        <template v-for="(plugin, id) in pluginList" :key="id">
+          <div v-if="!plugin?.internal?.hidden" class="plugin-item" @click="handleOpenPlugin(id)">
+            <img width="40" :src="icon" alt="Plugin Icon" class="plugin-icon" />
+            <ElText :line-clamp="2">{{ plugin.name }}</ElText>
+          </div>
+        </template>
       </div>
-    </template>
+      <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease;">暂无插件</div>
+    </ElScrollbar>
   </div>
-  <div v-else style="color: #888;">暂无插件</div>
 </template>
 
 <style scoped>
+.plugin-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  > *:not(.plugin-grid-container) {
+    padding: 8px;
+  }
+}
+
+.plugin-category {
+  animation: fadeIn 0.2s ease;
+}
+
+.cmd-input {
+  font-size: 20px;
+}
+
 .plugin-grid {
+  overflow-y: auto;
+  padding: 12px 6px;
+  flex: 1 1;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 8px;
