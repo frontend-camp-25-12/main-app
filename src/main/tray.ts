@@ -1,4 +1,4 @@
-import { Tray, Menu, nativeImage, app,  globalShortcut, ipcMain } from 'electron';
+import { Tray, Menu, nativeImage, app, globalShortcut, ipcMain, nativeTheme } from 'electron';
 import { BuiltinPluginId, builtinPlugins } from './plugins/builtin';
 import { windowManager } from './plugins/window';
 import trayIcon from '../../resources/tray-icon.png?asset'
@@ -12,17 +12,25 @@ function updateTrayMenu() {
   if (!tray) return;
 
   const contextMenu = Menu.buildFromTemplate([
-    { 
-      label: i18next.t('showHideMain'), 
+    {
+      label: i18next.t('showHideMain'),
       click: () => toggleMainWindow()
     },
-    { 
-      label: i18next.t('openSettings'), 
+    {
+      label: i18next.t('openSettings'),
       click: () => windowManager.open(builtinPlugins[1])
     },
+    {
+      label: i18next.t('toggleColorMode'),
+      click: () => {
+        // todo: 实际应该调用某个主题管理器，由管理器更改electron，同时更改配置项
+        const mode = nativeTheme.shouldUseDarkColors ? 'light' : 'dark';
+        nativeTheme.themeSource = mode;
+      }
+    },
     { type: 'separator' },
-    { 
-      label: i18next.t('quit'), 
+    {
+      label: i18next.t('quit'),
       click: () => app.quit()
     }
   ]);

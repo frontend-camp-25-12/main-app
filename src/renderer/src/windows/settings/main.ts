@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 import '../shared.css'
 import '../../styles/theme.css' // 引入主题变量
 import '../../styles/light.css' // 引入浅色主题覆盖

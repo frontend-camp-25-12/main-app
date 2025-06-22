@@ -1,8 +1,8 @@
 import { ref, watch } from 'vue';
-import { 
-  THEME_STORAGE_KEY, 
-  DEFAULT_THEME, 
-  SUPPORTED_THEMES, 
+import {
+  THEME_STORAGE_KEY,
+  DEFAULT_THEME,
+  SUPPORTED_THEMES,
   Theme
 } from '../../../share/plugins/constants';
 
@@ -13,22 +13,20 @@ const currentTheme = ref<Theme>(DEFAULT_THEME);
 export function initTheme() {
   // 从localStorage获取保存的主题设置
   const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
-  
+
   if (savedTheme && SUPPORTED_THEMES.includes(savedTheme)) {
     currentTheme.value = savedTheme;
   } else {
     currentTheme.value = DEFAULT_THEME;
   }
-  
+
   applyTheme(currentTheme.value);
-  
+
   // 监听系统主题变化
   if (window.matchMedia) {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addEventListener('change', () => {
-      if (currentTheme.value === 'system') {
-        applyTheme('system');
-      }
+      applyTheme('system');
     });
   }
 }
@@ -37,23 +35,23 @@ export function initTheme() {
 export function applyTheme(theme: Theme) {
   // 更新当前主题状态
   currentTheme.value = theme;
-  
+
   // 保存到localStorage
   localStorage.setItem(THEME_STORAGE_KEY, theme);
-  
+
   // 获取实际应用的主题（如果是system则根据系统设置确定）
-  const effectiveTheme = theme === 'system' 
-    ? getSystemTheme() 
+  const effectiveTheme = theme === 'system'
+    ? getSystemTheme()
     : theme;
-  
+
   // 更新html的class
   document.documentElement.classList.toggle('dark', effectiveTheme === 'dark');
 }
 
 // 获取系统主题
 export function getSystemTheme(): 'light' | 'dark' {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches 
-    ? 'dark' 
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
     : 'light';
 }
 

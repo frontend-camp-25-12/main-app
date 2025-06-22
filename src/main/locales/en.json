@@ -3,5 +3,6 @@
   "showHideMain": "Show/Hide Main Window",
   "openSettings": "Open Settings",
   "quit": "Quit",
-  "myTools": "My Tools"
+  "myTools": "My Tools",
+  "toggleColorMode": "Toggle Color Mode"
 }

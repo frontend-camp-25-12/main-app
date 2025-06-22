@@ -2,7 +2,8 @@ import { ref, watch } from 'vue';
 import { 
   SKIN_STORAGE_KEY, 
   DEFAULT_SKIN,
-  PRESET_SKINS
+  PRESET_SKINS,
+  PresetSkin
 } from '../../../share/plugins/constants';
 
 const DEFAULT_CUSTOM_COLOR = '#F759AB'; // 默认自定义颜色为粉色
