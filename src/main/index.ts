@@ -1,5 +1,6 @@
-import { app} from 'electron'
-import { electronApp, optimizer} from '@electron-toolkit/utils'
+import { app, globalShortcut } from 'electron'
+import { electronApp, optimizer } from '@electron-toolkit/utils'
+import { createTray, registerGlobalShortcut } from './plugins/tray' // 导入registerGlobalShortcut
 import './plugins/index'
 import './generated/ipc-handlers'
 
@@ -11,6 +12,16 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
+
+  // 创建托盘图标
+  createTray();
+  // 注册全局快捷键
+  registerGlobalShortcut();
+})
+
+// 添加应用退出时取消快捷键注册
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

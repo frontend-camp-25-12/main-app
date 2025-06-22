@@ -121,7 +121,3 @@ export class PluginManager {
 
 export const pluginManager = new PluginManager();
 pluginManager.loadPlugins();
-
-app.on('ready', () => {
-  pluginManager.open('builtin.entrance');
-});

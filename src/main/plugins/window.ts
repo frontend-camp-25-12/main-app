@@ -72,6 +72,11 @@ class PluginWindow {
       window.loadFile(path.join(windowContent.dist, 'index.html'));
     }
     this.window = window;
+
+    window.on('closed', () => {
+      const id = plugin.id;
+      windowManager.remove(id);
+    });
   }
 
   show() {
@@ -88,6 +93,21 @@ class PluginWindow {
         this.window.show()
       }
     }
+  }
+
+  hide() {
+    this.window.hide();
+  }
+
+  isVisible(): boolean {
+    return this.window.isVisible();
+  }
+
+  focus() {
+    if (this.window.isMinimized()) {
+      this.window.restore();
+    }
+    this.window.focus();
   }
 }
 
@@ -127,6 +147,28 @@ class WindowManager {
   }
 
   /**
+   * 获取指定窗口
+   */
+  getWindow(pluginId: string): PluginWindow | undefined {
+    return this.windows[pluginId];
+  }
+
+  /**
+   * 隐藏所有窗口
+   */
+  hideAll() {
+    Object.values(this.windows).forEach(window => window.hide());
+  }
+
+  /**
+   * 移除窗口
+   * @param pluginId
+   */
+  remove(pluginId: string) {
+    delete this.windows[pluginId];
+  }
+
+  /**
    * 发送ipc事件到所有窗口，只应该在ipc-handlers.ts被中使用
    */
   async emit(channel: string, ...args: any[]) {
@@ -147,6 +189,7 @@ class WindowManager {
       }
     }
   }
+}
 }
 
 export const windowManager = new WindowManager();

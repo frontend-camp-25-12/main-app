@@ -1,0 +1,107 @@
+:root {
+  /* 基础主题变量 */
+  --bg-color: #ffffff;
+  --text-color: #303133;
+  --border-color: #dcdfe6;
+  --card-bg: #f5f7fa;
+  --hover-bg: #f0f2f5;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+
+  /* 皮肤变量 */
+  --primary-color: #409EFF; /* 默认蓝色 */
+  --primary-light-color: #79bbff;
+  --primary-dark-color: #337ecc;
+
+  /* 组件特定变量 */
+  --plugin-item-bg: #f5f7fa;
+  --plugin-item-hover-bg: #e4e7ed;
+  --settings-card-bg: #ffffff;
+}
+
+.dark {
+  /* 深色主题变量 */
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --border-color: #444444;
+  --card-bg: #1e1e1e;
+  --hover-bg: #2a2a2a;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+
+  /* 组件特定变量 */
+  --plugin-item-bg: #1e1e1e;
+  --plugin-item-hover-bg: #2a2a2a;
+  --settings-card-bg: #1e1e1e;
+}
+
+/* 应用主题变量 */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* 使用皮肤变量 */
+.plugin-item:hover {
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.el-button--primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.el-button--primary:hover,
+.el-button--primary:focus {
+  background-color: var(--primary-dark-color) !important;
+  border-color: var(--primary-dark-color) !important;
+}
+
+.el-select .el-input.is-focus .el-input__inner {
+  border-color: var(--primary-color) !important;
+}
+
+.el-select-dropdown__item.selected {
+  color: var(--primary-color) !important;
+}
+
+.settings-card {
+  border-top: 3px solid var(--primary-color);
+}
+
+/* 覆盖所有按钮的主题色 */
+.el-button--primary,
+.el-button--primary:active,
+.el-button--primary:focus,
+.el-button--primary:visited {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #fff !important;
+}
+
+.el-button--primary:hover {
+  background-color: var(--primary-dark-color) !important;
+  border-color: var(--primary-dark-color) !important;
+  color: #fff !important;
+}
+
+.el-button--primary:disabled,
+.el-button--primary.is-disabled {
+  background-color: var(--primary-light-color) !important;
+  border-color: var(--primary-light-color) !important;
+  color: #fff !important;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 普通按钮（非primary）可选：如需统一风格也可加 */
+.el-button:not(.el-button--primary) {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+.el-button:not(.el-button--primary):hover {
+  background-color: var(--hover-bg);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}

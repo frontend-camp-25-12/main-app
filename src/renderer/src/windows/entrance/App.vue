@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { ElButton, ElInput, ElText, ElNotification, ElScrollbar } from 'element-plus';
 import { PluginMetadata, SearchResult } from '../../../../share/plugins/type';
 import icon from '../../../../../resources/icon.png';
+import { t } from '../../plugins/i18n';
 
 const pluginList = ref<Record<string, PluginMetadata>>({});
 const pluginPath = ref('');
@@ -22,15 +23,15 @@ const handleAddPlugin = async () => {
     pluginPath.value = '';
     await fetchPlugins();
     ElNotification.success({
-      title: '插件添加成功',
-      message: '插件已成功添加',
+      title: t('pluginAddSuccess'),
+      message: t('pluginAddSuccess'),
       duration: 2000,
       position: 'bottom-right',
     });
   } catch (error: any) {
     ElNotification.error({
-      title: '添加插件失败',
-      message: error?.message || '未知错误',
+      title: t('pluginAddFailed'),
+      message: error?.message || t('pluginAddFailed'),
       duration: 5000,
       position: 'bottom-right',
     });
@@ -106,7 +107,6 @@ onMounted(() => {
 }
 
 .plugin-grid {
-  overflow-y: auto;
   padding: 12px 6px;
   flex: 1 1;
   display: grid;
