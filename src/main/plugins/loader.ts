@@ -66,7 +66,7 @@ export class PluginManager {
       console.warn(`Plugin at ${path} failed zod validation:`, e);
       return null;
     }
-    if (this.plugins[pluginDef.name]) {
+    if (this.plugins[pluginDef.id]) {
       throw new Error(`插件 ${pluginDef.name} 已经存在`);
     }
 
@@ -101,7 +101,7 @@ export class PluginManager {
     }
 
     const plugins = await this.plugins;
-    plugins[pluginMetadata.name] = pluginMetadata;
+    plugins[pluginMetadata.id] = pluginMetadata;
     return plugins;
   }
 
