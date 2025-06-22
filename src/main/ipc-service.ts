@@ -33,6 +33,8 @@ export class IpcService {
   async onPluginSearch(query: string): Promise<SearchResult[]> {
     return pluginSearch.search(query);
   }
+
+  async emitInternalSettingsChanged(test: number): Promise<void> { }
 }
 
 export const serviceInstance = new IpcService();

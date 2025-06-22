@@ -64,18 +64,17 @@ src/                  # 源码目录
 
 ## ipc开发
 
-为了简化electron添加ipc接口的重复劳动，减少人工错误，项目内添加了`build/vite-plugin-ipc-generator.ts`这个`vite`插件，通过扫描 `src/main/ipc-service.ts` 中定义的服务类方法，自动生成主进程的 IPC 处理器代码和渲染进程的调用接口代码。
+为了简化electron添加ipc接口的重复劳动，减少人工错误，项目内添加了`build/ipc-generator`这个`vite`插件，通过扫描 `src/main/ipc-service.ts` 中定义的服务类方法，自动生成主进程的 IPC 处理器代码和渲染进程的调用接口代码。
 
 #### 过程
 1. **服务类方法读取**：
-   - 约定在 `src/main/ipc-service.ts` 中定义服务接口，方法以 `on` 开头。
+   - 约定在 `src/main/ipc-service.ts` 中定义服务接口，方法以 `on` 或 `emit` `emitInternal` 开头，具体说明见`src/main/ipc-service.ts`。
    - 插件会自动提取每个方法的返回类型和参数类型。
 2. **公共类型提取**：
    - 约定在 `src/share/**/type.d.ts` 中定义任何需要在main和renderer进程共享的ts类型。
    - 这些类型会被在生成的代码中引用，来使得类型检查和提示生效。
 3. **主进程接口生成**：
    - 在 `src/main/generated/ipc-handlers.ts` 中生成 `ipcMain.handle` 的接口注册代码。
-
 4. **渲染进程接口生成**：
    - 在 `src/preload/generated/ipc-api.ts` 中生成 `ipcRenderer.invoke` 的调用代码。
    - 渲染进程可以通过 `ipcApi` 对象直接调用主进程方法，享受类型提示。

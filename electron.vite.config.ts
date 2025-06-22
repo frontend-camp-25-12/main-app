@@ -5,7 +5,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { glob } from 'glob'
-import { ipcGeneratorPlugin } from './build/vite-plugin-ipc-generator'
+import { ipcGeneratorPlugin } from './build/ipc-generator/vite-plugin'
 
 /**
  * 约定在src/renderer/src/windows目录下的index.html文件，作为每个窗口的入口

@@ -24,5 +24,12 @@ export const builtinPlugins: PluginMetadata[] = [
     version: '1.0.0',
     dist: 'settings',
     internal: {}
+  },
+  {
+    id: 'builtin.settings2',
+    name: '插件商店',
+    version: '1.0.0',
+    dist: 'settings',
+    internal: {}
   }
 ] as const

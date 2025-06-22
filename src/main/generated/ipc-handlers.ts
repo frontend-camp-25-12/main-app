@@ -1,6 +1,7 @@
 // 自动生成的IPC接口，请勿手动修改
 import { app, ipcMain } from 'electron';
 import { serviceInstance } from '../ipc-service';
+import { windowManager } from '../plugins/window';
 
 
 app.on('ready', () => {
@@ -24,3 +25,9 @@ app.on('ready', () => {
     return await serviceInstance.onPluginSearch(query);
   });
 });
+
+export namespace ipcEmit {
+  function settingsChanged(test) {
+    windowManager.emitInternal('settings-changed', test);                  
+  }
+}

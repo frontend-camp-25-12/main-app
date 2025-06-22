@@ -23,13 +23,15 @@ interface PluginWindowContent {
 }
 
 class PluginWindow {
-  private window: BrowserWindow | undefined;
+  window: BrowserWindow | undefined;
   private windowContent: PluginWindowContent | undefined;
   private plugin: PluginMetadata;
+  internal: boolean;
   constructor(plugin: PluginMetadata) {
     this.plugin = plugin;
     let dist = plugin.dist;
     let preload: string;
+    this.internal = plugin.internal != undefined
     if (plugin.internal) {
       // 内置插件，共享相同preload逻辑
       preload = join(__dirname, '../preload/index.js');
@@ -122,6 +124,28 @@ class WindowManager {
    */
   getAllWindows(): Record<string, PluginWindow> {
     return this.windows;
+  }
+
+  /**
+   * 发送ipc事件到所有窗口，只应该在ipc-handlers.ts被中使用
+   */
+  async emit(channel: string, ...args: any[]) {
+    for (const w of Object.values(this.windows)) {
+      if (w && w.window && !w.window.isDestroyed()) {
+        w.window.webContents.send(channel, ...args);
+      }
+    }
+  }
+
+  /**
+   * 发送内部ipc事件，只应该在ipc-handlers.ts被中使用
+   */
+  async emitInternal(channel: string, ...args: any[]) {
+    for (const w of Object.values(this.windows)) {
+      if (w && w.internal && w.window && !w.window.isDestroyed()) {
+        w.window.webContents.send(channel, ...args);
+      }
+    }
   }
 }
 
