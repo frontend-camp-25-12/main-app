@@ -54,6 +54,7 @@ class PluginWindow {
       transparent: plugin.window?.transparent ?? false,
       frame: plugin.window?.frame ?? true,
       show: false,
+      resizable: plugin.window?.resizable ?? true,
       ...(process.platform === 'linux' ? { icon } : {}),
       webPreferences: {
         preload: windowContent.preload,
