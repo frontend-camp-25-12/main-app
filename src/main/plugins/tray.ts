@@ -1,9 +1,8 @@
 import { Tray, Menu, nativeImage, app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
-import path from 'path';
 import { builtinPlugins } from './builtin';
 import { windowManager } from './window';
 import { t } from './i18n';
-import { LANG_STORAGE_KEY } from '../../share/plugins/constants';
+import trayIcon from '../../../resources/tray-icon.png?asset'
 
 let tray: Tray | null = null;
 const entrancePluginId = builtinPlugins[0].id; // 获取入口插件ID
@@ -34,8 +33,8 @@ function updateTrayMenu() {
 // 创建系统托盘图标
 export function createTray(): void {
   try {
-    const iconPath = path.join(__dirname, '../../../../resources/icon.png');
-    const icon = nativeImage.createFromPath(iconPath).resize({ width: 32, height: 32 });
+    console.log('Tray icon path:', trayIcon);
+    const icon = nativeImage.createFromPath(trayIcon).resize({ width: 32, height: 32 });
 
     tray = new Tray(icon);
     tray.setToolTip(t('appName'));
