@@ -1,6 +1,6 @@
 import { app, globalShortcut } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
-import { createTray, registerGlobalShortcut } from './plugins/tray' // 导入registerGlobalShortcut
+import { createTray, registerGlobalShortcut } from './tray' // 导入registerGlobalShortcut
 import './plugins/index'
 import './generated/ipc-handlers'
 

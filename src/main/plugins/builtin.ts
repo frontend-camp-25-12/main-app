@@ -4,9 +4,14 @@
 
 import { PluginMetadata } from "../../share/plugins/type";
 
+export enum BuiltinPluginId {
+  ENTRANCE = 'builtin.entrance',
+  SETTINGS = 'builtin.settings'
+}
+
 export const builtinPlugins: PluginMetadata[] = [
   {
-    id: 'builtin.entrance',
+    id: BuiltinPluginId.ENTRANCE,
     name: '插件入口',
     version: '1.0.0',
     dist: 'entrance',
@@ -19,7 +24,7 @@ export const builtinPlugins: PluginMetadata[] = [
     }
   },
   {
-    id: 'builtin.settings',
+    id: BuiltinPluginId.SETTINGS,
     name: '设置',
     version: '1.0.0',
     dist: 'settings',

@@ -1,5 +1,7 @@
 {
+  "appName": "工具入口",
   "showHideMain": "显示/隐藏主窗口",
   "openSettings": "打开设置",
-  "quit": "退出"
+  "quit": "退出",
+  "myTools": "我的工具"
 }

@@ -96,18 +96,18 @@ class PluginWindow {
   }
 
   hide() {
-    this.window.hide();
+    this.window?.hide();
   }
 
   isVisible(): boolean {
-    return this.window.isVisible();
+    return this.window?.isVisible() ?? false;
   }
 
   focus() {
-    if (this.window.isMinimized()) {
+    if (this.window?.isMinimized()) {
       this.window.restore();
     }
-    this.window.focus();
+    this.window?.focus();
   }
 }
 

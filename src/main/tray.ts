@@ -1,8 +1,8 @@
 import { Tray, Menu, nativeImage, app,  globalShortcut, ipcMain } from 'electron';
 import { builtinPlugins } from './plugins/builtin';
 import { windowManager } from './plugins/window';
-import { t } from './i18n';
-import trayIcon from '../../../resources/tray-icon.png?asset'
+import trayIcon from '../../resources/tray-icon.png?asset'
+import i18next from './locales/i18n';
 
 let tray: Tray | null = null;
 const entrancePluginId = builtinPlugins[0].id; // 获取入口插件ID
@@ -13,16 +13,16 @@ function updateTrayMenu() {
 
   const contextMenu = Menu.buildFromTemplate([
     { 
-      label: t('showHideMain'), 
+      label: i18next.t('showHideMain'), 
       click: () => toggleMainWindow()
     },
     { 
-      label: t('openSettings'), 
+      label: i18next.t('openSettings'), 
       click: () => windowManager.open(builtinPlugins[1])
     },
     { type: 'separator' },
     { 
-      label: t('quit'), 
+      label: i18next.t('quit'), 
       click: () => app.quit()
     }
   ]);
@@ -37,7 +37,7 @@ export function createTray(): void {
     const icon = nativeImage.createFromPath(trayIcon).resize({ width: 32, height: 32 });
 
     tray = new Tray(icon);
-    tray.setToolTip(t('appName'));
+    tray.setToolTip(i18next.t('appName'));
 
     updateTrayMenu();
     tray.on('click', () => toggleMainWindow());
@@ -45,7 +45,7 @@ export function createTray(): void {
     // 监听语言变化
     ipcMain.on('language-changed', () => {
       updateTrayMenu();
-      tray?.setToolTip(t('appName'));
+      tray?.setToolTip(i18next.t('appName'));
     });
 
     console.log('Tray icon created successfully');
