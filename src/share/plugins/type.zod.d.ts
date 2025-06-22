@@ -13,7 +13,7 @@ export const PluginDefinitionSchema = z.object({
       height: z.number().optional(),
       disableTransition: z.boolean().optional(), // 是否禁用窗口进出时的过渡动画
       frame: z.boolean().optional().default(true), // 是否启用窗口边框，默认为true
-      transparent: z.boolean().optional().default(false), // 是否启用透明窗口，默认为false
+      transparent: z.boolean().optional().default(false), // 是否启用透明窗口，默认为false，启用时需要同时设置frame为false
     })
     .optional(),
 });

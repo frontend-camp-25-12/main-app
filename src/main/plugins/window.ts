@@ -52,6 +52,7 @@ class PluginWindow {
       width: plugin.window?.width ?? 900,
       height: plugin.window?.height ?? 670,
       transparent: plugin.window?.transparent ?? false,
+      frame: plugin.window?.frame ?? true,
       show: false,
       ...(process.platform === 'linux' ? { icon } : {}),
       webPreferences: {
