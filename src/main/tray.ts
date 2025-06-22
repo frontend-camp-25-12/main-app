@@ -1,6 +1,6 @@
-import { Tray, Menu, nativeImage, app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
-import { builtinPlugins } from './builtin';
-import { windowManager } from './window';
+import { Tray, Menu, nativeImage, app,  globalShortcut, ipcMain } from 'electron';
+import { builtinPlugins } from './plugins/builtin';
+import { windowManager } from './plugins/window';
 import { t } from './i18n';
 import trayIcon from '../../../resources/tray-icon.png?asset'
 
