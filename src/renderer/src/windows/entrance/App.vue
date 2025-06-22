@@ -4,6 +4,7 @@ import { ElButton, ElInput, ElText, ElNotification } from 'element-plus';
 import { IpcChannel } from '../../../../share/ipcChannel';
 import { PluginMetadata } from '../../../../share/plugins/type';
 import icon from '../../../../../resources/icon.png';
+import { t } from '../../plugins/i18n';
 
 const pluginList = ref<Record<string, PluginMetadata>>({});
 const pluginPath = ref('');
@@ -20,15 +21,15 @@ const handleAddPlugin = async () => {
     pluginPath.value = '';
     await fetchPlugins();
     ElNotification.success({
-      title: '插件添加成功',
-      message: '插件已成功添加',
+      title: t('pluginAddSuccess'),
+      message: t('pluginAddSuccess'),
       duration: 2000,
       position: 'bottom-right',
     });
   } catch (error: any) {
     ElNotification.error({
-      title: '添加插件失败',
-      message: error?.message || '未知错误',
+      title: t('pluginAddFailed'),
+      message: error?.message || t('pluginAddFailed'),
       duration: 5000,
       position: 'bottom-right',
     });
@@ -39,48 +40,108 @@ const handleOpenPlugin = async (id: string) => {
   await window.electron.ipcRenderer.invoke(IpcChannel.PluginOpen, id);
 };
 
+const handleOpenSettings = async () => {
+  await window.electron.ipcRenderer.invoke(IpcChannel.PluginOpen, 'builtin.settings');
+};
+
 onMounted(() => {
   fetchPlugins();
 });
 </script>
 
 <template>
-  <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-    <ElInput v-model="pluginPath" placeholder="开发：输入插件文件夹路径，例如附带的demo插件./demo-plugin"
-      @keyup.enter="handleAddPlugin" style="flex: 1" />
-    <ElButton type="primary" :disabled="!pluginPath.trim()" @click="handleAddPlugin">
-      添加插件
-    </ElButton>
+  <div class="entrance-container">
+    <div class="header">
+      <h1>{{ t('appName') }}</h1>
+      <ElButton type="primary" plain @click="handleOpenSettings">
+        {{ t('openSettings') }}
+      </ElButton>
+    </div>
+    
+    <div class="plugin-input">
+      <ElInput 
+        v-model="pluginPath" 
+        :placeholder="t('pluginPathPlaceholder')"
+        @keyup.enter="handleAddPlugin" 
+      />
+      <ElButton 
+        type="primary" 
+        :disabled="!pluginPath.trim()" 
+        @click="handleAddPlugin"
+      >
+        {{ t('addPlugin') }}
+      </ElButton>
+    </div>
+    
+    <div v-if="Object.keys(pluginList).length" class="plugin-grid">
+      <template v-for="(plugin, id) in pluginList" :key="id">
+        <div 
+          v-if="!plugin?.internal?.hidden" 
+          class="plugin-item" 
+          @click="handleOpenPlugin(id)"
+        >
+          <img width="40" :src="icon" alt="Plugin Icon" class="plugin-icon" />
+          <ElText truncated size="large">{{ plugin.name }}</ElText>
+        </div>
+      </template>
+    </div>
+    <div v-else class="no-plugins">
+      {{ t('noPlugins') }}
+    </div>
   </div>
-  <div v-if="Object.keys(pluginList).length" class="plugin-grid">
-    <template v-for="(plugin, id) in pluginList" :key="id">
-      <div v-if="!plugin?.internal?.hidden" class="plugin-item" @click="handleOpenPlugin(id)">
-        <img width="40" :src="icon" alt="Plugin Icon" class="plugin-icon" />
-        <ElText truncated size="large">{{ plugin.name }}</ElText>
-      </div>
-    </template>
-  </div>
-  <div v-else style="color: #888;">暂无插件</div>
 </template>
 
 <style scoped>
+.entrance-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.plugin-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
 .plugin-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
 }
 
 .plugin-item {
   cursor: pointer;
-  padding: 16px;
+  padding: 15px;
   border-radius: var(--el-border-radius-base);
-  transition: box-shadow 0.3s ease;
+  background-color: #f5f7fa;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
 .plugin-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.plugin-icon {
+  margin-bottom: 10px;
+}
+
+.no-plugins {
+  text-align: center;
+  color: #909399;
+  padding: 40px 0;
+  font-size: 16px;
 }
 </style>

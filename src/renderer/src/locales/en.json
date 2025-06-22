@@ -1,0 +1,21 @@
+{
+  "appName": "My App",
+  "settings": "Settings",
+  "showHide": "Show/Hide",
+  "quit": "Quit",
+  "addPlugin": "Add Plugin",
+  "pluginPathPlaceholder": "Dev: Enter plugin folder path, e.g. ./demo-plugin",
+  "noPlugins": "No plugins available",
+  "pluginAddSuccess": "Plugin added successfully",
+  "pluginAddFailed": "Failed to add plugin",
+  "language": "Language",
+  "english": "English",
+  "chinese": "简体中文",
+  "theme": "Theme",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
+  "openSettings": "Open Settings",
+  "refresh": "Refresh",
+  "about": "About"
+}

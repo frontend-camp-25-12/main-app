@@ -53,6 +53,15 @@ class PluginWindow {
       window.loadFile(path.join(dist, 'index.html'));
     }
     this.window = window;
+
+    // 新增：窗口关闭时移除引用
+    window.on('closed', () => {
+      // @ts-ignore
+      const id = plugin.id;
+      // 这里的 this 指向 window，不是 PluginWindow
+      // 所以用 windowManager 静态方法移除
+      windowManager.remove(id);
+    });
   }
 
   show() {
@@ -109,6 +118,11 @@ class WindowManager {
   // 新增方法：隐藏所有窗口
   hideAll() {
     Object.values(this.windows).forEach(window => window.hide());
+  }
+
+  // 新增：移除窗口
+  remove(pluginId: string) {
+    delete this.windows[pluginId];
   }
 }
 
