@@ -2,15 +2,20 @@ import PinyinMatch from 'pinyin-match';
 import { PluginMetadata } from '../../share/plugins/type.js';
 import { pluginManager } from './loader.js';
 import { app, ipcMain } from 'electron';
+import { rMerge } from "ranges-merge";
 
-interface SearchResult {
-  plugin: PluginMetadata;
-  feature?: {
+type MatchRange = [number, number][];  // 直接搜索插件名称或描述时，返回匹配的字符范围用来高亮
+export interface SearchResult {
+  id: PluginMetadata['id'];
+  name?: MatchRange;
+  description?: MatchRange;
+  feature: {
     code: string;
-    matchedCmd: string | { type: 'regex'; label: string; match: string };
-  };
-  score: number; // 匹配分数，按照 regex > 关键词匹配 > 拼音 的优先级排序
+    matchedCmdLabel: string[];
+  }[];
+  score: number; // 匹配分数
 }
+
 
 enum MatchTypeScore {
   REGEX = 200, // 正则匹配
@@ -27,7 +32,7 @@ export class PluginSearch {
    * @param query 搜索关键词
    * @returns 匹配的插件列表，按匹配优先级排序
    */
-  async search(query: string): Promise<PluginMetadata[]> {
+  async search(query: string): Promise<SearchResult[]> {
     if (!query.trim()) {
       return [];
     }
@@ -40,72 +45,89 @@ export class PluginSearch {
         continue;
       }
 
+      const matchedPlugin: SearchResult = {
+        id: plugin.id,
+        score: 0,
+        feature: []
+      };
+
       // 1. 匹配插件名称
-      const nameMatchScore = this.matchText(query, plugin.name);
-      if (nameMatchScore > 0) {
-        results.push({
-          plugin,
-          score: nameMatchScore
-        });
+      const nameMatch = this.matchText(query, plugin.name);
+      if (nameMatch.score > 0) {
+        matchedPlugin.name = nameMatch.range;
+        matchedPlugin.score += nameMatch.score;
       }
 
-      // 2. 匹配features.cmds
+      // 2. 匹配插件描述
+      if (plugin.description) {
+        const descriptionMatch = this.matchText(query, plugin.description);
+        if (descriptionMatch.score > 0) {
+          matchedPlugin.description = descriptionMatch.range;
+          matchedPlugin.score += descriptionMatch.score;
+        }
+      }
+
+      // 3. 匹配features.cmds
       if (plugin.features) {
         for (const feature of plugin.features) {
+          const matchedPluginFeature: SearchResult['feature'][number] = {
+            code: feature.code,
+            matchedCmdLabel: []
+          };
+
           for (const cmd of feature.cmds) {
             if (typeof cmd === 'string') {
               // 字符串命令匹配
-              const cmdMatchScore = this.matchText(query, cmd);
-              if (cmdMatchScore > 0) {
-                results.push({
-                  plugin,
-                  feature: {
-                    code: feature.code,
-                    matchedCmd: cmd
-                  },
-                  score: cmdMatchScore
-                });
+              const cmdMatch = this.matchText(query, cmd);
+              if (cmdMatch.score > 0) {
+                matchedPlugin.score += cmdMatch.score;
+                matchedPluginFeature.matchedCmdLabel.push(cmd);
               }
             } else if (cmd.type === 'regex') {
               // 正则匹配
               try {
                 const regex = new RegExp(cmd.match, 'gi');
                 if (regex.test(query)) {
-                  results.push({
-                    plugin,
-                    feature: {
-                      code: feature.code,
-                      matchedCmd: cmd
-                    },
-                    score: MatchTypeScore.REGEX
-                  });
+                  matchedPlugin.score += MatchTypeScore.REGEX;
+                  matchedPluginFeature.matchedCmdLabel.push(cmd.label);
                 }
               } catch (e) {
                 console.warn(`Invalid regex pattern in plugin ${plugin.id}:`, cmd.match);
               }
             }
           }
+
+          if (matchedPluginFeature.matchedCmdLabel.length > 0) {
+            matchedPlugin.feature.push(matchedPluginFeature);
+          }
         }
+      }
+
+      if (matchedPlugin.score > 0) {
+        results.push(matchedPlugin);
       }
     }
 
-    // 按分数降序排序，去重
-    const uniqueResults = this.deduplicateResults(results);
-    uniqueResults.sort((a, b) => b.score - a.score);
-
-    return uniqueResults.map(result => result.plugin);
+    // 按分数降序排序
+    return results.sort((a, b) => b.score - a.score);
   }
 
   /**
    * 匹配文本，返回匹配结果
    */
-  private matchText(query: string, text: string): number {
+  private matchText(query: string, text: string): { score: number; range: MatchRange | undefined } {
     let score = 0;
+    let ranges: MatchRange = [];
     const queryLower = query.toLowerCase();
     const textLower = text.toLowerCase();
 
     // 1. 关键词匹配
-    if (textLower.includes(queryLower)) {
+    let idx = textLower.indexOf(queryLower);
+    while (idx !== -1) {
+      ranges.push([idx, idx + queryLower.length]);
+      idx = textLower.indexOf(queryLower, idx + 1);
+    }
+    if (ranges.length > 0) {
       score += queryLower.length === textLower.length ? MatchTypeScore.EXACT : MatchTypeScore.KEYWORD;
     }
 
@@ -113,32 +135,21 @@ export class PluginSearch {
     const pinyinMatch = PinyinMatch.match(text, query);
     if (pinyinMatch) {
       score += MatchTypeScore.PINYIN;
+      ranges.push(pinyinMatch)
     }
 
-    return score;
+    return {
+      score,
+      range: rMerge(ranges) as MatchRange || undefined
+    };
   }
 
-  /**
-   * 去除重复的插件
-   */
-  private deduplicateResults(results: SearchResult[]): SearchResult[] {
-    const pluginMap = new Map<string, SearchResult>();
-
-    for (const result of results) {
-      const existing = pluginMap.get(result.plugin.id);
-      if (!existing || result.score > existing.score) {
-        pluginMap.set(result.plugin.id, result);
-      }
-    }
-
-    return Array.from(pluginMap.values());
-  }
 }
 
 export const pluginSearch = new PluginSearch();
 
 app.on('ready', () => {
-  ipcMain.handle('plugin-search', async (event, query: string) => {
+  ipcMain.handle('plugin-search', async (_event, query: string) => {
     return pluginSearch.search(query);
   });
 });

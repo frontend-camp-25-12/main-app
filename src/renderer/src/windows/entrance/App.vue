@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { ElButton, ElInput, ElText, ElNotification, ElScrollbar } from 'element-plus';
 import { IpcChannel } from '../../../../share/ipcChannel';
 import { PluginMetadata } from '../../../../share/plugins/type';
@@ -49,7 +49,7 @@ const handleSearchInput = async () => {
     return;
   }
   const filteredPlugins = await window.electron.ipcRenderer.invoke(IpcChannel.PluginSearch, query);
-  pluginList.value = filteredPlugins;
+  pluginList.value = filteredPlugins.map(search => fullPluginList[search.id]);
 };
 
 onMounted(() => {
@@ -79,7 +79,7 @@ onMounted(() => {
           </div>
         </template>
       </div>
-      <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease;">暂无插件</div>
+      <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease; padding: 8px;">暂无插件</div>
     </ElScrollbar>
   </div>
 </template>

@@ -8,6 +8,7 @@ import { z } from "zod";
 export const PluginDefinitionSchema = z.object({
   id: z.string(),  // 插件的唯一标识符
   name: z.string(), // 插件的名称
+  description: z.string().optional(), // 插件的描述信息
   version: z.string(),
   window: z
     .object({
