@@ -43,7 +43,7 @@ onMounted(() => {
   customColor.value = getCustomColor();
 });
 
-// 占位方法，实际实现请根据你的业务逻辑补充
+// 占位方法，实际实现根据业务逻辑补充
 const initApp = () => window.location.reload();
 const showAbout = () => alert(t('about'));
 </script>
