@@ -3,9 +3,9 @@ import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
 /**
  * 插件服务类
- * 在这里定义的公共方法会自动生成对应的IPC接口
+ * 在这里定义的on开头的public方法会自动生成对应的IPC接口
  */
-export class PluginService {
+export class IpcService {
   /**
  * 添加插件
  */
@@ -35,4 +35,4 @@ export class PluginService {
   }
 }
 
-export const serviceInstance = new PluginService();
+export const serviceInstance = new IpcService();

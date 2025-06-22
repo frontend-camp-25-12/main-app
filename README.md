@@ -62,6 +62,71 @@ src/                  # 源码目录
 - 持久化方案？
 - 主进程与渲染进程如何状态同步？
 
+## ipc开发
+
+为了简化electron添加ipc接口的重复劳动，减少人工错误，项目内添加了`build/vite-plugin-ipc-generator.ts`这个`vite`插件，通过扫描 `src/main/ipc-service.ts` 中定义的服务类方法，自动生成主进程的 IPC 处理器代码和渲染进程的调用接口代码。
+
+#### 过程
+1. **服务类方法读取**：
+   - 约定在 `src/main/ipc-service.ts` 中定义服务接口，方法以 `on` 开头。
+   - 插件会自动提取每个方法的返回类型和参数类型。
+2. **公共类型提取**：
+   - 约定在 `src/share/**/type.d.ts` 中定义任何需要在main和renderer进程共享的ts类型。
+   - 这些类型会被在生成的代码中引用，来使得类型检查和提示生效。
+3. **主进程接口生成**：
+   - 在 `src/main/generated/ipc-handlers.ts` 中生成 `ipcMain.handle` 的接口注册代码。
+
+4. **渲染进程接口生成**：
+   - 在 `src/preload/generated/ipc-api.ts` 中生成 `ipcRenderer.invoke` 的调用代码。
+   - 渲染进程可以通过 `ipcApi` 对象直接调用主进程方法，享受类型提示。
+
+#### 添加新接口的步骤
+以下以 `SearchResult` 类型为例，演示如何添加一个新接口：
+
+1. **定义公共类型**
+   在 `src/share/plugins/type.d.ts` 中定义类型。例如：
+   ```typescript
+   export interface SearchResult {
+     id: string;
+     name?: MatchRange;
+     description?: MatchRange;
+     feature: {
+       code: string;
+       matchedCmdLabel: string[];
+     }[];
+     score: number;
+   }
+   ```
+
+2. **在服务类中定义方法**
+   打开 `src/main/ipc-service.ts`，在服务类中添加以 `on` 开头的方法。例如：
+   ```typescript
+   export class IpcService {
+     // ...现有方法...
+
+     /**
+      * 搜索插件
+      * @param query 搜索关键词
+      * @returns 搜索结果列表
+      */
+      async onPluginSearch(query: string): Promise<SearchResult[]> {
+        return pluginSearch.search(query);
+      }
+   }
+   ```
+
+3. **在渲染进程中调用接口**
+   在renderer代码中，通过 `window.ipcApi` 调用新接口。例如：
+   ```typescript
+
+   async function searchPlugin(query: string) {
+     const results = await window.ipcApi.pluginSearch(query);
+   }
+   ```
+
+通过以上步骤，即可完成一个新ipc接口的定义和使用。
+
+
 # 插件开发
 
 当前定义：插件是**任意**提供了 `plugin.json` `preload.js` `index.html` 的目录，相当于于electron中一个renderer。

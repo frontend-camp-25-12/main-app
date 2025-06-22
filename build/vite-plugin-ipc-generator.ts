@@ -1,3 +1,14 @@
+/**
+ * Vite 插件，用于生成 IPC 接口代码
+ * 根据src/main/ipc-service.ts中定义的插件服务类，生成：
+ * src/main/generated/ipc-handlers.ts
+ *     其中使用ipcMain.handle注册这些IPC方法
+ * src/preload/generated/ipc-api.ts
+ *     其中使用ipcMain.invoke调用对应方法
+ * 
+ * 新增一个主程序的ipc服务，只需要在src/main/ipc-service.ts中对应添加方法，即可在生成接口代码后，在renderer享受带类型提示的ipcApi接口
+ * 注意：公共类型需要在src/share/下，任意位置的type.d.ts文件中定义，否则renderer端生成的代码无法正确resolve类型
+ */
 import { Plugin } from 'vite';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -324,7 +335,6 @@ export function ipcGeneratorPlugin(options: {
       const resolvedServicePath = path.resolve(options.serviceClassPath);
       const shareDir = path.resolve(path.dirname(options.preloadOutputPath), '../../share');
       const typeFiles = scanTypeFiles(shareDir);
-
       if (file === resolvedServicePath || typeFiles.includes(file)) {
         generateIpcCode(options);
       }
