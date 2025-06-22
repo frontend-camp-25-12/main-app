@@ -20,6 +20,7 @@ function loadInternalWindow(window: BrowserWindow, name: string): void {
 class PluginWindow {
   private window: BrowserWindow;
   private plugin: PluginMetadata;
+
   constructor(plugin: PluginMetadata) {
     this.plugin = plugin;
     let dist = plugin.dist;
@@ -55,15 +56,23 @@ class PluginWindow {
   }
 
   show() {
-    const window = this.window;
-    if (this.plugin.window?.disableTransition) {
-      // 通过切换opacity可以取消窗口进出的过渡动画（windows上有效）
-      window.setOpacity(0)
-      window.show()
-      window.setOpacity(1)
-    } else {
-      window.show()
+    this.window.show();
+    this.window.focus();
+  }
+
+  hide() {
+    this.window.hide();
+  }
+
+  isVisible(): boolean {
+    return this.window.isVisible();
+  }
+
+  focus() {
+    if (this.window.isMinimized()) {
+      this.window.restore();
     }
+    this.window.focus();
   }
 }
 
@@ -72,19 +81,12 @@ class PluginWindow {
  */
 class WindowManager {
   private windows: Record<string, PluginWindow> = {};
-  /**
-   * 添加一个插件窗口（不打开）
-   * @param plugin 插件元数据
-   */
+
   add(plugin: PluginMetadata): void {
     const pluginWindow = new PluginWindow(plugin);
     this.windows[plugin.id] = pluginWindow;
   }
 
-  /**
-   * 打开一个插件窗口
-   * @param plugin 插件元数据
-   */
   open(plugin: PluginMetadata): void {
     if (this.windows[plugin.id]) {
       this.windows[plugin.id].show();
@@ -95,11 +97,18 @@ class WindowManager {
     pluginWindow.show();
   }
 
-  /**
-   * 获取所有打开的窗口
-   */
   getAllWindows(): Record<string, PluginWindow> {
     return this.windows;
+  }
+
+  // 新增方法：获取指定窗口
+  getWindow(pluginId: string): PluginWindow | undefined {
+    return this.windows[pluginId];
+  }
+
+  // 新增方法：隐藏所有窗口
+  hideAll() {
+    Object.values(this.windows).forEach(window => window.hide());
   }
 }
 

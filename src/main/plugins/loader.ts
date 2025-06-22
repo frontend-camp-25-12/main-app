@@ -127,11 +127,8 @@ pluginManager.loadPlugins();
  * 先用最简单、没依赖的方法做Ipc，后面看看有没有更好的办法
  */
 app.on('ready', () => {
-
-  /**
-   * TODO: 当前硬编码成一启动就打开插件入口窗口，后面再看情况吧
-   */
-  pluginManager.open(builtinPlugins[0].id)
+  // 注释掉自动打开入口窗口的代码
+  // pluginManager.open(builtinPlugins[0].id)
 
   ipcMain.handle(IpcChannel.PluginList, async () => {
     return pluginManager.list();
