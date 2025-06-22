@@ -1,7 +1,7 @@
 import path, { join } from "path";
 import { PluginMetadata } from "../../share/plugins/type.js";
 import fs from "fs";
-import { app, ipcMain } from "electron";
+import { app, ipcMain, BrowserWindow } from "electron";
 import { IpcChannel } from "../../share/ipcChannel.js";
 import { builtinPlugins } from "./builtin.js";
 import { windowManager } from "./window.js";
@@ -140,5 +140,12 @@ app.on('ready', () => {
 
   ipcMain.handle(IpcChannel.PluginOpen, async (_event, name: string) => {
     return pluginManager.open(name);
+  });
+
+  // 新增：监听设置变更并广播到所有窗口
+  ipcMain.on('settings-changed', (_event, payload) => {
+    BrowserWindow.getAllWindows().forEach(win => {
+      win.webContents.send('settings-changed', payload);
+    });
   });
 });

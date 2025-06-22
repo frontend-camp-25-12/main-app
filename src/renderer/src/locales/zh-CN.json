@@ -1,5 +1,5 @@
 {
-  "appName": "我的应用",
+  "appName": "应用",
   "settings": "设置",
   "showHide": "显示/隐藏",
   "quit": "退出",
@@ -17,5 +17,8 @@
   "system": "系统",
   "openSettings": "打开设置",
   "refresh": "刷新",
-  "about": "关于"
+  "about": "关于",
+  "skin": "主题颜色",
+  "appearance": "外观",
+  "actions": "操作"
 }

@@ -47,9 +47,6 @@ export function applyTheme(theme: Theme) {
   
   // 更新html的class
   document.documentElement.classList.toggle('dark', effectiveTheme === 'dark');
-  
-  // 更新Element Plus主题
-  updateElementTheme(effectiveTheme);
 }
 
 // 获取系统主题
@@ -59,32 +56,18 @@ export function getSystemTheme(): 'light' | 'dark' {
     : 'light';
 }
 
-// 更新Element Plus主题
-function updateElementTheme(theme: 'light' | 'dark') {
-  // 移除现有主题样式
-  const existingTheme = document.getElementById('element-theme');
-  if (existingTheme) {
-    existingTheme.remove();
-  }
-  
-  // 如果是深色主题，加载Element Plus的深色主题CSS
-  if (theme === 'dark') {
-    const link = document.createElement('link');
-    link.id = 'element-theme';
-    link.rel = 'stylesheet';
-    link.href = 'https://unpkg.com/element-plus/theme-chalk/dark/css-vars.css';
-    document.head.appendChild(link);
-  }
-}
-
 // 获取当前主题
 export function getTheme(): Theme {
   return currentTheme.value;
 }
 
 // 设置主题
-export function setTheme(theme: Theme) {
+export function setTheme(theme: Theme, fromIpc = false) {
   applyTheme(theme);
+  // 只有不是IPC广播时才通知主进程
+  if (!fromIpc && window.electron) {
+    window.electron.ipcRenderer.send('settings-changed', { type: 'theme', value: theme });
+  }
 }
 
 // 监听主题变化

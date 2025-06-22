@@ -17,13 +17,13 @@ const i18n = createI18n({
 });
 
 // 切换语言方法
-export function setLocale(lang: string) {
+export function setLocale(lang: string, fromIpc = false) {
   i18n.global.locale.value = lang;
   localStorage.setItem(LANG_STORAGE_KEY, lang);
-  
-  // 通知主进程语言已变更
-  if (window.electron) {
-    window.electron.ipcRenderer.send('language-changed', lang);
+
+  // 只有不是IPC广播时才通知主进程
+  if (!fromIpc && window.electron) {
+    window.electron.ipcRenderer.send('settings-changed', { type: 'language', value: lang });
   }
 }
 

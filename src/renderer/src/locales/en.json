@@ -1,5 +1,5 @@
 {
-  "appName": "My App",
+  "appName": "App",
   "settings": "Settings",
   "showHide": "Show/Hide",
   "quit": "Quit",
@@ -17,5 +17,8 @@
   "system": "System",
   "openSettings": "Open Settings",
   "refresh": "Refresh",
-  "about": "About"
+  "about": "About",
+  "skin": "Theme Color",
+  "appearance": "Appearance",
+  "actions": "Actions"
 }

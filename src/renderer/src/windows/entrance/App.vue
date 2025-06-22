@@ -40,10 +40,6 @@ const handleOpenPlugin = async (id: string) => {
   await window.electron.ipcRenderer.invoke(IpcChannel.PluginOpen, id);
 };
 
-const handleOpenSettings = async () => {
-  await window.electron.ipcRenderer.invoke(IpcChannel.PluginOpen, 'builtin.settings');
-};
-
 onMounted(() => {
   fetchPlugins();
 });
@@ -53,9 +49,7 @@ onMounted(() => {
   <div class="entrance-container">
     <div class="header">
       <h1>{{ t('appName') }}</h1>
-      <ElButton type="primary" plain @click="handleOpenSettings">
-        {{ t('openSettings') }}
-      </ElButton>
+      <!-- 删除“打开设置”按钮 -->
     </div>
     
     <div class="plugin-input">
@@ -68,6 +62,7 @@ onMounted(() => {
         type="primary" 
         :disabled="!pluginPath.trim()" 
         @click="handleAddPlugin"
+        class="add-plugin-btn"
       >
         {{ t('addPlugin') }}
       </ElButton>
@@ -147,5 +142,19 @@ onMounted(() => {
   opacity: 0.7;
   padding: 40px 0;
   font-size: 16px;
+}
+
+/* 新增按钮深色样式 */
+.add-plugin-btn {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #fff !important;
+}
+
+.add-plugin-btn:disabled {
+  opacity: 0.5;
+  background-color: var(--primary-light-color) !important;
+  border-color: var(--primary-light-color) !important;
+  color: #fff !important;
 }
 </style>
