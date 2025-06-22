@@ -1,17 +1,25 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { ElButton, ElSelect, ElOption, ElRow, ElCol, ElCard } from 'element-plus';
 import { t, setLocale, getLocale } from '../../plugins/i18n';
-import { SUPPORTED_LANGUAGES } from '../../plugins/constants';
+import { SUPPORTED_LANGUAGES, SUPPORTED_THEMES } from '../../plugins/constants';
+import { setTheme, getTheme } from '../../plugins/theme';
 
 const lang = ref(getLocale());
+const theme = ref(getTheme());
 
-watch(lang, (val) => {
+const handleLanguageChange = (val: string) => {
   setLocale(val);
-});
+};
+
+const handleThemeChange = (val: string) => {
+  setTheme(val as 'light' | 'dark' | 'system');
+  theme.value = getTheme();
+};
 
 onMounted(() => {
   lang.value = getLocale();
+  theme.value = getTheme();
 });
 </script>
 
@@ -25,10 +33,10 @@ onMounted(() => {
         <ElCol :span="18">
           <ElSelect v-model="lang" @change="handleLanguageChange">
             <ElOption 
-              v-for="lang in SUPPORTED_LANGUAGES" 
-              :key="lang" 
-              :label="lang === 'en' ? t('english') : t('chinese')" 
-              :value="lang"
+              v-for="l in SUPPORTED_LANGUAGES" 
+              :key="l" 
+              :label="l === 'en' ? t('english') : t('chinese')" 
+              :value="l"
             />
           </ElSelect>
         </ElCol>
@@ -37,10 +45,13 @@ onMounted(() => {
       <ElRow :gutter="20" class="setting-row">
         <ElCol :span="6" class="label">{{ t('theme') }}</ElCol>
         <ElCol :span="18">
-          <ElSelect :model-value="t('system')" disabled>
-            <ElOption :label="t('light')" value="light" />
-            <ElOption :label="t('dark')" value="dark" />
-            <ElOption :label="t('system')" value="system" />
+          <ElSelect v-model="theme" @change="handleThemeChange">
+            <ElOption 
+              v-for="th in SUPPORTED_THEMES" 
+              :key="th" 
+              :label="t(th)" 
+              :value="th"
+            />
           </ElSelect>
         </ElCol>
       </ElRow>

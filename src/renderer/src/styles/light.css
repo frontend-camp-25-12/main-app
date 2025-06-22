@@ -1,0 +1,15 @@
+/* 浅色主题下Element Plus组件的样式覆盖 */
+.el-card {
+  background-color: var(--settings-card-bg);
+  border-color: var(--border-color);
+}
+
+.el-button:not(.el-button--primary) {
+  background-color: #f5f7fa;
+  border-color: #dcdfe6;
+}
+
+.el-input__inner {
+  background-color: #ffffff;
+  border-color: #dcdfe6;
+}

@@ -1,0 +1,36 @@
+:root {
+  /* 浅色主题变量 */
+  --bg-color: #ffffff;
+  --text-color: #303133;
+  --border-color: #dcdfe6;
+  --card-bg: #f5f7fa;
+  --hover-bg: #f0f2f5;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  
+  /* 组件特定变量 */
+  --plugin-item-bg: #f5f7fa;
+  --plugin-item-hover-bg: #e4e7ed;
+  --settings-card-bg: #ffffff;
+}
+
+.dark {
+  /* 深色主题变量 */
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --border-color: #444444;
+  --card-bg: #1e1e1e;
+  --hover-bg: #2a2a2a;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  
+  /* 组件特定变量 */
+  --plugin-item-bg: #1e1e1e;
+  --plugin-item-hover-bg: #2a2a2a;
+  --settings-card-bg: #1e1e1e;
+}
+
+/* 应用主题变量 */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}

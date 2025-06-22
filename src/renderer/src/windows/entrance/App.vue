@@ -103,6 +103,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  color: var(--text-color);
 }
 
 .plugin-input {
@@ -121,17 +122,19 @@ onMounted(() => {
   cursor: pointer;
   padding: 15px;
   border-radius: var(--el-border-radius-base);
-  background-color: #f5f7fa;
+  background-color: var(--plugin-item-bg);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  border: 1px solid var(--border-color);
 }
 
 .plugin-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-color);
+  background-color: var(--plugin-item-hover-bg);
 }
 
 .plugin-icon {
@@ -140,7 +143,8 @@ onMounted(() => {
 
 .no-plugins {
   text-align: center;
-  color: #909399;
+  color: var(--text-color);
+  opacity: 0.7;
   padding: 40px 0;
   font-size: 16px;
 }
