@@ -6,20 +6,20 @@ import {
   t, 
   getLocale, 
   setLocale 
-} from '../../plugins/i18n';
+} from '../../utils/i18n';
 import { 
   SUPPORTED_THEMES, 
   SUPPORTED_LANGUAGES 
-} from '../../plugins/constants';
+} from '../../utils/constants';
 import { 
   getTheme, 
   setTheme 
-} from '../../plugins/theme';
+} from '../../utils/theme';
 import { 
   getSkin, 
   setSkin, 
   getCustomColor 
-} from '../../plugins/skin';
+} from '../../utils/skin';
 
 const currentLanguage = ref(getLocale());
 const currentTheme = ref(getTheme());

@@ -15,7 +15,6 @@ export const resources = {
 
 
 i18next.init({
-  debug: true,
   lng: "zh-CN",
   fallbackLng: "en",
   defaultNS: defaultNS,

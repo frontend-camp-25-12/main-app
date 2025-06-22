@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { ElButton, ElInput, ElText, ElNotification, ElScrollbar } from 'element-plus';
 import { PluginMetadata, SearchResult } from '../../../../share/plugins/type';
 import icon from '../../../../../resources/icon.png';
-import { t } from '../../plugins/i18n';
+import { t } from '../../utils/i18n';
 
 const pluginList = ref<Record<string, PluginMetadata>>({});
 const pluginPath = ref('');

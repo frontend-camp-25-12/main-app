@@ -5,9 +5,9 @@ import '../../styles/theme.css' // 引入主题变量
 import '../../styles/light.css' // 引入浅色主题覆盖
 import '../../styles/dark.css'  // 引入深色主题覆盖
 import App from './App.vue'
-import i18n from '../../plugins/i18n'
-import { initTheme } from '../../plugins/theme'
-import { initSkin } from '../../plugins/skin' // 导入皮肤模块
+import i18n from '../../utils/i18n'
+import { initTheme } from '../../utils/theme'
+import { initSkin } from '../../utils/skin' // 导入皮肤模块
 
 const app = createApp(App)
 app.use(i18n)

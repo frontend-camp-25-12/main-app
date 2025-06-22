@@ -1,11 +1,11 @@
 import { Tray, Menu, nativeImage, app,  globalShortcut, ipcMain } from 'electron';
-import { builtinPlugins } from './plugins/builtin';
+import { BuiltinPluginId, builtinPlugins } from './plugins/builtin';
 import { windowManager } from './plugins/window';
 import trayIcon from '../../resources/tray-icon.png?asset'
 import i18next from './locales/i18n';
 
 let tray: Tray | null = null;
-const entrancePluginId = builtinPlugins[0].id; // 获取入口插件ID
+const entrancePluginId = BuiltinPluginId.ENTRANCE;
 
 // 更新托盘菜单
 function updateTrayMenu() {
@@ -33,7 +33,6 @@ function updateTrayMenu() {
 // 创建系统托盘图标
 export function createTray(): void {
   try {
-    console.log('Tray icon path:', trayIcon);
     const icon = nativeImage.createFromPath(trayIcon).resize({ width: 32, height: 32 });
 
     tray = new Tray(icon);

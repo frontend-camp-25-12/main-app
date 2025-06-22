@@ -2,7 +2,8 @@ import { ref, watch } from 'vue';
 import { 
   THEME_STORAGE_KEY, 
   DEFAULT_THEME, 
-  SUPPORTED_THEMES 
+  SUPPORTED_THEMES, 
+  Theme
 } from '../../../share/plugins/constants';
 
 // 当前主题状态

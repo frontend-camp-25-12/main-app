@@ -4,7 +4,6 @@ import fs from "fs";
 import { builtinPlugins } from "./builtin.js";
 import { windowManager } from "./window.js";
 import { PluginDefinitionSchema } from "../../share/plugins/type.zod.d.js";
-import { app } from "electron";
 
 const pluginPath = [
 ];
