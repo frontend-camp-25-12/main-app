@@ -7,13 +7,13 @@ const messages = {
     showHideMain: 'Show/Hide Main Window',
     openSettings: 'Settings',
     quit: 'Quit',
-    appName: 'Your App Name'
+    appName: 'My Tools'
   },
   'zh-CN': {
     showHideMain: '显示/隐藏主窗口',
     openSettings: '设置',
     quit: '退出',
-    appName: '你的应用名'
+    appName: '我的工具'
   }
 }
 
@@ -23,8 +23,9 @@ function getCurrentLanguage() {
   return DEFAULT_LANGUAGE // 或 app.getLocale()
 }
 
-// 主进程i18n函数
-export function t(key: keyof typeof messages['en']) {
-  const lang = getCurrentLanguage()
-  return messages[lang]?.[key] || messages[DEFAULT_LANGUAGE][key] || key
+type MessageKeys = keyof typeof messages['en'];
+
+export function t(key: MessageKeys) {
+  const lang = getCurrentLanguage();
+  return messages[lang]?.[key] || messages[DEFAULT_LANGUAGE][key] || key;
 }

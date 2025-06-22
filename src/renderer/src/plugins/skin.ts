@@ -5,27 +5,30 @@ import {
   PRESET_SKINS
 } from '../../../share/plugins/constants';
 
+const DEFAULT_CUSTOM_COLOR = '#F759AB'; // 默认自定义颜色为粉色
+
 // 当前皮肤状态
 const currentSkin = ref<string>(DEFAULT_SKIN);
-const customColor = ref<string>('');
+// 修改这里，默认粉色
+const customColor = ref<string>(DEFAULT_CUSTOM_COLOR);
 
 // 初始化皮肤
 export function initSkin() {
   // 从localStorage获取保存的皮肤设置
   const savedSkin = localStorage.getItem(SKIN_STORAGE_KEY);
-  
+
   if (savedSkin && Object.keys(PRESET_SKINS).includes(savedSkin)) {
     currentSkin.value = savedSkin;
-    customColor.value = '';
+    customColor.value = DEFAULT_CUSTOM_COLOR;
     applySkin(currentSkin.value);
   } else if (savedSkin) {
     // 自定义颜色
     currentSkin.value = 'custom';
-    customColor.value = savedSkin;
-    applySkin('custom', savedSkin);
+    customColor.value = savedSkin || DEFAULT_CUSTOM_COLOR;
+    applySkin('custom', customColor.value);
   } else {
     currentSkin.value = DEFAULT_SKIN;
-    customColor.value = '';
+    customColor.value = DEFAULT_CUSTOM_COLOR;
     applySkin(DEFAULT_SKIN);
   }
 }
