@@ -17,8 +17,14 @@ function loadInternalWindow(window: BrowserWindow, name: string): void {
   }
 }
 
+interface PluginWindowContent {
+  preload: string;
+  dist: string;
+}
+
 class PluginWindow {
-  private window: BrowserWindow;
+  private window: BrowserWindow | undefined;
+  private windowContent: PluginWindowContent | undefined;
   private plugin: PluginMetadata;
   constructor(plugin: PluginMetadata) {
     this.plugin = plugin;
@@ -30,7 +36,17 @@ class PluginWindow {
     } else {
       preload = path.join(dist, 'preload.js');
     }
+    this.windowContent = {
+      preload, dist
+    }
+    this.create()
+  }
 
+  create() {
+    const { plugin, windowContent } = this;
+    if (!windowContent || !windowContent) {
+      throw new Error(`Plugin ${plugin.name} does not have valid window content.`);
+    }
     const window = new BrowserWindow({
       title: plugin.name,
       width: plugin.window?.width ?? 900,
@@ -39,7 +55,7 @@ class PluginWindow {
       show: false,
       ...(process.platform === 'linux' ? { icon } : {}),
       webPreferences: {
-        preload: preload,
+        preload: windowContent.preload,
         sandbox: false,
         contextIsolation: false,
       },
@@ -49,20 +65,24 @@ class PluginWindow {
     if (plugin.internal) {
       loadInternalWindow(window, plugin.dist)
     } else {
-      window.loadFile(path.join(dist, 'index.html'));
+      window.loadFile(path.join(windowContent.dist, 'index.html'));
     }
     this.window = window;
   }
 
   show() {
-    const window = this.window;
-    if (this.plugin.window?.disableTransition) {
-      // 通过切换opacity可以取消窗口进出的过渡动画（windows上有效）
-      window.setOpacity(0)
-      window.show()
-      window.setOpacity(1)
-    } else {
-      window.show()
+    if (!this.window || this.window.isDestroyed()) {
+      this.create();
+    }
+    if (this.window) {
+      if (this.plugin.window?.disableTransition) {
+        // 通过切换opacity可以取消窗口进出的过渡动画（windows上有效）
+        this.window.setOpacity(0)
+        this.window.show()
+        this.window.setOpacity(1)
+      } else {
+        this.window.show()
+      }
     }
   }
 }

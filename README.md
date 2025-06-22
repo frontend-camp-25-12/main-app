@@ -2,6 +2,17 @@
 
 其它插件的入口、设置页、悬浮球
 
+## 运行
+开发，带HMR
+```bash
+npm run dev
+```
+打包
+```bash
+npm run build
+```
+
+
 ## 主程序约定使用
 - 渲染进程：Vue 3 Composition + vue-router
 - UI 组件：Element Plus（利用它的i18n与深浅色模式支持）
