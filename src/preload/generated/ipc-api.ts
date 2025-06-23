@@ -4,11 +4,11 @@ import type { PluginMetadata, SearchResult } from '../../share/plugins/type';
 // 自动生成的IPC接口，请勿手动修改
 export class IpcApi {
   /**
-   * pluginAdd
-   * Channel: plugin-add
+   * pluginDevInstall
+   * Channel: plugin-dev-install
    */
-  async pluginAdd(dir: string): Promise<Record<string, PluginMetadata>> {
-    return electronAPI.ipcRenderer.invoke('plugin-add', dir);
+  async pluginDevInstall(dir: string): Promise<Record<string, PluginMetadata>> {
+    return electronAPI.ipcRenderer.invoke('plugin-dev-install', dir);
   }
 
   /**

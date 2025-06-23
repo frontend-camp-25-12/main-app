@@ -20,5 +20,8 @@
   "about": "About",
   "skin": "Theme Color",
   "appearance": "Appearance",
-  "actions": "Actions"
+  "actions": "Actions",
+  "searchPlaceholder": "Hi",
+  "commandMatch": "Command Match",
+  "installedPlugins": "Installed Plugins"
 }

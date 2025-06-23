@@ -4,9 +4,9 @@ import fs from "fs";
 import { builtinPlugins } from "./builtin.js";
 import { windowManager } from "./window.js";
 import { PluginDefinitionSchema } from "../../share/plugins/type.zod.d.js";
+import { app } from "electron";
 
-const pluginPath = [
-];
+const pluginInstallPath = join(app.getPath('userData'), 'plugins');
 
 export class PluginManager {
   private plugins: Promise<Record<string, PluginMetadata>>;
@@ -27,20 +27,16 @@ export class PluginManager {
     for (const plugin of builtinPlugins) {
       allPlugins[plugin.id] = plugin;
     }
-    // 扫描外部插件目录
-    for (const path of pluginPath) {
-      if (!fs.existsSync(path)) {
-        console.warn(`Plugin directory ${path} does not exist`);
-        continue;
-      }
-      const dirs = await fs.promises.readdir(path, { withFileTypes: true });
-      for (const dirent of dirs) {
-        if (dirent.isDirectory()) {
-          const pluginDir = join(path, dirent.name);
-          const pluginMetadata = await this.loadPluginDir(pluginDir);
-          if (pluginMetadata) {
-            allPlugins[pluginMetadata.id] = pluginMetadata;
-          }
+    if (!fs.existsSync(pluginInstallPath)) {
+      fs.mkdirSync(pluginInstallPath, { recursive: true });
+    }
+    // 扫描插件目录
+    const dirs = await fs.promises.readdir(pluginInstallPath, { withFileTypes: true });
+    for (const dirent of dirs) {
+      if (dirent.isDirectory()) {
+        const pluginMetadata = await this.loadPluginDir(dirent.name);
+        if (pluginMetadata) {
+          allPlugins[pluginMetadata.id] = pluginMetadata;
         }
       }
     }
@@ -49,8 +45,13 @@ export class PluginManager {
 
   /**
    * 加载单个插件目录
+   * @param folderName 插件目录名，必须位于pluginInstallPath下
    */
-  async loadPluginDir(path: string) {
+  async loadPluginDir(folderName: string) {
+    const path = join(pluginInstallPath, folderName);
+    if (!fs.existsSync(path)) {
+      return null;
+    }
     const pluginJsonPath = join(path, 'plugin.json');
     if (!fs.existsSync(pluginJsonPath)) {
       return null;
@@ -60,7 +61,6 @@ export class PluginManager {
     let pluginDef: PluginMetadata;
     try {
       pluginDef = PluginDefinitionSchema.parse(raw) as PluginMetadata; // 用zod校验和清理字段
-
     } catch (e) {
       console.warn(`Plugin at ${path} failed zod validation:`, e);
       return null;
@@ -83,7 +83,7 @@ export class PluginManager {
    * 添加目录作为插件
    * @param dir 插件目录
    */
-  async add(dir: string) {
+  async installDevPlugin(dir: string) {
     if (!path.isAbsolute(dir)) {
       dir = join(process.cwd(), dir);
     }
@@ -93,9 +93,16 @@ export class PluginManager {
       console.error(`Plugin directory ${dir} does not exist`);
       throw new Error(`目录 ${dir} 不存在`);
     }
-
-    const pluginMetadata = await this.loadPluginDir(dir);
+    const basename = path.basename(dir);
+    const installPath = join(pluginInstallPath, basename);
+    if (fs.existsSync(installPath)) {
+      await fs.promises.rm(installPath, { recursive: true, force: true });
+    }
+    // 软链接这个文件夹
+    await fs.promises.symlink(dir, installPath, 'dir');
+    const pluginMetadata = await this.loadPluginDir(basename);
     if (!pluginMetadata) {
+      await fs.promises.rm(installPath, { recursive: true, force: true });
       throw new Error(`目录 ${dir} 不是有效的插件目录`);
     }
 

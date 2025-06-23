@@ -19,7 +19,7 @@ const fetchPlugins = async () => {
 const handleAddPlugin = async () => {
   if (!pluginPath.value.trim()) return;
   try {
-    await window.ipcApi.pluginAdd(pluginPath.value.trim());
+    await window.ipcApi.pluginDevInstall(pluginPath.value.trim());
     pluginPath.value = '';
     await fetchPlugins();
     ElNotification.success({
@@ -63,16 +63,16 @@ onMounted(() => {
 <template>
   <div class="plugin-container">
     <div style="display: flex; gap: 8px;">
-      <ElInput v-model="pluginPath" placeholder="开发：输入插件文件夹路径，例如附带的demo插件./demo-plugin" @keyup.enter="handleAddPlugin"
+      <ElInput v-model="pluginPath" :placeholder="t('pluginPathPlaceholder')" @keyup.enter="handleAddPlugin"
         style="flex: 1" />
       <ElButton type="primary" :disabled="!pluginPath.trim()" @click="handleAddPlugin">
-        添加插件
+        {{ t('addPlugin') }}
       </ElButton>
     </div>
-    <ElInput v-model="searchInput" class="cmd-input" placeholder="Hi" @input="handleSearchInput"
+    <ElInput v-model="searchInput" class="cmd-input" :placeholder="t('searchPlaceholder')" @input="handleSearchInput"
       @keyup.enter="handleSearchInput" size="large" />
-    <span class="plugin-category" v-if="searchInput.length">命令匹配</span>
-    <span class="plugin-category" v-else>已安装插件</span>
+    <span class="plugin-category" v-if="searchInput.length">{{ t('commandMatch') }}</span>
+    <span class="plugin-category" v-else>{{ t('installedPlugins') }}</span>
     <ElScrollbar class="plugin-grid-container">
       <div v-if="Object.keys(pluginList).length" class="plugin-grid">
         <template v-for="(plugin, id) in pluginList" :key="id">
@@ -82,7 +82,7 @@ onMounted(() => {
           </div>
         </template>
       </div>
-      <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease; padding: 8px;">暂无插件</div>
+      <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease; padding: 8px;">{{ t('noPlugins') }}</div>
     </ElScrollbar>
   </div>
 </template>

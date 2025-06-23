@@ -6,9 +6,9 @@ import { PluginMetadata } from '../../share/plugins/type'
 
 
 app.on('ready', () => {
-  // onPluginAdd: dir: string -> Promise<Record<string, PluginMetadata>>
-  ipcMain.handle('plugin-add', async (_event, dir) => {
-    return await serviceInstance.onPluginAdd(dir);
+  // onPluginDevInstall: dir: string -> Promise<Record<string, PluginMetadata>>
+  ipcMain.handle('plugin-dev-install', async (_event, dir) => {
+    return await serviceInstance.onPluginDevInstall(dir);
   });
 
   // onPluginList:  -> Promise<Record<string, PluginMetadata>>

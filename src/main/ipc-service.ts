@@ -11,8 +11,8 @@ export class IpcService {
   /**
  * 添加插件
  */
-  async onPluginAdd(dir: string): Promise<Record<string, PluginMetadata>> {
-    return pluginManager.add(dir);
+  async onPluginDevInstall(dir: string): Promise<Record<string, PluginMetadata>> {
+    return pluginManager.installDevPlugin(dir);
   }
 
   /**
