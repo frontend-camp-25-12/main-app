@@ -4,8 +4,7 @@ import { pluginSearch } from './plugins/search';
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
- * emit开头的方法，将自动生成ipcMain.emit和ipcRenderer.on方法包装，用于向所有插件广播
- * emitInternal开头的方法，用于向内部插件广播
+ * emit开头的方法，将自动生成ipcMain.emit和ipcRenderer.on方法包装，生成两个方法：向所有插件广播，和向指定插件发送的版本
  */
 export class IpcService {
   /**

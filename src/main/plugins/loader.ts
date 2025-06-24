@@ -7,6 +7,7 @@ import { PluginDefinitionSchema } from "../../share/plugins/type.zod.d.js";
 import { app } from "electron";
 
 const pluginInstallPath = join(app.getPath('userData'), 'plugins');
+const PLUGIN_REQUIRED_FILES = ['plugin.json', 'index.html', 'preload.js'];
 
 export class PluginManager {
   private plugins: Promise<Record<string, PluginMetadata>>;
@@ -52,10 +53,13 @@ export class PluginManager {
     if (!fs.existsSync(path)) {
       return null;
     }
-    const pluginJsonPath = join(path, 'plugin.json');
-    if (!fs.existsSync(pluginJsonPath)) {
-      return null;
+    for (const file of PLUGIN_REQUIRED_FILES) {
+      const requireFile = join(path, file);
+      if (!fs.existsSync(requireFile)) {
+        return null;
+      }
     }
+    const pluginJsonPath = join(path, 'plugin.json');
     const pluginData = await fs.promises.readFile(pluginJsonPath, "utf-8");
     const raw = JSON.parse(pluginData);
     let pluginDef: PluginMetadata;
@@ -98,7 +102,7 @@ export class PluginManager {
     if (fs.existsSync(installPath)) {
       await fs.promises.rm(installPath, { recursive: true, force: true });
     }
-    // 软链接这个文件夹
+    // 软链接开发中的插件文件夹
     await fs.promises.symlink(dir, installPath, 'dir');
     const pluginMetadata = await this.loadPluginDir(basename);
     if (!pluginMetadata) {

@@ -21,9 +21,16 @@ export default defineConfig({
     plugins: [
       externalizeDepsPlugin(),
       ipcGeneratorPlugin({
-        serviceClassPath: resolve('src/main/ipc-service.ts'),
-        mainOutputPath: resolve('src/main/generated/ipc-handlers.ts'),
-        preloadOutputPath: resolve('src/preload/generated/ipc-api.ts')
+        host: {
+          serviceClassPath: resolve('src/main/ipc-service-main.ts'),
+          mainOutputPath: resolve('src/main/generated/ipc-handlers-main.ts'),
+          preloadOutputPath: resolve('src/preload/generated/ipc-api-main.ts')
+        },
+        plugin: {
+          serviceClassPath: resolve('src/main/plugin/ipc-service-plugin.ts'),
+          mainOutputPath: resolve('src/main/generated/ipc-handlers-plugin.ts'),
+          preloadOutputPath: resolve('src/preload/generated/ipc-api-plugin.ts')
+        }
       })
     ]
   },
@@ -55,7 +62,7 @@ export default defineConfig({
         }
       },
     },
-    root:'./src/renderer/src/',
+    root: './src/renderer/src/',
     base: './'
   }
 })

@@ -68,7 +68,7 @@ src/                  # 源码目录
 
 #### 过程
 1. **服务类方法读取**：
-   - 约定在 `src/main/ipc-service.ts` 中定义服务接口，方法以 `on` 或 `emit` `emitInternal` 开头，具体说明见`src/main/ipc-service.ts`。
+   - 约定在 `src/main/ipc-service.ts` 中定义服务接口，方法以 `on` 或 `emit` 开头，具体说明见`src/main/ipc-service-main.ts`。
    - 插件会自动提取每个方法的返回类型和参数类型。
 2. **公共类型提取**：
    - 约定在 `src/share/**/type.d.ts` 中定义任何需要在main和renderer进程共享的ts类型。

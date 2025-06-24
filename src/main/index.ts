@@ -2,7 +2,7 @@ import { app, globalShortcut } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createTray, registerGlobalShortcut } from './tray' // 导入registerGlobalShortcut
 import './plugins/index'
-import './generated/ipc-handlers'
+import './generated/ipc-handlers-main'
 
 
 // 当前窗口的加载在src\main\plugins\loader.ts中处理

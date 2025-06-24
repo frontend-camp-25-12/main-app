@@ -180,17 +180,6 @@ class WindowManager {
   }
 
   /**
-   * 发送内部ipc事件，只应该在ipc-handlers.ts被中使用
-   */
-  async emitInternal(channel: string, ...args: any[]) {
-    for (const w of Object.values(this.windows)) {
-      if (w && w.internal && w.window && !w.window.isDestroyed()) {
-        w.window.webContents.send(channel, ...args);
-      }
-    }
-  }
-
-  /**
    * 发送ipc到指定窗口
    */
   async emitTo(pluginId: string, channel: string, ...args: any[]) {
