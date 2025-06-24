@@ -8,3 +8,6 @@ fs.readdir(currentDir, (err, files) => {
 });
 
 window.platform.hello('world')
+window.platform.onPluginEnter((action) => {
+  window.alert('插件进入事件触发: ' + JSON.stringify(action));
+});

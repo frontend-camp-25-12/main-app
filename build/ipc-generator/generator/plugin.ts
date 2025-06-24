@@ -8,6 +8,8 @@ export class PluginIpcGenerator extends CommonIpcGenerator {
     const [handlers, emits] = this.commonMainCode
     return `import { app, ipcMain } from 'electron';
 import { serviceInstance } from '${implPath}';
+import { windowManager } from '../plugins/window';
+import { PluginMetadata } from '../../share/plugins/type';
 app.on('ready', () => {
 ${handlers}
 });

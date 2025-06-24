@@ -2,6 +2,11 @@
     "id": "com.example.clipboard",
     "name": "剪贴板",
     "version": "1.0.0",
-    "window": {
-    }
+    "features": [{
+      "code": "search",
+      "cmds": [{
+        "type": "any",
+        "label": "搜索"
+      }]  
+    }]
 }

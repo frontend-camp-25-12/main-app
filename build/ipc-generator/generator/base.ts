@@ -118,7 +118,7 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
     return electronAPI.ipcRenderer.invoke('${method.channelName}'${invokeParams});
   }`;
   }
-  
+
   // 为了提供给PluginIpcGenerator重写
   getMethodForPreload() {
     return this.methods
@@ -164,10 +164,10 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
     return await serviceInstance.${method.name}(${params});
   });`);
       } else if (method.type === 'emit') {
-        emits.push(`  function ${method.name}(${paramsWithTypes}) {
+        emits.push(`  export function ${method.name}(${paramsWithTypes}) {
   windowManager.emit('${method.channelName}'${paramList});
 }`);
-        emits.push(`  function ${method.name}To(id: PluginMetadata['id'], ${paramsWithTypes}) {
+        emits.push(`  export function ${method.name}To(id: PluginMetadata['id'], ${paramsWithTypes}) {
     windowManager.emitTo(id, '${method.channelName}'${paramList});
   }`);
       }

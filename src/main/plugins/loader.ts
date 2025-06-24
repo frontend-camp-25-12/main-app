@@ -5,6 +5,7 @@ import { builtinPlugins } from "./builtin.js";
 import { windowManager } from "./window.js";
 import { PluginDefinitionSchema } from "../../share/plugins/type.zod.d.js";
 import { app } from "electron";
+import { ipcEmitPlugin } from "../generated/ipc-handlers-plugin.js";
 
 const pluginInstallPath = join(app.getPath('userData'), 'plugins');
 const PLUGIN_REQUIRED_FILES = ['plugin.json', 'index.html', 'preload.js'];
@@ -125,6 +126,10 @@ export class PluginManager {
       throw new Error(`Plugin ${id} does not exist`);
     }
     const plugin = plugins[id];
+    ipcEmitPlugin.pluginEnterTo(plugin.id, {
+      code: "TODO",
+      payload: "TODO"
+    })
     windowManager.open(plugin);
   }
 }

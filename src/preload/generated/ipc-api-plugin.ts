@@ -13,4 +13,15 @@ export class PlatformApi {
   async hello(content: string): Promise<void> {
     return electronAPI.ipcRenderer.invoke('hello', this.pluginId, content);
   }
+
+  /**
+   * onPluginEnter
+   * Channel: plugin-enter
+   */
+  onPluginEnter(callback: (action: {
+    code: string;
+    payload: string;
+  }) => void) {
+    electronAPI.ipcRenderer.on('plugin-enter', (_event, action) => callback(action));
+  }
 }

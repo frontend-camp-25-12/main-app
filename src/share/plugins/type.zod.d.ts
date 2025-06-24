@@ -21,11 +21,18 @@ export const PluginDefinitionSchema = z.object({
     }).optional(),
   features: z.array(z.object({
     code: z.string(), // 功能代码，用于通过命令输入进入插件时，识别用户通过哪个feature进入。无code表明用户是通过“点击”进入插件的
-    cmds: z.array(z.union([z.string(), z.object({ // 定义命令列表，用于命令匹配方式地进入插件
-      type: z.literal('regex'),
-      label: z.string(), // 命令的显示名称
-      match: z.string() // 正则匹配字符串，如match: "\d+"，默认flag为gi，不要添加包围反斜杠和flag
-    })])), 
+    cmds: z.array(z.union([
+      z.string(),
+      z.object({ // 定义命令列表，用于命令匹配方式地进入插件
+        type: z.literal('regex'),
+        label: z.string(), // 命令的显示名称
+        match: z.string() // 正则匹配字符串，如match: "\d+"，默认flag为gi，不要添加包围反斜杠和flag
+      }),
+      z.object({
+        type: z.literal('any'),  // 任意输入都会被匹配上
+        label: z.string(), // 命令的显示名称
+      })
+    ])),
   })).optional().default([]),
 });
 
