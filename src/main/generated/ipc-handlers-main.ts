@@ -27,11 +27,5 @@ app.on('ready', () => {
 });
     
 export namespace ipcEmit {
-  function test(num1: number, number2: number) {
-  windowManager.emit('test', num1, number2);
-}
 
-  function testTo(id: PluginMetadata['id'], num1: number, number2: number) {
-    windowManager.emitTo(id, 'test', num1, number2);
-  }
 }

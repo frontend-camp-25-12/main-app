@@ -34,7 +34,7 @@ export class PluginManager {
     // 扫描插件目录
     const dirs = await fs.promises.readdir(pluginInstallPath, { withFileTypes: true });
     for (const dirent of dirs) {
-      if (dirent.isDirectory()) {
+      if (dirent.isDirectory() || dirent.isSymbolicLink()) {
         const pluginMetadata = await this.loadPluginDir(dirent.name);
         if (pluginMetadata) {
           allPlugins[pluginMetadata.id] = pluginMetadata;

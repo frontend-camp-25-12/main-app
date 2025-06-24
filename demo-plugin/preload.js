@@ -6,3 +6,5 @@ const currentDir = __dirname;
 fs.readdir(currentDir, (err, files) => {
   window.alert('当前目录文件:\n' + files.join('\n'));
 });
+
+window.platform.hello('world')

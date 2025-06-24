@@ -27,16 +27,20 @@ class PluginWindow {
   private windowContent: PluginWindowContent | undefined;
   private plugin: PluginMetadata;
   internal: boolean;
+  private additionalArguments: string[] = [];
   constructor(plugin: PluginMetadata) {
     this.plugin = plugin;
     let dist = plugin.dist;
     let preload: string;
     this.internal = plugin.internal != undefined
     if (plugin.internal) {
-      // 内置插件，共享相同preload逻辑
       preload = join(__dirname, '../preload/index.js');
     } else {
-      preload = path.join(dist, 'preload.js');
+      // 插件的preload是特殊的为其注入平台api的preload(src/preload/plugin-index.ts)
+      preload = join(__dirname, '../preload/pluginIndex.js');
+      const pluginPreload = join(dist, 'preload.js');
+      // 在其中，将会读取这些参数，真正加载插件preload
+      this.additionalArguments = [`--plugin-id=${plugin.id}`, `--plugin-preload=${pluginPreload}`];
     }
     this.windowContent = {
       preload, dist
@@ -62,6 +66,7 @@ class PluginWindow {
         preload: windowContent.preload,
         sandbox: false,
         contextIsolation: false,
+        additionalArguments: this.additionalArguments,
       },
     })
 

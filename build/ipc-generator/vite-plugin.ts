@@ -16,6 +16,7 @@ import { log } from './log';
 import { HostIpcGenerator } from './generator/host';
 import { IpcGenerator } from './generator/base';
 import { IpcGeneratorOptions } from './types';
+import { PluginIpcGenerator } from './generator/plugin';
 
 function generateIpcCode(g: IpcGenerator) {
   try {
@@ -38,10 +39,10 @@ export function ipcGeneratorPlugin(options: IpcGeneratorOptions): Plugin {
         ...commonParam,
         ...host
       }));
-      // generators.push(new PluginIpcGenerator({
-      //   ...commonParam,
-      //   ...plugin
-      // }))
+      generators.push(new PluginIpcGenerator({
+        ...commonParam,
+        ...plugin
+      }))
     },
     buildStart() {
       for (const g of generators) {

@@ -27,7 +27,7 @@ export default defineConfig({
           preloadOutputPath: resolve('src/preload/generated/ipc-api-main.ts')
         },
         plugin: {
-          serviceClassPath: resolve('src/main/plugin/ipc-service-plugin.ts'),
+          serviceClassPath: resolve('src/main/plugins/ipc-service-plugin.ts'),
           mainOutputPath: resolve('src/main/generated/ipc-handlers-plugin.ts'),
           preloadOutputPath: resolve('src/preload/generated/ipc-api-plugin.ts')
         }
@@ -35,7 +35,15 @@ export default defineConfig({
     ]
   },
   preload: {
-    plugins: [externalizeDepsPlugin()]
+    plugins: [externalizeDepsPlugin()],
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve('src/preload/index.ts'),
+          pluginIndex: resolve('src/preload/plugin-index.ts')
+        },
+      },
+    }
   },
   renderer: {
     resolve: {

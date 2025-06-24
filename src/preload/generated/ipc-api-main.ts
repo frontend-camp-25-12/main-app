@@ -34,14 +34,6 @@ export class IpcApi {
   async pluginSearch(query: string): Promise<SearchResult[]> {
     return electronAPI.ipcRenderer.invoke('plugin-search', query);
   }
-
-  /**
-   * onTest
-   * Channel: test
-   */
-  onTest(callback: (num1: number, number2: number) => void) {
-    electronAPI.ipcRenderer.on('test', (_event, num1, number2) => callback(num1, number2));
-  }
 }
 
 export const ipcApi = new IpcApi();
