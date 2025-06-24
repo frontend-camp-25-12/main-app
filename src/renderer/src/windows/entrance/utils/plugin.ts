@@ -29,8 +29,8 @@ export class PluginView {
         const view = new PluginView(plugin);
         view.matchedName = s.name;
         view.matchedDescription = s.description;
-        if (plugin.features) {
-          for (const feat of plugin.features) {
+        if (s.feature) {
+          for (const feat of s.feature) {
             results.push({
               ...view,
               feature: {

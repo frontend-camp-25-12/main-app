@@ -60,13 +60,14 @@ export class PluginSearch {
             code: feature.code,
             label: feature.label
           };
-          let match = true
+          let match = false
           for (const cmd of feature.cmds) {
             if (typeof cmd === 'string') {
               // 字符串命令匹配
               const cmdMatch = this.matchText(query, cmd);
               if (cmdMatch.score > 0) {
                 matchedPlugin.score += cmdMatch.score;
+                match = true;
               }
             } else if (cmd.type === 'regex') {
               // 正则匹配
@@ -74,6 +75,7 @@ export class PluginSearch {
                 const regex = new RegExp(cmd.match, 'gi');
                 if (regex.test(query)) {
                   matchedPlugin.score += MatchTypeScore.REGEX;
+                  match = true;
                 }
               } catch (e) {
                 console.warn(`Invalid regex pattern in plugin ${plugin.id}:`, cmd.match);
@@ -81,8 +83,7 @@ export class PluginSearch {
             } else if (cmd.type === 'any') {
               // 任意输入匹配
               matchedPlugin.score += MatchTypeScore.KEYWORD; // 任意输入匹配，按关键词匹配处理
-            } else {
-              match = false;
+              match = true;
             }
           }
 
