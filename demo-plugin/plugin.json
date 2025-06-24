@@ -3,7 +3,6 @@
     "name": "剪贴板",
     "version": "1.0.0",
     "logo": "./logo.png",
-    "background": true,
     "features": [
         {
             "code": "search",

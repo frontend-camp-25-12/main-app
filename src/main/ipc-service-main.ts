@@ -1,4 +1,4 @@
-import type { PluginMetadata, SearchResult } from '../share/plugins/type';
+import type { PluginEnterAction, PluginMetadata, SearchResult } from '../share/plugins/type';
 import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
 /**
@@ -24,8 +24,8 @@ export class IpcService {
   /**
    * 打开插件
    */
-  async onPluginOpen(id: string): Promise<void> {
-    return pluginManager.open(id);
+  async onPluginOpen(id: string, action: PluginEnterAction): Promise<void> {
+    return pluginManager.open(id, action);
   }
 
   /**

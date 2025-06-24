@@ -6,11 +6,12 @@ import { getRelativePathTsImport } from "../utils";
 export class HostIpcGenerator extends CommonIpcGenerator {
   get mainIpcCode(): string {
     const implPath = getRelativePathTsImport(this.params.mainOutputPath, this.params.serviceClassPath);
+    const { imports: typeImports } = extractExportedTypes(this.params.preloadOutputPath);
     const imports = `// 自动生成的IPC接口，请勿手动修改
 import { app, ipcMain } from 'electron';
 import { serviceInstance } from '${implPath}';
 import { windowManager } from '../plugins/window';
-import { PluginMetadata } from '../../share/plugins/type'
+${typeImports ? `\n${typeImports}` : ''}
     `;
     const [handlers, emits] = this.commonMainCode
     return `${imports}
@@ -24,7 +25,6 @@ ${emits}
   }
   get preloadIpcCode(): string {
     const { imports: typeImports } = extractExportedTypes(this.params.preloadOutputPath);
-    // 导入部分
     const imports = [
       `import { electronAPI } from '@electron-toolkit/preload';`,
       typeImports

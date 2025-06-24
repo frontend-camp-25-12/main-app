@@ -1,5 +1,5 @@
 import { electronAPI } from '@electron-toolkit/preload';
-import type { PluginMetadata, SearchResult } from '../../share/plugins/type';
+import type { PluginMetadata, MatchRange, SearchResult, PluginEnterAction } from '../../share/plugins/type';
 
 // 自动生成的IPC接口，请勿手动修改
 export class IpcApi {
@@ -23,8 +23,8 @@ export class IpcApi {
    * pluginOpen
    * Channel: plugin-open
    */
-  async pluginOpen(id: string): Promise<void> {
-    return electronAPI.ipcRenderer.invoke('plugin-open', id);
+  async pluginOpen(id: string, action: PluginEnterAction): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('plugin-open', id, action);
   }
 
   /**

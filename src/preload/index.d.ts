@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { IpcApi } from './generated/ipc-api'
+import { IpcApi } from './generated/ipc-api-main'
 
 declare global {
   interface Window {

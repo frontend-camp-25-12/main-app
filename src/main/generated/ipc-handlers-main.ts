@@ -2,7 +2,8 @@
 import { app, ipcMain } from 'electron';
 import { serviceInstance } from '../ipc-service-main';
 import { windowManager } from '../plugins/window';
-import { PluginMetadata } from '../../share/plugins/type'
+
+import type { PluginMetadata, MatchRange, SearchResult, PluginEnterAction } from '../../share/plugins/type';
     
 app.on('ready', () => {
   // onPluginDevInstall(dir: string) -> Promise<Record<string, PluginMetadata>>
@@ -15,9 +16,9 @@ app.on('ready', () => {
     return await serviceInstance.onPluginList();
   });
 
-  // onPluginOpen(id: string) -> Promise<void>
-  ipcMain.handle('plugin-open', async (_event, id: string) => {
-    return await serviceInstance.onPluginOpen(id);
+  // onPluginOpen(id: string, action: PluginEnterAction) -> Promise<void>
+  ipcMain.handle('plugin-open', async (_event, id: string, action: PluginEnterAction) => {
+    return await serviceInstance.onPluginOpen(id, action);
   });
 
   // onPluginSearch(query: string) -> Promise<SearchResult[]>

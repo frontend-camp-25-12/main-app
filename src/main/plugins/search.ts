@@ -1,9 +1,7 @@
 import PinyinMatch from 'pinyin-match';
-import { SearchResult } from '../../share/plugins/type.js';
+import { SearchResult, MatchRange } from '../../share/plugins/type.js';
 import { pluginManager } from './loader.js';
 import { rMerge } from "ranges-merge";
-
-type MatchRange = [number, number][];  // 直接搜索插件名称或描述时，返回匹配的字符范围用来高亮
 
 enum MatchTypeScore {
   REGEX = 200, // 正则匹配
@@ -60,16 +58,15 @@ export class PluginSearch {
         for (const feature of plugin.features) {
           const matchedPluginFeature: SearchResult['feature'][number] = {
             code: feature.code,
-            matchedCmdLabel: []
+            label: feature.label
           };
-
+          let match = true
           for (const cmd of feature.cmds) {
             if (typeof cmd === 'string') {
               // 字符串命令匹配
               const cmdMatch = this.matchText(query, cmd);
               if (cmdMatch.score > 0) {
                 matchedPlugin.score += cmdMatch.score;
-                matchedPluginFeature.matchedCmdLabel.push(cmd);
               }
             } else if (cmd.type === 'regex') {
               // 正则匹配
@@ -77,7 +74,6 @@ export class PluginSearch {
                 const regex = new RegExp(cmd.match, 'gi');
                 if (regex.test(query)) {
                   matchedPlugin.score += MatchTypeScore.REGEX;
-                  matchedPluginFeature.matchedCmdLabel.push(cmd.label);
                 }
               } catch (e) {
                 console.warn(`Invalid regex pattern in plugin ${plugin.id}:`, cmd.match);
@@ -85,11 +81,12 @@ export class PluginSearch {
             } else if (cmd.type === 'any') {
               // 任意输入匹配
               matchedPlugin.score += MatchTypeScore.KEYWORD; // 任意输入匹配，按关键词匹配处理
-              matchedPluginFeature.matchedCmdLabel.push(cmd.label);
+            } else {
+              match = false;
             }
           }
 
-          if (matchedPluginFeature.matchedCmdLabel.length > 0) {
+          if (match) {
             matchedPlugin.feature.push(matchedPluginFeature);
           }
         }

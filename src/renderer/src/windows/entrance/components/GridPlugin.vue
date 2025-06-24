@@ -1,0 +1,79 @@
+
+<script setup lang="ts">
+import { PluginView } from '../utils/plugin';
+import icon from '../../../../../../resources/icon.png';
+import { t } from '../../../utils/i18n';
+
+defineProps<{
+  plugins: PluginView[]
+}>()
+
+const emit = defineEmits<{
+  (e: 'open-plugin', id: string, feat: PluginView['feature']): void
+}>();
+</script>
+
+<template>
+  <div v-if="plugins.length" class="plugin-grid">
+    <template v-for="plugin in plugins" :key="plugin.id">
+      <div class="plugin-item" @click="emit('open-plugin', plugin.id, plugin.feature)">
+        <img width="48" :src="plugin.logoPath ? `file:///${plugin.logoPath}` : icon" alt="logo"
+          class="plugin-icon" />
+        <ElText :line-clamp="2">{{ plugin.name }}</ElText>
+        <div class="search-label" v-if="plugin.feature">
+          <ElText>{{ plugin.feature.label }}</ElText>
+        </div>
+      </div>
+    </template>
+  </div>
+  <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease; padding: 8px;">{{
+    t('noPlugins')
+  }}</div>
+</template>
+
+
+<style scoped>
+.plugin-grid {
+  padding: 12px 6px;
+  flex: 1 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.plugin-item {
+  position: relative;
+  height: 86px;
+  cursor: pointer;
+  padding: 12px 4px;
+  border-radius: var(--el-border-radius-base);
+  transition: box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  .el-text {
+    transition: color 0.2s ease;
+  }
+}
+
+.plugin-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  .el-text {
+    --el-text-color: var(--el-color-primary);
+  }
+}
+
+.search-label{
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  transform: translate(-50%, -50%);
+  border-radius: var(--el-border-radius-base);
+  backdrop-filter: blur(4px);
+  padding: 2px 4px;
+  background-color: #ffffffb7;
+}
+</style>

@@ -1,5 +1,5 @@
 import path, { join } from "path";
-import { PluginMetadata } from "../../share/plugins/type.js";
+import { PluginEnterAction, PluginMetadata } from "../../share/plugins/type.js";
 import fs from "fs";
 import { builtinPlugins } from "./builtin.js";
 import { windowManager } from "./window.js";
@@ -130,17 +130,14 @@ export class PluginManager {
    * 打开插件窗口
    * @param id 插件标识
    */
-  async open(id: string) {
+  async open(id: string, action: PluginEnterAction) {
     const plugins = await this.plugins;
     if (!plugins[id]) {
       throw new Error(`Plugin ${id} does not exist`);
     }
     const plugin = plugins[id];
-    ipcEmitPlugin.pluginEnterTo(plugin.id, {
-      code: "TODO",
-      payload: "TODO"
-    })
     windowManager.open(plugin);
+    ipcEmitPlugin.pluginEnterTo(plugin.id, action);
   }
 }
 

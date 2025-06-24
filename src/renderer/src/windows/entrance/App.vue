@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { ElButton, ElInput, ElText, ElNotification, ElScrollbar, ElAlert } from 'element-plus';
-import { PluginMetadata, SearchResult } from '../../../../share/plugins/type';
-import icon from '../../../../../resources/icon.png';
+import { ref, onMounted, Ref } from 'vue';
+import { ElButton, ElInput, ElNotification, ElScrollbar } from 'element-plus';
+import { PluginEnterAction, PluginMetadata, SearchResult } from '../../../../share/plugins/type';
 import { t } from '../../utils/i18n';
+import GridPlugin from './components/GridPlugin.vue';
+import { PluginView } from './utils/plugin';
 
-const pluginList = ref<Record<string, PluginMetadata>>({});
+let pluginList: Record<string, PluginMetadata> = {};
 const pluginPath = ref('');
 const searchInput = ref('');
-let fullPluginList: typeof pluginList.value = {};
+
+let displayedPlugins: Ref<PluginView[]> = ref([]);
 
 const fetchPlugins = async () => {
   const data = await window.ipcApi.pluginList();
-  pluginList.value = data || {};
-  fullPluginList = data || {};
+  pluginList = data || {};
+  displayedPlugins.value = Object.values(pluginList).filter(plugin => !plugin.internal?.hidden).map(plugin => new PluginView(plugin));
 };
 
 const handleAddPlugin = async () => {
@@ -38,21 +40,14 @@ const handleAddPlugin = async () => {
   }
 };
 
-const handleOpenPlugin = async (id: string) => {
-  await window.ipcApi.pluginOpen(id);
-};
-
 const handleSearchInput = async () => {
   const query = searchInput.value.trim();
   if (!query) {
-    pluginList.value = fullPluginList;
+    fetchPlugins();
     return;
   }
   const filteredPlugins = await window.ipcApi.pluginSearch(query);
-  pluginList.value = filteredPlugins.reduce((acc: Record<string, PluginMetadata>, search: SearchResult) => {
-    acc[search.id] = fullPluginList[search.id];
-    return acc;
-  }, {});
+  displayedPlugins.value = PluginView.fromSearchResult(pluginList, filteredPlugins)
 };
 
 onMounted(() => {
@@ -62,9 +57,21 @@ onMounted(() => {
 if (import.meta.env.DEV) {
   ElNotification({
     title: '当前是vite dev server环境',
-    message: '插件的logo将无法正常加载，可通过使用npm run start启动部署环境的应用来解决。'
+    message: '插件的logo将无法正常加载显示，可通过使用npm run start启动部署环境的应用来解决。'
   })
 }
+
+function handleOpenPlugin(id: string, feat: PluginView['feature']) {
+  const payload = searchInput.value
+  let action: PluginEnterAction = {
+    code: '',
+    payload
+  };
+  if (feat) {
+    action.code = feat.code
+  }
+  return window.ipcApi.pluginOpen(id, action);
+};
 </script>
 
 <template>
@@ -81,15 +88,7 @@ if (import.meta.env.DEV) {
     <span class="plugin-category" v-if="searchInput.length">{{ t('commandMatch') }}</span>
     <span class="plugin-category" v-else>{{ t('installedPlugins') }}</span>
     <ElScrollbar class="plugin-grid-container">
-      <div v-if="Object.keys(pluginList).length" class="plugin-grid">
-        <template v-for="(plugin, id) in pluginList" :key="id">
-          <div v-if="!plugin?.internal?.hidden" class="plugin-item" @click="handleOpenPlugin(id)">
-            <img width="40" :src="plugin.logoPath ? `file:///${plugin.logoPath}` : icon" alt="Plugin Icon" class="plugin-icon" />
-            <ElText :line-clamp="2">{{ plugin.name }}</ElText>
-          </div>
-        </template>
-      </div>
-      <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease; padding: 8px;">{{ t('noPlugins') }}</div>
+      <GridPlugin :plugins="displayedPlugins" @open-plugin="handleOpenPlugin" />
     </ElScrollbar>
   </div>
 </template>
@@ -100,7 +99,7 @@ if (import.meta.env.DEV) {
   flex-direction: column;
   height: 100vh;
 
-  > *:not(.plugin-grid-container) {
+  >*:not(.plugin-grid-container) {
     padding: 8px;
   }
 }
@@ -111,37 +110,5 @@ if (import.meta.env.DEV) {
 
 .cmd-input {
   font-size: 20px;
-}
-
-.plugin-grid {
-  padding: 12px 6px;
-  flex: 1 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 8px;
-}
-
-.plugin-item {
-  height: 78px;
-  cursor: pointer;
-  padding: 12px 4px;
-  border-radius: var(--el-border-radius-base);
-  transition: box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-
-  .el-text {
-    transition: color 0.2s ease;
-  }
-}
-
-.plugin-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-
-  .el-text {
-    --el-text-color: var(--el-color-primary);
-  }
 }
 </style>
