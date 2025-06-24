@@ -13,10 +13,16 @@ const emit = defineEmits<{
 }>();
 </script>
 
-<template>
-  <div v-if="plugins.length" class="plugin-grid">
+<template>  <div v-if="plugins.length" class="plugin-grid">
     <template v-for="plugin in plugins" :key="plugin.id">
-      <div class="plugin-item" @click="emit('open-plugin', plugin.id, plugin.feature)">
+      <div 
+        class="plugin-item" 
+        tabindex="0"
+        role="button"
+        :aria-label="`${plugin.name}${plugin.feature ? ' - ' + plugin.feature.label : ''}`"
+        @click="emit('open-plugin', plugin.id, plugin.feature)"
+        @keydown.enter="emit('open-plugin', plugin.id, plugin.feature)"
+        @keydown.space.prevent="emit('open-plugin', plugin.id, plugin.feature)">
         <img width="48" :src="plugin.logoPath ? `file:///${plugin.logoPath}` : icon" alt="logo"
           class="plugin-icon" />
         <ElText :line-clamp="2">{{ plugin.name }}</ElText>
@@ -58,7 +64,8 @@ const emit = defineEmits<{
   }
 }
 
-.plugin-item:hover {
+.plugin-item:hover,
+.plugin-item:focus {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 
   .el-text {
