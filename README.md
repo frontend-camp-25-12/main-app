@@ -138,7 +138,31 @@ src/                  # 源码目录
 ![](https://mermaid.ink/img/pako:eNqNVFtvEkEU_iubafpGCcOd1TRpC9tLYmKivgh9WNnhossuWRZtJSRNY0uhphBpxNjUXrxVja2x2hZoy5_ZGeDJv-BeBmiURvdpzjnffOec75ydHIjKAgIsiInyk2iCV1TmbjAiMfo3Osrgw9davUh2T_F52XJGRT6TCaIYk80gJfQYSSoTS4oiOxLycj6Os2VURX6E2BHoDzj65tiTpKAmWGd64cYfLCk-KU3pBVASjuN8IW-fhJvwT0HvP0kUJAlIuUrj5bhQsE_jcU654cQwmn6jndJye7lutWs574VJ-YXWPMH1Y1z-1j5Yx40yrhzh0sE8y7L97i3wBAzjo7rW2MCVDR1t3RyCmwyT4sfO3nMmrSBR5gX7w4yB6qlggYLh9uYBWTs1Cio0aRVbl2S3cPOBMk7WXlphrbnRuazilfdkb7W7VCTrn65NGwrL0m0xG09KIUlFCqM11g3Od8_aldW_83O08_bnGi6_xWtbuNkwUAOZLdx0GJd2OxcXTFL3L9gTakocBpvJXRXl1_lOnmoB_0eMGXjN9VmqknbR0g_tZpVs7xj64JXjbu3r1Q6GCDIXJmffyU6109rSJ9vZ_9ItlMjm5TyNwrDWXEkkBUQJBmvSetNutOiCMGNj4_rkextgmpO0N93QwQWtsaqdLZHDn6R20q39MOqzqibFKj5f0sNWod3tfbLdMhnozxc0jRkqgm6QV0eGJzTw4MoHMyXs6WleoRM3zxwdqGlM06mZxqxFDwfEc7An-IB6LiIBG0ghRZ-JoL8ROQMSAWoCpVAEsPpRQDE-K6oREJHyOpTPqvKdRSkKWFXJIhtQ5Gw80TOyaYFXUTDJxxU-BdgYL2Z0b5qX7styqgeKK0YmeptuUlZSAQsdHreJBmwOLADW5XDbPQ6X3-l3OaHX5YU2sAhYt8sOHdAV8DudDl_A6c_bwFOT3WH3QWfA7wj4PV43dPsCHhtAQlKVlVvW-2c-g70iQ2aE1pj_DXwrD28?type=png)
 
 注：
-- onPluginEnter是在preload.js中利用平台API注册的事件，**当前未实现平台API**
+- onPluginEnter是在preload.js中利用平台API注册的事件，**当前已经实现平台API**
+
+## 平台API
+
+平台API的接口代码位于`src\preload\generated\ipc-api-plugin.ts`，插件开发时，通过window.platfrom来访问平台api。例如仓库内附带的`demo-plugin`中的示例：
+```javascript
+window.platform.hello('world')
+window.platform.onPluginEnter((action) => {
+  window.alert('插件进入事件触发: ' + JSON.stringify(action));
+});
+```
+
+平台API在主应用的实现原理跟README里面提到的`ipc-generator`相同，在`src\main\plugins\ipc-service-plugin.ts`，自动生成主进程的处理器和渲染进程的调用接口。
+开发新的平台API时，注意避免包含外部的类型，因为生成的代码将外部类型复制进去后，无法resolve到对应类型。
+
+### 平台API列表
+
+后续计划自动生成ts类型声明供插件开发者导入
+
+| 方法名                | 说明                                   | 参数                                                         |
+|---------------------|--------------------------------------|------------------------------------------------------------|
+| hello               | 打印一条来自插件的问候信息到主进程控制台         | content: string                                 |
+| onPluginEnter       | 注册插件进入事件的回调   | callback: (action: { code: string; payload: string }) => void |
+
+
 
 
 ## 约束
