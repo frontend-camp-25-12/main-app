@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { ElButton, ElInput, ElText, ElNotification, ElScrollbar } from 'element-plus';
+import { ElButton, ElInput, ElText, ElNotification, ElScrollbar, ElAlert } from 'element-plus';
 import { PluginMetadata, SearchResult } from '../../../../share/plugins/type';
 import icon from '../../../../../resources/icon.png';
 import { t } from '../../utils/i18n';
@@ -58,6 +58,13 @@ const handleSearchInput = async () => {
 onMounted(() => {
   fetchPlugins();
 });
+
+if (import.meta.env.DEV) {
+  ElNotification({
+    title: '当前是vite dev server环境',
+    message: '插件的logo将无法正常加载，可通过使用npm run start启动部署环境的应用来解决。'
+  })
+}
 </script>
 
 <template>
@@ -77,7 +84,7 @@ onMounted(() => {
       <div v-if="Object.keys(pluginList).length" class="plugin-grid">
         <template v-for="(plugin, id) in pluginList" :key="id">
           <div v-if="!plugin?.internal?.hidden" class="plugin-item" @click="handleOpenPlugin(id)">
-            <img width="40" :src="icon" alt="Plugin Icon" class="plugin-icon" />
+            <img width="40" :src="plugin.logoPath ? `file:///${plugin.logoPath}` : icon" alt="Plugin Icon" class="plugin-icon" />
             <ElText :line-clamp="2">{{ plugin.name }}</ElText>
           </div>
         </template>

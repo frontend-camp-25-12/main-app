@@ -50,31 +50,41 @@ export class PluginManager {
    * @param folderName 插件目录名，必须位于pluginInstallPath下
    */
   async loadPluginDir(folderName: string) {
-    const path = join(pluginInstallPath, folderName);
-    if (!fs.existsSync(path)) {
+    const pluginPath = join(pluginInstallPath, folderName);
+    if (!fs.existsSync(pluginPath)) {
       return null;
     }
     for (const file of PLUGIN_REQUIRED_FILES) {
-      const requireFile = join(path, file);
+      const requireFile = join(pluginPath, file);
       if (!fs.existsSync(requireFile)) {
         return null;
       }
     }
-    const pluginJsonPath = join(path, 'plugin.json');
+    const pluginJsonPath = join(pluginPath, 'plugin.json');
     const pluginData = await fs.promises.readFile(pluginJsonPath, "utf-8");
     const raw = JSON.parse(pluginData);
     let pluginDef: PluginMetadata;
     try {
       pluginDef = PluginDefinitionSchema.parse(raw) as PluginMetadata; // 用zod校验和清理字段
     } catch (e) {
-      console.warn(`Plugin at ${path} failed zod validation:`, e);
+      console.warn(`Plugin at ${pluginPath} failed zod validation:`, e);
       return null;
     }
     if (this.plugins[pluginDef.id]) {
       throw new Error(`插件 ${pluginDef.name} 已经存在`);
     }
-
-    pluginDef.dist = join(path); // 为了之后从其中加载内容
+    if (pluginDef.logo) {
+      if (!path.isAbsolute(pluginDef.logo)) {
+        // 确保路径是相对的且不超出其目录范围
+        const logoPath = path.resolve(pluginPath, pluginDef.logo);
+        if (logoPath.startsWith(pluginPath + path.sep)) {
+          if (fs.existsSync(logoPath)) {
+            pluginDef.logoPath = logoPath;
+          }
+        }
+      }
+    }
+    pluginDef.dist = pluginPath; // 为了之后从其中加载内容
     windowManager.add(pluginDef); // 添加到窗口管理器，执行其preload脚本
     return pluginDef;
   }

@@ -5,6 +5,7 @@ import { PluginDefinition } from './type.zod.d.ts';
  */
 export interface PluginMetadata extends PluginDefinition {
   dist: string;         // 插件的内容目录，用于装载内容
+  logoPath?: string;
   internal?: {             // 内置插件相关
     hidden?: boolean;   // 是否在插件列表中隐藏
   }

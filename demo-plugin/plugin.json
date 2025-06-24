@@ -2,6 +2,7 @@
     "id": "com.example.clipboard",
     "name": "剪贴板",
     "version": "1.0.0",
+    "logo": "./logo.png",
     "features": [{
       "code": "search",
       "cmds": [{

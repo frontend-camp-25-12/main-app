@@ -10,6 +10,7 @@ export const PluginDefinitionSchema = z.object({
   name: z.string(), // 插件的名称
   description: z.string().optional(), // 插件的描述信息
   version: z.string(),
+  logo: z.string().optional(), // 插件的logo图片路径，相对于插件根目录
   window: z
     .object({
       width: z.number().optional(),

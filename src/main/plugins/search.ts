@@ -82,6 +82,10 @@ export class PluginSearch {
               } catch (e) {
                 console.warn(`Invalid regex pattern in plugin ${plugin.id}:`, cmd.match);
               }
+            } else if (cmd.type === 'any') {
+              // 任意输入匹配
+              matchedPlugin.score += MatchTypeScore.KEYWORD; // 任意输入匹配，按关键词匹配处理
+              matchedPluginFeature.matchedCmdLabel.push(cmd.label);
             }
           }
 
