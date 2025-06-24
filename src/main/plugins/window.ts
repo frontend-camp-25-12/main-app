@@ -45,7 +45,9 @@ class PluginWindow {
     this.windowContent = {
       preload, dist
     }
-    this.create()
+    if (plugin.background) {
+      this.create()
+    }
   }
 
   create() {
@@ -83,6 +85,14 @@ class PluginWindow {
       const id = plugin.id;
       windowManager.remove(id);
     });
+
+    if (plugin.background) {
+      // 后台保持类型的插件不销毁实例，仅隐藏
+      window.on('close', (event) => {
+        event.preventDefault();
+        window.hide();
+      });
+    }
   }
 
   show() {

@@ -3,11 +3,16 @@
     "name": "剪贴板",
     "version": "1.0.0",
     "logo": "./logo.png",
-    "features": [{
-      "code": "search",
-      "cmds": [{
-        "type": "any",
-        "label": "搜索"
-      }]  
-    }]
+    "background": true,
+    "features": [
+        {
+            "code": "search",
+            "label": "搜索",
+            "cmds": [
+                {
+                    "type": "any"
+                }
+            ]
+        }
+    ]
 }

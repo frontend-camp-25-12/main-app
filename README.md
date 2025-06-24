@@ -135,7 +135,7 @@ src/                  # 源码目录
 - `plugin.json`是插件的元数据，包含插件的ID、名称、版本等信息。
 
 ## 插件生命周期
-![](https://mermaid.ink/img/pako:eNqFVMtO20AU_RVrELsQ2XHsJG6FBMRmValS6aZOF248ebSOHTl2gSKkCAHBpCK0VCBBqaAPlXYBVR_QJDx-xjMOf9HxIwFRqnph-dw599x7z5VnDuQNFQIBFDRjOl9STIuayuZ0ijzDwxQ63HbbDt47QaetMJjXlFotCwuUXYOm-BzqFlUoa5owJPJSSpJiNcs0nkFhiEln6AEcmS6rVklIVGfu3FCpKGV9gjQQiUiSlBL5gYg0lp5g-P-KmFBXoXldhpckMTuQ4RITSWbsNpnBoL3VBW-hHY4bBh_KuPXa7R6j9g_U-uYdNFGnhdaP0OrBY0EQBtOH5DFGRkdtt7OGnTp-66CT74TqvTnwthdDldtyEjI6raPWq159CTtNItw7O0NLn8IEvNnwi39s35I5LmPnc2__JVU1oWYoavxpzWf1vQxJWZnUxysn_liNbjTLzjnea9x9Yo7ilc3w2O2u9c43_LL7y5d1Bze__LNhUTb0-5pdLOuibkGTcjvNoMVFb3357_pS5J_3dQu1PqCVHdTt-KyrZYW8SRmt7pHJqTKJz8RLVkW7Sbva0sU7r3MR7YcaGRklxvcXEMDxvrXX0TgBJLXhdpbd33V8-AtvHV9u_fRtCD3AzgbZBDkOO77cfY93LwKF6E_IBkCMbAiAFE0ZgMmcDmKgAk1igUr-pTn_MAesEqzAHBDIpwoLiq1ZOZDT5wlVsS3jwayeB4Jl2jAGTMMulvrArqqKBbNlpWgqFSAUFK1GolVFf2QYlT6paPqVouzIK1u3gJDm2IAMhDkwAwSWp-MZlkvQGY5hU6lkho-BWSDwbJxnk2maSdBskubSzHwMvAjk6TjHc4kUneFpliVvlokBqJYtw7wXXhTBfdHvUgxOoibn_wD6vbpc?type=png)
+![](https://mermaid.ink/img/pako:eNqNVFtvEkEU_iubafpGCcOd1TRpC9tLYmKivgh9WNnhossuWRZtJSRNY0uhphBpxNjUXrxVja2x2hZoy5_ZGeDJv-BeBmiURvdpzjnffOec75ydHIjKAgIsiInyk2iCV1TmbjAiMfo3Osrgw9davUh2T_F52XJGRT6TCaIYk80gJfQYSSoTS4oiOxLycj6Os2VURX6E2BHoDzj65tiTpKAmWGd64cYfLCk-KU3pBVASjuN8IW-fhJvwT0HvP0kUJAlIuUrj5bhQsE_jcU654cQwmn6jndJye7lutWs574VJ-YXWPMH1Y1z-1j5Yx40yrhzh0sE8y7L97i3wBAzjo7rW2MCVDR1t3RyCmwyT4sfO3nMmrSBR5gX7w4yB6qlggYLh9uYBWTs1Cio0aRVbl2S3cPOBMk7WXlphrbnRuazilfdkb7W7VCTrn65NGwrL0m0xG09KIUlFCqM11g3Od8_aldW_83O08_bnGi6_xWtbuNkwUAOZLdx0GJd2OxcXTFL3L9gTakocBpvJXRXl1_lOnmoB_0eMGXjN9VmqknbR0g_tZpVs7xj64JXjbu3r1Q6GCDIXJmffyU6109rSJ9vZ_9ItlMjm5TyNwrDWXEkkBUQJBmvSetNutOiCMGNj4_rkextgmpO0N93QwQWtsaqdLZHDn6R20q39MOqzqibFKj5f0sNWod3tfbLdMhnozxc0jRkqgm6QV0eGJzTw4MoHMyXs6WleoRM3zxwdqGlM06mZxqxFDwfEc7An-IB6LiIBG0ghRZ-JoL8ROQMSAWoCpVAEsPpRQDE-K6oREJHyOpTPqvKdRSkKWFXJIhtQ5Gw80TOyaYFXUTDJxxU-BdgYL2Z0b5qX7styqgeKK0YmeptuUlZSAQsdHreJBmwOLADW5XDbPQ6X3-l3OaHX5YU2sAhYt8sOHdAV8DudDl_A6c_bwFOT3WH3QWfA7wj4PV43dPsCHhtAQlKVlVvW-2c-g70iQ2aE1pj_DXwrD28?type=png)
 
 注：
 - onPluginEnter是在preload.js中利用平台API注册的事件，**当前未实现平台API**
@@ -165,6 +165,7 @@ src/                  # 源码目录
   "description": "插件描述",              // （可选）插件描述
   "version": "1.0.0",                    // 插件版本
   "logo": "./logo.png",                    // （可选）插件图标，路径相对于插件目录
+  "background": false,                // （可选）是否需要保持后台运行，默认false
   "window": {                              // （可选）窗口配置
     "width": 800,                          // （可选）窗口宽度
     "height": 600,                         // （可选）窗口高度
@@ -176,15 +177,14 @@ src/                  # 源码目录
   "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入
     {
       "code": "featureCode",              // 功能代码，用于在onPluginEnter时，区分不同功能
+      "label": "功能名称",              // 功能名称
       "cmds": [                            // 可触发这个feature的命令列表
         "search",                        // 定义一个命令叫search
         {                                    // 也可以定义正则匹配的命令
           "type": "regex",                // 对于正则匹配命令，固定为'regex'
-          "label": "命令显示名",           // 匹配成功后命令的显示名称
           "match": "\\d+"                // 正则匹配字符串（不含/和flag）
         },{
           "type": "any",                // 也可以定义匹配任意输入的命令
-          "label": "匹配任意输入的命令"    
         }
       ]
     }
