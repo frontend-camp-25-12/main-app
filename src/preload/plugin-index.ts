@@ -1,7 +1,6 @@
-import { platform } from "./generated/ipc-api-plugin";
+import { PlatformApi } from "./generated/ipc-api-plugin";
 
-// @ts-ignore
-window.platform = platform;
+
 
 function parse(name: string): string | undefined {
   const prefix = `--${name}=`;
@@ -11,6 +10,9 @@ function parse(name: string): string | undefined {
 
 const pluginId = parse("plugin-id");
 const pluginPreloadPath = parse("plugin-preload");
+
+// @ts-ignore
+window.platform = new PlatformApi(pluginId);
 
 console.log(`Plugin Preload Path: ${pluginPreloadPath}, Plugin ID: ${pluginId}`);
 

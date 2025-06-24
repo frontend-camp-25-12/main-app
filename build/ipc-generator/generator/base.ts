@@ -108,20 +108,30 @@ function generateChannelName(name: string, type: IpcType): string {
 }
 
 export abstract class CommonIpcGenerator extends IpcGenerator {
-  get commonPreloadCode() {
-    return this.methods.map(method => {
-      if (method.type === 'on') {
-        let methodName = method.name.substring(2); // 去掉'on'前缀
-        methodName = firstToLowerCase(methodName);
-        const params = method.parameters.map(p => `${p.name}: ${p.type}`).join(', ');
-        const invokeParams = method.parameters.length > 0 ? `, ${method.parameters.map(p => p.name).join(', ')}` : '';
-        return `  /**
+  // 为了提供给PluginIpcGenerator重写
+  generatePreloadInvoke(method: IpcMethod, methodName: string, params: string, invokeParams: string): string {
+    return `  /**
    * ${methodName}
    * Channel: ${method.channelName}
    */
   async ${methodName}(${params}): ${method.returnType} {
     return electronAPI.ipcRenderer.invoke('${method.channelName}'${invokeParams});
   }`;
+  }
+  
+  // 为了提供给PluginIpcGenerator重写
+  getMethodForPreload() {
+    return this.methods
+  }
+
+  get commonPreloadCode() {
+    return this.getMethodForPreload().map(method => {
+      if (method.type === 'on') {
+        let methodName = method.name.substring(2); // 去掉'on'前缀
+        methodName = firstToLowerCase(methodName);
+        const params = method.parameters.map(p => `${p.name}: ${p.type}`).join(', ');
+        const invokeParams = method.parameters.length > 0 ? `, ${method.parameters.map(p => p.name).join(', ')}` : '';
+        return this.generatePreloadInvoke(method, methodName, params, invokeParams);
       } else if (method.type === 'emit') {
         // 生成监听函数
         let methodName = method.name;

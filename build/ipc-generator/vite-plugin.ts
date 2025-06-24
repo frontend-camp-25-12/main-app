@@ -19,11 +19,7 @@ import { IpcGeneratorOptions } from './types';
 import { PluginIpcGenerator } from './generator/plugin';
 
 function generateIpcCode(g: IpcGenerator) {
-  try {
-    g.generate();
-  } catch (error) {
-    log(`模板生成失败: ${error}`);
-  }
+  g.generate();
 }
 
 export function ipcGeneratorPlugin(options: IpcGeneratorOptions): Plugin {
@@ -53,7 +49,6 @@ export function ipcGeneratorPlugin(options: IpcGeneratorOptions): Plugin {
       }
     },
     handleHotUpdate({ file }) {
-      console.log(`HMR: ${file}`);
       for (const g of generators) {
         for (const watchFile of g.hmrWatchFiles) {
           if (file === watchFile) {

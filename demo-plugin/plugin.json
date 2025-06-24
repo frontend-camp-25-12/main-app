@@ -1,8 +1,7 @@
 {
-    "id": "clipboard",
+    "id": "com.example.clipboard",
     "name": "剪贴板",
     "version": "1.0.0",
     "window": {
-        "transparent": true
     }
 }
