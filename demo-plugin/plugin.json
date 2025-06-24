@@ -8,8 +8,33 @@
             "code": "search",
             "label": "搜索",
             "cmds": [
+                "搜索剪贴板",
                 {
                     "type": "any"
+                }
+            ]
+        },
+        {
+            "code": "clear",
+            "label": "清空",
+            "cmds": [
+                "清空剪贴板"
+            ]
+        },
+        {
+            "code": "copy",
+            "label": "复制",
+            "cmds": [
+                "复制剪贴板"
+            ]
+        },
+        {
+            "code": "regexTest",
+            "label": "正则命令",
+            "cmds": [
+                {
+                    "type": "regex",
+                    "match": "\\d+"
                 }
             ]
         }

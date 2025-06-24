@@ -174,11 +174,11 @@ src/                  # 源码目录
     "transparent": false,                  // （可选）是否透明窗口，默认false，设为true时需要同时设置`frame: false`才有效
     "resizable": true                      // （可选）是否允许调整窗口大小，默认true
   },
-  "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入
+  "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入，支持拼音搜索和拼音首字母搜索
     {
       "code": "featureCode",              // 功能代码，用于在onPluginEnter时，区分不同功能
       "label": "功能名称",              // 功能名称
-      "cmds": [                            // 可触发这个feature的命令列表
+      "cmds": [                            // 可触发这个feature的命令列表, 一共支持三种类型的命令
         "search",                        // 定义一个命令叫search
         {                                    // 也可以定义正则匹配的命令
           "type": "regex",                // 对于正则匹配命令，固定为'regex'
