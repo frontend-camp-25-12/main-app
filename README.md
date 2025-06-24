@@ -64,19 +64,19 @@ src/                  # 源码目录
 
 ## ipc开发
 
-为了简化electron添加ipc接口的重复劳动，减少人工错误，项目内添加了`build/ipc-generator`这个`vite`插件，通过扫描 `src/main/ipc-service.ts` 中定义的服务类方法，自动生成主进程的 IPC 处理器代码和渲染进程的调用接口代码。
+为了简化electron添加ipc接口的重复劳动，减少人工错误，项目内添加了`build/ipc-generator`这个`vite`插件，通过扫描 `src/main/ipc-service-main.ts` 和 `src/main/ipc-server-plugin.ts` 中定义的服务类方法，自动生成主进程的 IPC 处理器代码和渲染进程的调用接口代码。
 
 #### 过程
 1. **服务类方法读取**：
-   - 约定在 `src/main/ipc-service.ts` 中定义服务接口，方法以 `on` 或 `emit` 开头，具体说明见`src/main/ipc-service-main.ts`。
+   - 约定在 `src/main/ipc-service-main.ts` 中定义服务接口，方法以 `on` 或 `emit` 开头，具体说明见`src/main/ipc-service-main.ts`。
    - 插件会自动提取每个方法的返回类型和参数类型。
 2. **公共类型提取**：
    - 约定在 `src/share/**/type.d.ts` 中定义任何需要在main和renderer进程共享的ts类型。
    - 这些类型会被在生成的代码中引用，来使得类型检查和提示生效。
 3. **主进程接口生成**：
-   - 在 `src/main/generated/ipc-handlers.ts` 中生成 `ipcMain.handle` 的接口注册代码。
+   - 在 `src/main/generated/ipc-handlers-main.ts` 中生成 `ipcMain.handle` 的接口注册代码。
 4. **渲染进程接口生成**：
-   - 在 `src/preload/generated/ipc-api.ts` 中生成 `ipcRenderer.invoke` 的调用代码。
+   - 在 `src/preload/generated/ipc-api-main.ts` 中生成 `ipcRenderer.invoke` 的调用代码。
    - 渲染进程可以通过 `ipcApi` 对象直接调用主进程方法，享受类型提示。
 
 #### 添加新接口的步骤
@@ -164,12 +164,13 @@ src/                  # 源码目录
   "name": "插件名称",                     // 插件名称
   "description": "插件描述",              // （可选）插件描述
   "version": "1.0.0",                    // 插件版本
+  "logo": "./logo.png",                    // （可选）插件图标，路径相对于插件目录
   "window": {                              // （可选）窗口配置
     "width": 800,                          // （可选）窗口宽度
     "height": 600,                         // （可选）窗口高度
     "disableTransition": false,            // （可选）禁用窗口动画
     "frame": true,                         // （可选）是否显示窗口边框，默认true
-    "transparent": false,                  // （可选）是否透明窗口，默认false
+    "transparent": false,                  // （可选）是否透明窗口，默认false，设为true时需要同时设置`frame: false`才有效
     "resizable": true                      // （可选）是否允许调整窗口大小，默认true
   },
   "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入
@@ -181,6 +182,9 @@ src/                  # 源码目录
           "type": "regex",                // 对于正则匹配命令，固定为'regex'
           "label": "命令显示名",           // 匹配成功后命令的显示名称
           "match": "\\d+"                // 正则匹配字符串（不含/和flag）
+        },{
+          "type": "any",                // 也可以定义匹配任意输入的命令
+          "label": "匹配任意输入的命令"    
         }
       ]
     }
