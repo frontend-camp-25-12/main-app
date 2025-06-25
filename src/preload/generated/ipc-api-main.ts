@@ -42,6 +42,14 @@ export class IpcApi {
   async toggleColorMode(): Promise<'light' | 'dark' | 'system'> {
     return electronAPI.ipcRenderer.invoke('toggle-color-mode');
   }
+
+  /**
+   * onWhatEverYouWant
+   * Channel: what-ever-you-want
+   */
+  onWhatEverYouWant(callback: (args: any[]) => void) {
+    electronAPI.ipcRenderer.on('what-ever-you-want', (_event, args) => callback(args));
+  }
 }
 
 export const ipcApi = new IpcApi();

@@ -60,7 +60,6 @@ src/                  # 源码目录
 
 ## 应用设置的方案
 - 持久化方案？
-- 主进程与渲染进程如何状态同步？
 
 ## ipc开发
 
@@ -150,7 +149,7 @@ window.platform.onPluginEnter((action) => {
 });
 ```
 
-平台API在主应用的实现原理跟README里面提到的`ipc-generator`相同，在`src\main\plugins\ipc-service-plugin.ts`，自动生成主进程的处理器和渲染进程的调用接口。
+平台API在主应用的实现原理跟README里面提到的`ipc-generator`相同，在`src\main\plugins\ipc-service-plugin.ts`内设计接口，自动生成主进程的处理器和渲染进程的调用接口。
 开发新的平台API时，注意避免包含外部的类型，因为生成的代码将外部类型复制进去后，无法resolve到对应类型。
 
 ### 平台API列表

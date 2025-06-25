@@ -23,9 +23,8 @@ function updateTrayMenu() {
     {
       label: i18next.t('toggleColorMode'),
       click: () => {
-        // 调用主题管理器（即你的 onToggleColorMode IPC）
-        // 这里需要通过主进程直接调用 serviceInstance.onToggleColorMode()
-        serviceInstance.onToggleColorMode();
+        const mode = nativeTheme.shouldUseDarkColors ? 'light' : 'dark';
+        nativeTheme.themeSource = mode;
       }
     },
     { type: 'separator' },

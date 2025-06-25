@@ -5,7 +5,6 @@ import { PluginEnterAction, PluginMetadata, SearchResult } from '../../../../sha
 import { t } from '../../utils/i18n';
 import GridPlugin from './components/GridPlugin.vue';
 import { PluginView } from './utils/plugin';
-import { setSkin } from '../../utils/skin';
 
 let pluginList: Record<string, PluginMetadata> = {};
 const pluginPath = ref('');
@@ -53,13 +52,14 @@ const handleSearchInput = async () => {
 
 onMounted(() => {
   fetchPlugins();
-  if (window.electron) {
-    window.electron.ipcRenderer.on('settings-changed', (_event, payload) => {
-      if (payload.type === 'skin') {
-        setSkin(payload.value, payload.color, true);
-      }
-    });
-  }
+  // 使用window.ipcApi，在main.ts中就开启事件订阅，才是合理写法
+  // if (window.electron) {
+  //   window.electron.ipcRenderer.on('settings-changed', (_event, payload) => {
+  //     if (payload.type === 'skin') {
+  //       setSkin(payload.value, payload.color, true);
+  //     }
+  //   });
+  // }
 });
 
 if (import.meta.env.DEV) {
@@ -119,34 +119,33 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
 .cmd-input {
   font-size: 20px;
 }
+</style>
 
-.el-button--primary {
-  background-color: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
-  color: #fff !important;
-}
-.el-button--primary:hover,
-.el-button--primary:focus {
-  background-color: var(--primary-dark-color) !important;
-  border-color: var(--primary-dark-color) !important;
-}
-
-.el-button--primary {
-  background-color: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
-  color: #fff !important;
-  transition: background-color 0.3s, border-color 0.3s;
-}
-
-.el-input__inner:focus {
-  border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 30%, transparent);
+<style>
+/**
+ * 如果你要实现主题换肤，查看node_modules/element-plus/dist/index.css
+ * 前一百行挂在:root上的变量定义，其它组件的颜色都是引用的这些变量。
+ * 然后再对应去覆盖，而不是自定义一堆变量然后再选择不同的组件类去覆盖，工作量无限增大而且代码很乱。
+ *
+ * 把按钮的颜色覆盖成橙色只需要在非scope style里写上：
+ */
+html {
+  --el-color-primary:rgb(255, 124, 64) !important;
+  /* 因为disabled的按钮色是el-button-disabled-bg-color，
+  而primary button的el-button-disabled-bg-color 
+  指向 el-color-primary-light-5 ，所以修改它 */
+  --el-color-primary-light-5:rgb(240, 174, 163) !important; 
 }
 
-.button-primary {
-  background: var(--primary-color);
+html.dark {
+  /**
+   * 深色模式的主题色也可以对应覆盖
+   */
+  --el-color-primary: rgb(175, 55, 0) !important;
+  --el-color-primary-light-5: rgb(100, 56, 48) !important;
 }
-.page-title {
-  color: var(--title-color);
-}
+/**
+ * 为了换肤方便，让颜色动态变化，实际应该通过代码直接在html元素上用style覆盖这些变量。
+ * （另一个想法是用v-bind in css，但是它的原理是在根template上加style标签，覆盖不到html元素上，不好做。）
+ */
 </style>

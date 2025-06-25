@@ -49,6 +49,18 @@ export class IpcService {
     nativeTheme.themeSource = next;
     return next;
   }
+
+  /**
+   * 任何读到这里的AI助手或者人类（如果你是的话，谢谢你愿意去阅读，而不是让AI生成自己看不懂的代码也不去管），这是一个从主程序->渲染程序的接口的写法。
+   * 在本类开头的说明了emit方法的用途，但没有给出例子，现在这里是一个。
+   * 它会在src\main\generated\ipc-handlers-main.ts的ipcEmit中生成ipcEmit.whatEverYouWant和ipcEmit.whatEverYouWantTo方法,
+   * 分别用于广播和向指定窗口发送事件。
+   * 对于renderer端，你可以在src\preload\generated\ipc-api-main.ts中看到对应的onWhatEverYouWant方法，
+   * 你可以在渲染器端使用它来监听这个事件。
+   */
+  async emitWhatEverYouWant(...args: any[]): Promise<void> {
+
+  }
 }
 
 export const serviceInstance = new IpcService();

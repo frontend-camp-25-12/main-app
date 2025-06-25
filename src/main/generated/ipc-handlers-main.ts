@@ -33,5 +33,11 @@ app.on('ready', () => {
 });
     
 export namespace ipcEmit {
+  export function whatEverYouWant(args: any[]) {
+  windowManager.emit('what-ever-you-want', args);
+}
 
+  export function whatEverYouWantTo(id: PluginMetadata['id'], args: any[]) {
+    windowManager.emitTo(id, 'what-ever-you-want', args);
+  }
 }
