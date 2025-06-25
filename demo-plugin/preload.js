@@ -9,7 +9,7 @@ fs.readdir(currentDir, (err, files) => {
 
 window.platform.hello('world')
 window.platform.onPluginEnter((action) => {
-  window.alert('插件进入事件触发: ' + JSON.stringify(action));
+  window.alert(`插件进入事件触发: code:${action.code} payload:${action.payload}`);
 });
                       // 嵌套的配置路径是允许的，将会生成类似{ "hello": { "world": "!!!" } }
 window.platform.configSet('hello.world', '!!!!').then(async () => {
