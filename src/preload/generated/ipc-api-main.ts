@@ -44,6 +44,22 @@ export class IpcApi {
   }
 
   /**
+   * appConfigGet
+   * Channel: app-config-get
+   */
+  async appConfigGet(key: string, defalut: string): Promise<string> {
+    return electronAPI.ipcRenderer.invoke('app-config-get', key, defalut);
+  }
+
+  /**
+   * appConfigSet
+   * Channel: app-config-set
+   */
+  async appConfigSet(key: string, value: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('app-config-set', key, value);
+  }
+
+  /**
    * onWhatEverYouWant
    * Channel: what-ever-you-want
    */

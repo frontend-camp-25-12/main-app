@@ -30,6 +30,16 @@ app.on('ready', () => {
   ipcMain.handle('toggle-color-mode', async (_event, ) => {
     return await serviceInstance.onToggleColorMode();
   });
+
+  // onAppConfigGet(key: string, defalut: string) -> Promise<string>
+  ipcMain.handle('app-config-get', async (_event, key: string, defalut: string) => {
+    return await serviceInstance.onAppConfigGet(key, defalut);
+  });
+
+  // onAppConfigSet(key: string, value: string) -> Promise<void>
+  ipcMain.handle('app-config-set', async (_event, key: string, value: string) => {
+    return await serviceInstance.onAppConfigSet(key, value);
+  });
 });
     
 export namespace ipcEmit {

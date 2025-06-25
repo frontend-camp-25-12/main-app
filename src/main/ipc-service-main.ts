@@ -1,4 +1,5 @@
 import type { PluginEnterAction, PluginMetadata, SearchResult } from '../share/plugins/type';
+import { AppConfig } from './config/service';
 import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
 import { nativeTheme } from 'electron';
@@ -48,6 +49,16 @@ export class IpcService {
     else next = 'light';
     nativeTheme.themeSource = next;
     return next;
+  }
+
+  async onAppConfigGet(key: string, defalut: string): Promise<string> { 
+    console.warn('不建议直接在渲染进程操作配置项，而是应该通过设计专用的ipc接口和对应服务类来处理特定配置项的变更')
+    return AppConfig.get(key, defalut);
+  }
+
+  async onAppConfigSet(key: string, value: string): Promise<void> {
+    console.warn('不建议直接在渲染进程操作配置项，而是应该通过设计专用的ipc接口和对应服务类来处理特定配置项的变更')
+    AppConfig.set(key, value);
   }
 
   /**
