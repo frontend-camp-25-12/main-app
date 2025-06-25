@@ -15,6 +15,22 @@ export class PlatformApi {
   }
 
   /**
+    * configGet
+    * Channel: config-get
+    */
+  async configGet(key: string, defalut: string): Promise<string> {
+    return electronAPI.ipcRenderer.invoke('config-get', this.pluginId, key, defalut);
+  }
+
+  /**
+    * configSet
+    * Channel: config-set
+    */
+  async configSet(key: string, value: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('config-set', this.pluginId, key, value);
+  }
+
+  /**
    * onPluginEnter
    * Channel: plugin-enter
    */

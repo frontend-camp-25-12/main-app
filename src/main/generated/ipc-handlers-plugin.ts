@@ -7,6 +7,16 @@ app.on('ready', () => {
   ipcMain.handle('hello', async (_event, id: string, content: string) => {
     return await serviceInstance.onHello(id, content);
   });
+
+  // onConfigGet(id: string, key: string, defalut: string) -> Promise<string>
+  ipcMain.handle('config-get', async (_event, id: string, key: string, defalut: string) => {
+    return await serviceInstance.onConfigGet(id, key, defalut);
+  });
+
+  // onConfigSet(id: string, key: string, value: string) -> Promise<void>
+  ipcMain.handle('config-set', async (_event, id: string, key: string, value: string) => {
+    return await serviceInstance.onConfigSet(id, key, value);
+  });
 });
     
 export namespace ipcEmitPlugin {

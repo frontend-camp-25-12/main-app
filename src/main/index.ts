@@ -4,6 +4,7 @@ import { createTray, registerGlobalShortcut } from './tray' // 导入registerGlo
 import './plugins/index'
 import './generated/ipc-handlers-main'
 import './generated/ipc-handlers-plugin'
+import './config/service'
 
 
 // 当前窗口的加载在src\main\plugins\loader.ts中处理

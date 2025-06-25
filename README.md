@@ -59,7 +59,24 @@ src/                  # 源码目录
 使用 `pluginManager.open(id)` 在主进程中加载并显示对应窗口，实现不同页面间的切换。
 
 ## 应用设置的方案
-- 持久化方案？
+- 持久化方案
+使用`electron-store@8.2.0`来存储应用设置，配置项存储在%APPDATA%/config目录下的配置文件中。
+对于主应用开发，可以按如下步骤添加新的配置项：
+1. 在 `src/main/config/schema.ts` 中定义新的应用内配置项
+```ts
+export interface ConfigSchema {
+  colorMode: "light" | "dark" | "system";
+  locale: "en" | "zh-CN";
+  newThing: "some" | "other"; // 新增配置项
+}
+```
+2. 其它地方直接使用：
+```ts
+import { AppConfig } from 'src/main/config/service.ts'
+const config = AppConfig.get('newThing'); // 获取配置项，自带类型提示
+```
+
+对于插件开发者，见下文的ipcApi部分，具体原理是每个插件拥有独立的配置文件，在config/plugins目录下，文件名为插件ID.json。
 
 ## ipc开发
 
@@ -97,7 +114,7 @@ src/                  # 源码目录
    ```
 
 2. **在服务类中定义方法**
-   打开 `src/main/ipc-service.ts`，在服务类中添加以 `on` 开头的方法。例如：
+   打开 `src/main/ipc-service.ts`，在服务类中添加以 `on` 开头的方法，或者`emit`开头的方法。用`on`方法为例：
    ```typescript
    export class IpcService {
      // ...现有方法...
@@ -160,7 +177,8 @@ window.platform.onPluginEnter((action) => {
 |---------------------|--------------------------------------|------------------------------------------------------------|
 | hello               | 打印一条来自插件的问候信息到主进程控制台         | content: string                                 |
 | onPluginEnter       | 注册插件进入事件的回调   | callback: (action: { code: string; payload: string }) => void |
-
+| configGet    | 获取指定配置项的值，如果不存在则返回默认值。         | key: 配置项名称<br>default: 默认值         |
+| configSet    | 设置指定配置项的值。注意：读写时的key可以是'foo.bar'这样多级的json路径                             | key: 配置项名称<br>value: 要设置的值       |
 
 
 

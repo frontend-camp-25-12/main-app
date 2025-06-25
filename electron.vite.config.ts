@@ -31,8 +31,8 @@ export default defineConfig({
           mainOutputPath: resolve('src/main/generated/ipc-handlers-plugin.ts'),
           preloadOutputPath: resolve('src/preload/generated/ipc-api-plugin.ts')
         }
-      })
-    ]
+      }),
+    ],
   },
   preload: {
     plugins: [externalizeDepsPlugin()],

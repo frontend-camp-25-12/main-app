@@ -5,8 +5,9 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.vue",
     "src/preload/*.d.ts",
-    "src/share/**/*"
-, "src/share/ipcChannel.ts"  ],
+    "src/share/**/*",
+    "src/share/ipcChannel.ts"
+  ],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
