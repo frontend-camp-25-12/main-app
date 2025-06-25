@@ -5,6 +5,7 @@ import { PluginEnterAction, PluginMetadata, SearchResult } from '../../../../sha
 import { t } from '../../utils/i18n';
 import GridPlugin from './components/GridPlugin.vue';
 import { PluginView } from './utils/plugin';
+import { setSkin } from '../../utils/skin';
 
 let pluginList: Record<string, PluginMetadata> = {};
 const pluginPath = ref('');
@@ -52,6 +53,13 @@ const handleSearchInput = async () => {
 
 onMounted(() => {
   fetchPlugins();
+  if (window.electron) {
+    window.electron.ipcRenderer.on('settings-changed', (_event, payload) => {
+      if (payload.type === 'skin') {
+        setSkin(payload.value, payload.color, true);
+      }
+    });
+  }
 });
 
 if (import.meta.env.DEV) {
@@ -110,5 +118,35 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
 
 .cmd-input {
   font-size: 20px;
+}
+
+.el-button--primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #fff !important;
+}
+.el-button--primary:hover,
+.el-button--primary:focus {
+  background-color: var(--primary-dark-color) !important;
+  border-color: var(--primary-dark-color) !important;
+}
+
+.el-button--primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #fff !important;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.el-input__inner:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+.button-primary {
+  background: var(--primary-color);
+}
+.page-title {
+  color: var(--title-color);
 }
 </style>

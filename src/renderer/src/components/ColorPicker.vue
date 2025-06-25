@@ -51,7 +51,7 @@ watch(() => props.modelValue, (newVal) => {
 const selectCustomColor = () => {
   if (customColor.value) {
     selectedSkin.value = 'custom';
-    emit('update:modelValue', 'custom');
+    emit('update:modelValue', customColor.value); // 传递颜色值
     setTimeout(() => {
       emit('custom-color', customColor.value);
     }, 10);

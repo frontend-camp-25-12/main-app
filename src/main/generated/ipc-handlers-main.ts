@@ -25,6 +25,11 @@ app.on('ready', () => {
   ipcMain.handle('plugin-search', async (_event, query: string) => {
     return await serviceInstance.onPluginSearch(query);
   });
+
+  // onToggleColorMode() -> Promise<'light' | 'dark' | 'system'>
+  ipcMain.handle('toggle-color-mode', async (_event, ) => {
+    return await serviceInstance.onToggleColorMode();
+  });
 });
     
 export namespace ipcEmit {

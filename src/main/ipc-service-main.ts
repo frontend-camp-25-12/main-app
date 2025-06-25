@@ -1,6 +1,7 @@
 import type { PluginEnterAction, PluginMetadata, SearchResult } from '../share/plugins/type';
 import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
+import { nativeTheme } from 'electron';
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
@@ -33,6 +34,20 @@ export class IpcService {
    */
   async onPluginSearch(query: string): Promise<SearchResult[]> {
     return pluginSearch.search(query);
+  }
+
+  /**
+   * 切换深浅色模式
+   */
+  async onToggleColorMode(): Promise<'light' | 'dark' | 'system'> {
+    // 切换 themeSource
+    const current = nativeTheme.themeSource;
+    let next: 'light' | 'dark' | 'system';
+    if (current === 'light') next = 'dark';
+    else if (current === 'dark') next = 'system';
+    else next = 'light';
+    nativeTheme.themeSource = next;
+    return next;
   }
 }
 

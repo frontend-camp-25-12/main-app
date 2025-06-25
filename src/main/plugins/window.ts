@@ -1,5 +1,5 @@
 import { is } from "@electron-toolkit/utils"
-import { BrowserWindow } from "electron"
+import { BrowserWindow, ipcMain } from "electron"
 import path, { join } from "path"
 import icon from '../../../resources/icon.png?asset'
 import { PluginMetadata } from "../../share/plugins/type"
@@ -207,3 +207,7 @@ class WindowManager {
 }
 
 export const windowManager = new WindowManager();
+
+ipcMain.on('settings-changed', (_event, payload) => {
+  windowManager.emit('settings-changed', payload);
+});

@@ -34,6 +34,14 @@ export class IpcApi {
   async pluginSearch(query: string): Promise<SearchResult[]> {
     return electronAPI.ipcRenderer.invoke('plugin-search', query);
   }
+
+  /**
+   * toggleColorMode
+   * Channel: toggle-color-mode
+   */
+  async toggleColorMode(): Promise<'light' | 'dark' | 'system'> {
+    return electronAPI.ipcRenderer.invoke('toggle-color-mode');
+  }
 }
 
 export const ipcApi = new IpcApi();

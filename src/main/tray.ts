@@ -23,9 +23,9 @@ function updateTrayMenu() {
     {
       label: i18next.t('toggleColorMode'),
       click: () => {
-        // todo: 实际应该调用某个主题管理器，由管理器更改electron，同时更改配置项
-        const mode = nativeTheme.shouldUseDarkColors ? 'light' : 'dark';
-        nativeTheme.themeSource = mode;
+        // 调用主题管理器（即你的 onToggleColorMode IPC）
+        // 这里需要通过主进程直接调用 serviceInstance.onToggleColorMode()
+        serviceInstance.onToggleColorMode();
       }
     },
     { type: 'separator' },

@@ -54,20 +54,23 @@ export function applySkin(skin: string, color?: string) {
   
   // 更新CSS变量
   updateCssVariables(skinColor);
+  
+  if (skin === 'custom' && color) {
+    document.documentElement.style.setProperty('--primary-color', color);
+    // 你可以根据 color 算法生成 dark 版本
+    document.documentElement.style.setProperty('--primary-dark-color', color);
+  } else if (skin === 'blue') {
+    document.documentElement.style.setProperty('--primary-color', '#409EFF');
+    document.documentElement.style.setProperty('--accent-color', '#409EFF');
+  }
 }
 
 // 更新CSS变量
 function updateCssVariables(color: string) {
   const root = document.documentElement;
-
-  // 计算衍生颜色
-  const lighterColor = lightenColor(color, 0.2);
-  const darkerColor = darkenColor(color, 0.1);
-
-  // 设置CSS变量
   root.style.setProperty('--primary-color', color);
-  root.style.setProperty('--primary-light-color', lighterColor);
-  root.style.setProperty('--primary-dark-color', darkerColor);
+  root.style.setProperty('--accent-color', color); // 你可以用不同算法生成不同色
+  root.style.setProperty('--title-color', color);  // 你可以用不同算法生成不同色
 }
 
 // 颜色工具函数
@@ -106,7 +109,7 @@ export function getCustomColor(): string {
 }
 
 // 设置皮肤
-export function setSkin(skin: string, color?: string, fromIpc = false) {
+export function setSkin(skin: string, color?: string, fromIpc: boolean = false) {
   applySkin(skin, color);
   // 强制刷新变量
   if (skin === 'custom' && color) {

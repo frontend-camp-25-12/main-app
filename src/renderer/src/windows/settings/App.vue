@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { ElButton, ElDivider, ElRow, ElCol, ElSelect, ElOption } from 'element-plus';
 import ColorPicker from '../../components/ColorPicker.vue';
 import { 
@@ -25,7 +25,9 @@ const currentLanguage = ref(getLocale());
 const currentTheme = ref(getTheme());
 const currentSkin = ref(getSkin());
 const customColor = ref(getCustomColor());
-const tab = ref('appearance');
+const tab = ref('theme'); // 默认选中“主题”
+const pendingSkin = ref(currentSkin.value);
+const pendingCustomColor = ref(customColor.value);
 
 const handleLanguageChange = (lang: string) => {
   setLocale(lang);
@@ -37,12 +39,14 @@ const handleThemeChange = (theme: string) => {
 };
 
 const handleSkinChange = (skin: string) => {
-  if (skin === 'custom') {
-    setSkin(skin, customColor.value);
+  // 判断是否为自定义色（#开头的HEX）
+  if (skin.startsWith('#')) {
+    customColor.value = skin;
+    setSkin('custom', skin);
   } else {
     setSkin(skin);
   }
-  currentSkin.value = getSkin();
+  currentSkin.value = skin;
 };
 
 const handleCustomColor = (color: string) => {
@@ -58,26 +62,53 @@ onMounted(() => {
   customColor.value = getCustomColor();
 });
 
+watch(tab, (val) => {
+  if (val === 'skin') {
+    pendingSkin.value = currentSkin.value;
+    pendingCustomColor.value = customColor.value;
+  }
+});
+
 // 占位方法，实际实现请根据你的业务逻辑补充
 const initApp = () => window.location.reload();
 const showAbout = () => alert(t('about'));
+
+// 例如在 settings/App.vue 的 methods 里
+async function handleToggleColorMode() {
+  const mode = await window.ipcApi.toggleColorMode();
+  // 这里不用再手动加 dark class，window.matchMedia 会自动通知
+}
+
+const applySkin = () => {
+  if (pendingSkin.value.startsWith('#')) {
+    setSkin('custom', pendingSkin.value);
+    customColor.value = pendingSkin.value;
+  } else {
+    setSkin(pendingSkin.value);
+  }
+  currentSkin.value = pendingSkin.value;
+};
 </script>
 
 <template>
   <div class="settings-layout">
     <aside class="settings-sidebar">
       <ul>
-        <li :class="{active: tab==='appearance'}" @click="tab='appearance'">{{ t('theme') }}</li>
-        <li :class="{active: tab==='language'}" @click="tab='language'">{{ t('language') }}</li>
-        <li :class="{active: tab==='actions'}" @click="tab='actions'">{{ t('actions') }}</li>
+        <li :class="{active: tab==='theme'}" @click="tab='theme'">
+          <button class="sidebar-btn" :class="{selected: tab==='theme'}">{{ t('theme') }}</button>
+        </li>
+        <li :class="{active: tab==='language'}" @click="tab='language'">
+          <button class="sidebar-btn" :class="{selected: tab==='language'}">{{ t('language') }}</button>
+        </li>
+        <li :class="{active: tab==='skin'}" @click="tab='skin'">
+          <button class="sidebar-btn" :class="{selected: tab==='skin'}">{{ t('skin') }}</button>
+        </li>
       </ul>
     </aside>
     <main class="settings-main">
-      <section v-if="tab==='appearance'">
+      <section v-if="tab==='theme'">
         <h2>{{ t('theme') }}</h2>
-        
-        <ElDivider content-position="left">{{ t('theme') }}</ElDivider>
-        
+        <ElDivider />
         <ElRow :gutter="20" class="setting-row">
           <ElCol :span="6" class="label">{{ t('theme') }}</ElCol>
           <ElCol :span="18">
@@ -91,24 +122,10 @@ const showAbout = () => alert(t('about'));
             </ElSelect>
           </ElCol>
         </ElRow>
-        
-        <ElRow :gutter="20" class="setting-row">
-          <ElCol :span="6" class="label">{{ t('skin') }}</ElCol>
-          <ElCol :span="18">
-            <ColorPicker 
-              v-model="currentSkin" 
-              :custom-color="customColor"
-              @change="handleSkinChange"
-              @custom-color="handleCustomColor"
-            />
-          </ElCol>
-        </ElRow>
       </section>
       <section v-if="tab==='language'">
         <h2>{{ t('language') }}</h2>
-        
-        <ElDivider content-position="left">{{ t('language') }}</ElDivider>
-        
+        <ElDivider />
         <ElRow :gutter="20" class="setting-row">
           <ElCol :span="6" class="label">{{ t('language') }}</ElCol>
           <ElCol :span="18">
@@ -123,14 +140,23 @@ const showAbout = () => alert(t('about'));
           </ElCol>
         </ElRow>
       </section>
-      <section v-if="tab==='actions'">
-        <h2>{{ t('actions') }}</h2>
-        
-        <ElDivider content-position="left">{{ t('actions') }}</ElDivider>
-        
-        <ElRow class="actions-row">
-          <ElButton type="primary" @click="initApp">{{ t('refresh') }}</ElButton>
-          <ElButton @click="showAbout">{{ t('about') }}</ElButton>
+      <section v-if="tab==='skin'">
+        <h2>{{ t('skin') }}</h2>
+        <ElDivider />
+        <ElRow :gutter="20" class="setting-row">
+          <ElCol :span="6" class="label">{{ t('skin') }}</ElCol>
+          <ElCol :span="18">
+            <ColorPicker 
+              v-model="pendingSkin" 
+              :custom-color="pendingCustomColor.value"
+              @custom-color="val => pendingCustomColor.value = val"
+            />
+            <ElButton 
+              type="primary" 
+              style="margin-top: 18px"
+              @click="applySkin"
+            >{{ t('confirm') || '确认' }}</ElButton>
+          </ElCol>
         </ElRow>
       </section>
     </main>
@@ -161,28 +187,46 @@ const showAbout = () => alert(t('about'));
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
 }
 .settings-sidebar li {
-  padding: 18px 0;
   width: 100%;
-  text-align: center;
-  font-size: 1.1rem;
+  display: flex;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.sidebar-btn {
+  width: 90%;
+  padding: 12px 0;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--settings-card-bg);
   color: var(--text-color);
+  font-size: 1.08rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  border-left: 4px solid transparent;
+  transition: 
+    background 0.18s, 
+    color 0.18s, 
+    border-color 0.18s, 
+    box-shadow 0.18s;
+  outline: none;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px 0 rgba(60, 60, 100, 0.04);
 }
-.settings-sidebar li.active {
-  color: #fff;
-  background: var(--primary-color);
-  border-left: 4px solid var(--primary-color);
-  font-weight: bold;
-  transition: background 0.2s, color 0.2s;
-}
-.settings-sidebar li:hover {
+.sidebar-btn.selected,
+.sidebar-btn:hover,
+.settings-sidebar li.active .sidebar-btn {
   background: var(--primary-color);
   color: #fff;
-  transition: background 0.2s, color 0.2s;
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 16px 0 rgba(64, 158, 255, 0.10);
 }
 .settings-main {
   flex: 1;
@@ -191,7 +235,7 @@ const showAbout = () => alert(t('about'));
   min-height: 400px;
 }
 .settings-main h2 {
-  color: var(--primary-color);
+  color: var(--title-color);
   margin-bottom: 24px;
   font-size: 1.4rem;
   font-weight: 700;

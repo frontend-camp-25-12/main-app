@@ -8,7 +8,9 @@
   --shadow-color: rgba(0, 0, 0, 0.1);
 
   /* 皮肤变量 */
-  --primary-color: #409EFF; /* 默认蓝色 */
+  --primary-color: #409EFF;      /* 皮肤主色（按钮高亮等） */
+  --accent-color: #409EFF;       /* 例如边框色 */
+  --title-color: #303133;        /* h2标题色 */
   --primary-light-color: #79bbff;
   --primary-dark-color: #337ecc;
 
