@@ -1,5 +1,6 @@
 import { PluginDefinition } from './type.zod.d.ts';
 
+export type * from './api.type.d.ts';
 /**
  * 插件的元数据，包含插件定义和运行时信息
  */
@@ -20,9 +21,4 @@ export interface SearchResult {
     label: string;
   }[];
   score: number; // 匹配分数
-}
-
-export interface PluginEnterAction {
-  code: string; // 功能代码
-  payload: string // 用户输入
 }

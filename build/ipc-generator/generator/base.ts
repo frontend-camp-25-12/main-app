@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { firstToLowerCase } from '../utils';
 import { IpcGeneratorParams, IpcType, type IpcMethod } from '../types';
 import { extractTsdoc } from '../tsdoc-extract';
+import { extractExportedTypes } from '../types-importers';
 
 export abstract class IpcGenerator {
   abstract get mainIpcCode(): string
@@ -47,7 +48,7 @@ export abstract class IpcGenerator {
             return
           }
           // 提取TSDoc
-          const tsdoc = extractTsdoc(member, sourceFile);
+          const tsdoc = extractTsdoc(member);
 
           // 解析方法参数
           const parameters: { name: string; type: string }[] = [];
@@ -119,6 +120,16 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
   async ${methodName}(${params}): ${method.returnType} {
     return electronAPI.ipcRenderer.invoke('${method.channelName}'${invokeParams});
   }`;
+  }
+
+  private imports?: string = undefined
+  get commonImports() {
+    if (this.imports === undefined) {
+      this.imports = extractExportedTypes(this.params.preloadOutputPath, this.params.rootPath);
+    } else {
+      return this.imports;
+    }
+    return this.imports;
   }
 
   // 为了提供给PluginIpcGenerator重写

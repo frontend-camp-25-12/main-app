@@ -2,39 +2,35 @@ import { log } from "./log"
 import path from "path";
 import ts from "typescript";
 import * as fs from 'fs';
+import { getRelativePathTsImport } from "./utils";
 
 /**
  * 扫描指定路径下的type.d.ts文件，提取所有导出的类型
  */
-export function extractExportedTypes(basePath: string): { imports: string, relativePaths: string[] } {
+export function extractExportedTypes(basePath: string, rootPath: string, include?: string[]): string {
   try {
-    const shareDir = path.resolve(basePath, '../../../share');
+    const shareDir = path.resolve(basePath, path.join(rootPath, './src/share'));
     let typeFiles = scanTypeFiles(shareDir);
     const allExports: { path: string, exports: string[] }[] = [];
     for (const filePath of typeFiles) {
+      if (include && !include.some(pattern => filePath.includes(pattern))) {
+        continue;
+      }
       const exports = extractFromFile(filePath);
       if (exports.length > 0) {
-        // 计算相对路径
-        const relativePath = path.relative(path.dirname(basePath), filePath)
-          .replace(/\\/g, '/') // 统一使用正斜杠
-          .replace(/\.d\.ts$/, ''); // 移除.d.ts扩展名
-
+        const relativePath = getRelativePathTsImport(basePath, filePath)
         allExports.push({ path: relativePath, exports });
       }
     }
 
     log(`向preload注入import type: ${allExports.length} 条`);
     // 生成import语句
-    const imports = allExports.map(({ path, exports }) => {
+    return allExports.map(({ path, exports }) => {
       return `import type { ${exports.join(', ')} } from '${path}';`;
     }).join('\n');
-
-    const relativePaths = allExports.map(({ path }) => path);
-
-    return { imports, relativePaths };
   } catch (error) {
     log(`扫描类型文件失败: ${error}`);
-    return { imports: '', relativePaths: [] };
+    return '';
   }
 }
 
@@ -56,7 +52,7 @@ export function scanTypeFiles(dir: string): string[] {
       const stat = fs.statSync(itemPath);
       if (stat.isDirectory()) {
         scanRecursive(itemPath);
-      } else if (item === 'type.d.ts') {
+      } else if (item.endsWith('type.d.ts')) {
         typeFiles.push(itemPath);
       }
     }

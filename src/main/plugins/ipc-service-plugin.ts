@@ -1,3 +1,4 @@
+import { PluginEnterAction } from "../../share/plugins/api.type";
 import { configManager } from "../config/service";
 
 /**
@@ -5,6 +6,8 @@ import { configManager } from "../config/service";
  * 添加方法时，请提供准确的tsdoc，在生成的接口中将会一并包含tsdoc，以便开发时参考。
  * 对于on方法，第一个参数必须为id: string，表示触发的插件id
  * 但是注意，id参数会在生成的接口代码中自动附带，不需要使用者操心，所以不需要再tsdoc中说明。
+ * 
+ * 对于平台API所需要的类型，请在share/plugins/api.type.d.ts中定义，它会被一同打包到类型定义仓库中，以便插件开发者查看。
  */
 export class IpcServicePlugin {
   /**
@@ -40,10 +43,7 @@ export class IpcServicePlugin {
    * 插件进入事件
    * @param action 包含code（在你的plugin.json中定义）和 payload（用户输入）
    */
-  async emitPluginEnter(action: {
-    code: string;
-    payload: string;
-  }) { }
+  async emitPluginEnter(action: PluginEnterAction) { }
 }
 
 export const serviceInstance = new IpcServicePlugin();

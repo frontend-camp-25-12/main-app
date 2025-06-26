@@ -1,6 +1,6 @@
 import ts from "typescript";
 
-export function extractTsdoc(member: ts.ClassElement, sourceFile: ts.SourceFile): string {
+export function extractTsdoc(member: ts.ClassElement): string {
   const jsDocComments = ts.getJSDocCommentsAndTags(member);
   if (jsDocComments.length > 0) {
     const jsDocComment = jsDocComments[0];
@@ -19,7 +19,6 @@ export function extractTsdoc(member: ts.ClassElement, sourceFile: ts.SourceFile)
       if (jsDocComment.tags) {
         jsDocComment.tags.forEach(tag => {
           if (ts.isJSDocParameterTag(tag)) {
-            console.log(JSON.stringify(tag.getText()))
             docParts.push(tag.getText().trim().replace(/\r\n.*/, ''));
           }
         });

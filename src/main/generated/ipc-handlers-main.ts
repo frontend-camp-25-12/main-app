@@ -2,8 +2,8 @@
 import { app, ipcMain } from 'electron';
 import { serviceInstance } from '../ipc-service-main';
 import { windowManager } from '../plugins/window';
-
-import type { PluginMetadata, MatchRange, SearchResult, PluginEnterAction } from '../../share/plugins/type';
+import type { PluginEnterAction } from '../../share/plugins/api.type.d';
+import type { PluginMetadata, MatchRange, SearchResult } from '../../share/plugins/type.d';
     
 app.on('ready', () => {
 

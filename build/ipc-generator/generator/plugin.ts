@@ -1,4 +1,5 @@
 import { IpcMethod } from "../types";
+import { extractExportedTypes } from "../types-importers";
 import { getRelativePathTsImport } from "../utils";
 import { CommonIpcGenerator } from "./base";
 
@@ -9,7 +10,7 @@ export class PluginIpcGenerator extends CommonIpcGenerator {
     return `import { app, ipcMain } from 'electron';
 import { serviceInstance } from '${implPath}';
 import { windowManager } from '../plugins/window';
-import { PluginMetadata } from '../../share/plugins/type';
+${this.commonImports}
 app.on('ready', () => {
 ${handlers}
 });
@@ -47,10 +48,8 @@ ${emits}
   }
 
   get preloadIpcCode(): string {
-    const imports = [
-      `import { electronAPI } from '@electron-toolkit/preload';`,
-    ].filter(Boolean).join('\n');
-    return `${imports}
+    return `import { electronAPI } from '@electron-toolkit/preload';
+${extractExportedTypes(this.params.preloadOutputPath, this.params.rootPath, ['api.type.d.ts'])}
 
 // 自动生成的IPC接口，请勿手动修改
 export class PlatformApi {

@@ -48,21 +48,21 @@ export function ipcGeneratorPlugin(options: IpcGeneratorOptions): Plugin {
     },
     buildStart() {
       for (const g of generators) {
-        for (const file of g.hmrWatchFiles) {
-          this.addWatchFile(file);
-        }
+        // for (const file of g.hmrWatchFiles) {
+        //   this.addWatchFile(file);
+        // }
         generateIpcCode(g);
       }
     },
     handleHotUpdate({ file }) {
-      for (const g of generators) {
-        for (const watchFile of g.hmrWatchFiles) {
-          if (file === watchFile) {
-            generateIpcCode(g);
-            break;
-          }
-        }
-      }
+      // for (const g of generators) {
+      //   for (const watchFile of g.hmrWatchFiles) {
+      //     if (file === watchFile) {
+      //       generateIpcCode(g);
+      //       break;
+      //     }
+      //   }
+      // }
     }
   };
 }

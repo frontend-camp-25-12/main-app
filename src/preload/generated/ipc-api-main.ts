@@ -1,5 +1,6 @@
+import type { PluginEnterAction } from '../../share/plugins/api.type.d';
+import type { PluginMetadata, MatchRange, SearchResult } from '../../share/plugins/type.d';
 import { electronAPI } from '@electron-toolkit/preload';
-import type { PluginMetadata, MatchRange, SearchResult, PluginEnterAction } from '../../share/plugins/type';
 
 // 自动生成的IPC接口，请勿手动修改
 export class IpcApi {
