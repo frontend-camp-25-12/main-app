@@ -2,11 +2,13 @@ import { configManager } from "../config/service";
 
 /**
  * 插件服务类（插件），用于向插件提供平台api
+ * 添加方法时，请提供准确的tsdoc，在生成的接口中将会一并包含tsdoc，以便开发时参考。
+ * 对于on方法，第一个参数必须为id: string，表示触发的插件id
+ * 但是注意，id参数会在生成的接口代码中自动附带，不需要使用者操心，所以不需要再tsdoc中说明。
  */
 export class IpcServicePlugin {
   /**
    * 简单的hello方法，用于测试
-   * @param id 插件id
    * @param content 内容
    * @returns 无返回值
    */
@@ -16,7 +18,6 @@ export class IpcServicePlugin {
 
   /**
    * 获取插件配置项
-   * @param id 插件id
    * @param key 配置项key
    * @param defalut 默认值
    * @returns 配置项的值
@@ -27,7 +28,6 @@ export class IpcServicePlugin {
 
   /**
    * 设置插件配置项
-   * @param id 插件id
    * @param key 配置项key
    * @param value 配置项值
    * @returns 无返回值
