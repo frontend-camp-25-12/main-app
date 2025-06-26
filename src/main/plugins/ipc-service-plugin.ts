@@ -38,8 +38,7 @@ export class IpcServicePlugin {
 
   /**
    * 插件进入事件
-   * @param action 包含code（在你的plugin.json中定义）和payload（用户输入）
-   * @returns 无返回值
+   * @param action 包含code（在你的plugin.json中定义）和 payload（用户输入）
    */
   async emitPluginEnter(action: {
     code: string;

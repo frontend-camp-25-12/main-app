@@ -25,7 +25,7 @@ app.on('ready', () => {
 export namespace ipcEmitPlugin {
   /**
   * 插件进入事件
-    * @param action 包含code（在你的plugin.json中定义）和payload（用户输入）
+    * @param action 包含code（在你的plugin.json中定义）和 payload（用户输入）
   */
   export function pluginEnter(action: {
     code: string;
@@ -36,7 +36,7 @@ export namespace ipcEmitPlugin {
 
   /**
   * 插件进入事件
-    * @param action 包含code（在你的plugin.json中定义）和payload（用户输入）
+    * @param action 包含code（在你的plugin.json中定义）和 payload（用户输入）
   */
   export function pluginEnterTo(id: PluginMetadata['id'], action: {
     code: string;

@@ -37,7 +37,7 @@ export class PlatformApi {
 
   /**
    * 插件进入事件
-    * @param action 包含code（在你的plugin.json中定义）和payload（用户输入）
+    * @param action 包含code（在你的plugin.json中定义）和 payload（用户输入）
    */
   onPluginEnter(callback: (action: {
     code: string;
