@@ -146,6 +146,9 @@ window.ipcApi.appConfigSet('key', 'value')
    }
    ```
 
+4. **运行构建**
+   运行 `npm run start` 或 `npm run dev`，触发构建以生成新的IPC接口代码。
+
 通过以上步骤，即可完成一个新ipc接口的定义和使用。
 
 

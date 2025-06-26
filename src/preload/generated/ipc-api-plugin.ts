@@ -8,7 +8,6 @@ export class PlatformApi {
   }
   /**
     * 简单的hello方法，用于测试
-    * @param id 插件id
     * @param content 内容
     */
   async hello(content: string): Promise<void> {
@@ -17,7 +16,6 @@ export class PlatformApi {
 
   /**
     * 获取插件配置项
-    * @param id 插件id
     * @param key 配置项key
     * @param defalut 默认值
     */
@@ -27,7 +25,6 @@ export class PlatformApi {
 
   /**
     * 设置插件配置项
-    * @param id 插件id
     * @param key 配置项key
     * @param value 配置项值
     */
