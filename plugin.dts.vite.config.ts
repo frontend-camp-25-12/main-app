@@ -32,7 +32,7 @@ export default defineConfig({
          * 在生成的ipc-api-plugin.ts文件里面添加对于window.platform的声明
          */
         for (const filePath of emittedFiles.keys()) {
-          if (!filePath.endsWith('ipc-api-plugin.ts')) {
+          if (!filePath.endsWith('ipc-api-plugin.d.ts')) {
             continue
           }
           const content = fs.readFileSync(filePath, 'utf-8');
