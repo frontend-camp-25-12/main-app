@@ -7,32 +7,37 @@ export class PlatformApi {
     this.pluginId = pluginId;
   }
   /**
-    * hello
-    * Channel: hello
+    * 简单的hello方法，用于测试
+    * @param id 插件id
+    * @param content 内容
     */
   async hello(content: string): Promise<void> {
     return electronAPI.ipcRenderer.invoke('hello', this.pluginId, content);
   }
 
   /**
-    * configGet
-    * Channel: config-get
+    * 获取插件配置项
+    * @param id 插件id
+    * @param key 配置项key
+    * @param defalut 默认值
     */
   async configGet(key: string, defalut: string): Promise<string> {
     return electronAPI.ipcRenderer.invoke('config-get', this.pluginId, key, defalut);
   }
 
   /**
-    * configSet
-    * Channel: config-set
+    * 设置插件配置项
+    * @param id 插件id
+    * @param key 配置项key
+    * @param value 配置项值
     */
   async configSet(key: string, value: string): Promise<void> {
     return electronAPI.ipcRenderer.invoke('config-set', this.pluginId, key, value);
   }
 
   /**
-   * onPluginEnter
-   * Channel: plugin-enter
+   * 插件进入事件
+    * @param action 包含code（在你的plugin.json中定义）和payload（用户输入）
    */
   onPluginEnter(callback: (action: {
     code: string;

@@ -2,6 +2,7 @@ import * as ts from 'typescript';
 import * as fs from 'fs';
 import { firstToLowerCase } from '../utils';
 import { IpcGeneratorParams, IpcType, type IpcMethod } from '../types';
+import { extractTsdoc } from '../tsdoc-extract';
 
 export abstract class IpcGenerator {
   abstract get mainIpcCode(): string
@@ -45,10 +46,11 @@ export abstract class IpcGenerator {
           if (!methodName.startsWith('on') && !methodName.startsWith('emit')) {
             return
           }
-
-          const parameters: { name: string; type: string }[] = [];
+          // 提取TSDoc
+          const tsdoc = extractTsdoc(member, sourceFile);
 
           // 解析方法参数
+          const parameters: { name: string; type: string }[] = [];
           member.parameters.forEach(param => {
             if (ts.isIdentifier(param.name)) {
               const paramName = param.name.text;
@@ -88,7 +90,8 @@ export abstract class IpcGenerator {
               name: generatedMethodName,
               parameters,
               returnType,
-              channelName
+              channelName,
+              tsdoc
             });
           }
         }
@@ -111,8 +114,7 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
   // 为了提供给PluginIpcGenerator重写
   generatePreloadInvoke(method: IpcMethod, methodName: string, params: string, invokeParams: string): string {
     return `  /**
-   * ${methodName}
-   * Channel: ${method.channelName}
+   * ${method.tsdoc}
    */
   async ${methodName}(${params}): ${method.returnType} {
     return electronAPI.ipcRenderer.invoke('${method.channelName}'${invokeParams});
@@ -140,13 +142,13 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
         const callbackParams = method.parameters.map(p => `${p.name}: ${p.type}`).join(', ');
         const callbackArgs = method.parameters.map(p => p.name).join(', ');
         return `  /**
-   * ${methodName}
-   * Channel: ${method.channelName}
+   * ${method.tsdoc}
    */
   ${methodName}(callback: (${callbackParams}) => void) {
     electronAPI.ipcRenderer.on('${method.channelName}', (_event${method.parameters.length ? ', ' + callbackArgs : ''}) => callback(${callbackArgs}));
   }`;
       }
+      return undefined;
     }).filter(Boolean).join('\n\n');
   }
 
@@ -159,15 +161,22 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
       const paramList = method.parameters.length > 0 ? `, ${params}` : '';
 
       if (method.type === 'on') {
-        handlers.push(`  // ${method.name}(${paramsWithTypes}) -> ${method.returnType}
+        handlers.push(`
+  // ${method.name}(${paramsWithTypes}) -> ${method.returnType}
   ipcMain.handle('${method.channelName}', async (_event, ${paramsWithTypes}) => {
     return await serviceInstance.${method.name}(${params});
   });`);
       } else if (method.type === 'emit') {
-        emits.push(`  export function ${method.name}(${paramsWithTypes}) {
-  windowManager.emit('${method.channelName}'${paramList});
-}`);
-        emits.push(`  export function ${method.name}To(id: PluginMetadata['id'], ${paramsWithTypes}) {
+        emits.push(`  /**
+  * ${method.tsdoc}
+  */
+  export function ${method.name}(${paramsWithTypes}) {
+    windowManager.emit('${method.channelName}'${paramList});
+  }`);
+        emits.push(`  /**
+  * ${method.tsdoc}
+  */
+  export function ${method.name}To(id: PluginMetadata['id'], ${paramsWithTypes}) {
     windowManager.emitTo(id, '${method.channelName}'${paramList});
   }`);
       }

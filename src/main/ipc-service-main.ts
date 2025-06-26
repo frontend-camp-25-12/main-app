@@ -10,14 +10,17 @@ import { nativeTheme } from 'electron';
  */
 export class IpcService {
   /**
- * 添加插件
- */
+   * 添加插件
+   * @param dir 插件目录，允许绝对路径和相对路径
+   * @returns 插件元数据对象
+   */
   async onPluginDevInstall(dir: string): Promise<Record<string, PluginMetadata>> {
     return pluginManager.installDevPlugin(dir);
   }
 
   /**
    * 获取插件列表
+   * @returns 插件元数据对象
    */
   async onPluginList(): Promise<Record<string, PluginMetadata>> {
     return pluginManager.list();
@@ -25,6 +28,8 @@ export class IpcService {
 
   /**
    * 打开插件
+   * @param id 插件id
+   * @param action PluginEnterAction
    */
   async onPluginOpen(id: string, action: PluginEnterAction): Promise<void> {
     return pluginManager.open(id, action);
@@ -32,6 +37,8 @@ export class IpcService {
 
   /**
    * 搜索插件
+   * @param query 搜索关键词
+   * @returns 搜索结果数组
    */
   async onPluginSearch(query: string): Promise<SearchResult[]> {
     return pluginSearch.search(query);
@@ -39,6 +46,7 @@ export class IpcService {
 
   /**
    * 切换深浅色模式
+   * @returns 切换后的主题模式（'light' | 'dark' | 'system'）
    */
   async onToggleColorMode(): Promise<'light' | 'dark' | 'system'> {
     // 切换 themeSource
@@ -51,11 +59,22 @@ export class IpcService {
     return next;
   }
 
-  async onAppConfigGet(key: string, defalut: string): Promise<string> { 
+  /**
+   * 获取应用配置项
+   * @param key 配置项key
+   * @param defalut 默认值
+   * @returns 配置项的值
+   */
+  async onAppConfigGet(key: string, defalut: string): Promise<string> {
     console.warn('不建议直接在渲染进程操作配置项，而是应该通过设计专用的ipc接口和对应服务类来处理特定配置项的变更')
     return AppConfig.get(key, defalut);
   }
 
+  /**
+   * 设置应用配置项
+   * @param key 配置项key
+   * @param value 配置项值
+   */
   async onAppConfigSet(key: string, value: string): Promise<void> {
     console.warn('不建议直接在渲染进程操作配置项，而是应该通过设计专用的ipc接口和对应服务类来处理特定配置项的变更')
     AppConfig.set(key, value);
@@ -68,8 +87,10 @@ export class IpcService {
    * 分别用于广播和向指定窗口发送事件。
    * 对于renderer端，你可以在src\preload\generated\ipc-api-main.ts中看到对应的onWhatEverYouWant方法，
    * 你可以在渲染器端使用它来监听这个事件。
+   * @param args 任意参数数组
+   * @returns 无返回值
    */
-  async emitWhatEverYouWant(...args: any[]): Promise<void> {
+  async emitWhatEverYouWant(args: any[]): Promise<void> {
 
   }
 }

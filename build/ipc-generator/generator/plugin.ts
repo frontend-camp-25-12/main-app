@@ -36,11 +36,10 @@ ${emits}
       }
     })
   }
-
   override generatePreloadInvoke(method: IpcMethod, methodName: string, params: string, invokeParams: string): string {
+
     return `  /**
-    * ${methodName}
-    * Channel: ${method.channelName}
+    * ${method.tsdoc}
     */
   async ${methodName}(${params}): ${method.returnType} {
     return electronAPI.ipcRenderer.invoke('${method.channelName}', this.pluginId${invokeParams});
