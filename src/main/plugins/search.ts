@@ -8,6 +8,7 @@ enum MatchTypeScore {
   EXACT = 100, // 完全匹配
   KEYWORD = 80, // 部分匹配
   PINYIN = 60, // 拼音匹配
+  ANY = 10 // 任意输入匹配
 }
 
 export class PluginSearch {
@@ -59,9 +60,10 @@ export class PluginSearch {
           if (feature.searchable === false) {
             continue; // 不允许搜索，跳过
           }
-          const matchedPluginFeature: SearchResult['feature'][number] = {
+          const matchedPluginFeature: SearchResult['feature'][number]  = {
             code: feature.code,
-            label: feature.label
+            label: feature.label,
+            score: 0
           };
           let match = false
           for (const cmd of feature.cmds) {
@@ -69,7 +71,7 @@ export class PluginSearch {
               // 字符串命令匹配
               const cmdMatch = this.matchText(query, cmd);
               if (cmdMatch.score > 0) {
-                matchedPlugin.score += cmdMatch.score;
+                matchedPluginFeature.score += cmdMatch.score;
                 match = true;
               }
             } else if (cmd.type === 'regex') {
@@ -77,7 +79,7 @@ export class PluginSearch {
               try {
                 const regex = new RegExp(cmd.match, 'gi');
                 if (regex.test(query)) {
-                  matchedPlugin.score += MatchTypeScore.REGEX;
+                  matchedPluginFeature.score += MatchTypeScore.REGEX;
                   match = true;
                 }
               } catch (e) {
@@ -85,7 +87,7 @@ export class PluginSearch {
               }
             } else if (cmd.type === 'any') {
               // 任意输入匹配
-              matchedPlugin.score += MatchTypeScore.KEYWORD; // 任意输入匹配，按关键词匹配处理
+              matchedPluginFeature.score += MatchTypeScore.ANY;
               match = true;
             }
           }
@@ -94,6 +96,8 @@ export class PluginSearch {
             matchedPlugin.feature.push(matchedPluginFeature);
           }
         }
+        matchedPlugin.score += matchedPlugin.feature.reduce((sum, feat) => sum + feat.score, 0);
+        matchedPlugin.feature.sort((a, b) => b.score - a.score);
       }
 
       if (matchedPlugin.score > 0) {

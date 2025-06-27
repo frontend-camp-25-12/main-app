@@ -20,6 +20,7 @@ export interface SearchResult {
   feature: {
     code: string;
     label: string;
+    score: number;
   }[];
-  score: number; // 匹配分数
+  score: number;
 }
