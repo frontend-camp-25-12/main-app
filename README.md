@@ -204,6 +204,7 @@ import { PluginApi } from '@types/plugin-api-types';
 |---------------------|--------------------------------------|------------------------------------------------------------|
 | hello               | 打印一条来自插件的问候信息到主进程控制台         | content: string                                 |
 | onPluginEnter       | 注册插件进入事件的回调   | callback: (action: { code: string; payload: string }) => void |
+| getLastPluginEnterAction | 获取上一次插件进入事件的action，可用于处理没有及时监听导致错过action的情况。 |  |
 | configGet    | 获取指定配置项的值，如果不存在则返回默认值。         | key: 配置项名称<br>default: 默认值         |
 | configSet    | 设置指定配置项的值。注意：读写时的key可以是'foo.bar'这样多级的json路径                             | key: 配置项名称<br>value: 要设置的值       |
 | onOpenHotkeySettings | 打开快捷键设置窗口，并高亮显示指定功能的快捷键设置 | 希望用户设置快捷键的feature的code |

@@ -42,6 +42,13 @@ export class PlatformApi {
   }
 
   /**
+    * 获得上一次enter事件的action，可避免插件中onPluginEnter没有及时监听导致错过action的情况。
+    */
+  async getLastPluginEnterAction(): Promise<PluginEnterAction | undefined> {
+    return electronAPI.ipcRenderer.invoke('get-last-plugin-enter-action', this.pluginId);
+  }
+
+  /**
    * 插件进入事件
     * @param action PluginEnterAction
    */

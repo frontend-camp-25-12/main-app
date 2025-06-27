@@ -28,6 +28,12 @@ app.on('ready', () => {
   ipcMain.handle('open-hotkey-settings', async (_event, id: string, code: string) => {
     return await serviceInstance.onOpenHotkeySettings(id, code);
   });
+
+
+  // onGetLastPluginEnterAction(id: string) -> Promise<PluginEnterAction | undefined>
+  ipcMain.handle('get-last-plugin-enter-action', async (_event, id: string) => {
+    return await serviceInstance.onGetLastPluginEnterAction(id);
+  });
 });
     
 export namespace ipcEmitPlugin {

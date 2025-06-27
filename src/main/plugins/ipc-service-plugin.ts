@@ -1,6 +1,7 @@
 import { PluginEnterAction } from "../../share/plugins/api.type";
 import { configManager } from "../config/service";
 import { hotkeyManager } from "./hotkeys";
+import { pluginManager } from "./loader";
 
 /**
  * 插件服务类（插件），用于向插件提供平台api
@@ -46,6 +47,14 @@ export class IpcServicePlugin {
    */
   async onOpenHotkeySettings(id: string, code: string): Promise<void> {
     hotkeyManager.openHotkeySettings(id, code);
+  }
+
+  /**
+   * 获得上一次enter事件的action，可避免插件中onPluginEnter没有及时监听导致错过action的情况。
+   * @returns PluginEnterAction | undefined
+   */
+  async onGetLastPluginEnterAction(id: string): Promise<PluginEnterAction | undefined> {
+    return pluginManager.getLastPluginEnterAction(id);
   }
 
   /**

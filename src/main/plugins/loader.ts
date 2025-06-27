@@ -7,6 +7,16 @@ import { PluginDefinitionSchema } from "../../share/plugins/type.zod.d.js";
 import { app } from "electron";
 import { ipcEmitPlugin } from "../generated/ipc-handlers-plugin.js";
 import { hotkeyManager } from "./hotkeys.js";
+import asar from "asar";
+
+function isAsar(dirent: fs.Dirent) {
+  try {
+    asar.listPackage(join(dirent.parentPath, dirent.name));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
 
 const pluginInstallPath = join(app.getPath('userData'), 'plugins');
 const PLUGIN_REQUIRED_FILES = ['plugin.json'];
@@ -35,7 +45,7 @@ export class PluginManager {
     // 扫描插件目录
     const dirs = await fs.promises.readdir(pluginInstallPath, { withFileTypes: true });
     for (const dirent of dirs) {
-      if (dirent.isDirectory() || dirent.isSymbolicLink()) {
+      if (dirent.isDirectory() || dirent.isSymbolicLink() || isAsar(dirent)) {
         const pluginMetadata = await this.loadPluginDir(dirent.name);
         if (pluginMetadata) {
           allPlugins[pluginMetadata.id] = pluginMetadata;
@@ -171,6 +181,16 @@ export class PluginManager {
     const plugin = plugins[id];
     windowManager.open(plugin);
     ipcEmitPlugin.pluginEnterTo(plugin.id, action);
+    plugin.lastEnterAction = action;
+  }
+
+  /**
+   * 获得上一次enter事件的action
+   * @param id 
+   */
+  async getLastPluginEnterAction(id: string) {
+    const plugins = await this.plugins;
+    return plugins[id]?.lastEnterAction;
   }
 }
 
