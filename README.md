@@ -72,7 +72,7 @@ export interface ConfigSchema {
 ```
 2. 主程序的其它地方直接使用：
 ```ts
-import { AppConfig } from 'src/main/config/service.ts'
+import { AppConfig } from 'src/main/config/app'
 const config = AppConfig.get('newThing'); // 获取配置项，自带类型提示
 ```
 3. （不建议，虽然可以）在渲染进程中使用：
@@ -180,12 +180,25 @@ window.platform.configSet('hello.world', '!!!!').then(async () => {
 });
 ```
 
+## 在主应用中开发平台API
 平台API在主应用的实现原理跟README里面提到的`ipc-generator`相同，在`src\main\plugins\ipc-service-plugin.ts`内设计接口，自动生成主进程的处理器和渲染进程的调用接口。
-开发新的平台API时，注意避免包含外部的类型，因为生成的代码将外部类型复制进去后，无法resolve到对应类型。
+对于希望相关的类型定义，需要在`src\share\plugins\api.type.d.ts`中定义公共类型，它会被一并自动导出到类型声明中。
+在仓库中`src\preload\generated\ipc-api-plugin.ts`的变更将会触发github actions，在`plugin-api-types`仓库中自动拉取并构建最新的dts，使得插件开发者可以获取到。
 
 ### 平台API列表
 
-后续计划自动生成ts类型声明供插件开发者导入
+在 https://github.com/frontend-camp-25-12/plugin-api-types 中提供了类型定义的npm包，可通过
+```bash
+npm install git+https://github.com/frontend-camp-25-12/plugin-api-types
+npm update @types/plugin-api-types
+```
+来安装和更新。
+通过
+```typescript
+import { PluginApi } from '@types/plugin-api-types';
+```
+来导入类型定义。
+详见其仓库readme。
 
 | 方法名                | 说明                                   | 参数                                                         |
 |---------------------|--------------------------------------|------------------------------------------------------------|
