@@ -56,6 +56,9 @@ export class PluginSearch {
       // 3. 匹配features.cmds
       if (plugin.features) {
         for (const feature of plugin.features) {
+          if (feature.searchable === false) {
+            continue; // 不允许搜索，跳过
+          }
           const matchedPluginFeature: SearchResult['feature'][number] = {
             code: feature.code,
             label: feature.label

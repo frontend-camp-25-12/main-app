@@ -206,7 +206,7 @@ import { PluginApi } from '@types/plugin-api-types';
 | onPluginEnter       | 注册插件进入事件的回调   | callback: (action: { code: string; payload: string }) => void |
 | configGet    | 获取指定配置项的值，如果不存在则返回默认值。         | key: 配置项名称<br>default: 默认值         |
 | configSet    | 设置指定配置项的值。注意：读写时的key可以是'foo.bar'这样多级的json路径                             | key: 配置项名称<br>value: 要设置的值       |
-
+| onOpenHotkeySettings | 打开快捷键设置窗口，并高亮显示指定功能的快捷键设置 | 希望用户设置快捷键的feature的code |
 
 
 ## 约束
@@ -246,6 +246,7 @@ import { PluginApi } from '@types/plugin-api-types';
     {
       "code": "featureCode",              // 功能代码，用于在onPluginEnter时，区分不同功能
       "label": "功能名称",              // 功能名称
+      "hotKey": false,                // （可选）是否启用热键，默认false。设为true后，可在”快捷键管理”中查看对应的热键设置，通过热键进入时，action.from = 'hotkey'
       "cmds": [                            // 可触发这个feature的命令列表, 一共支持三种类型的命令
         "search",                        // 定义一个命令叫search
         {                                    // 也可以定义正则匹配的命令

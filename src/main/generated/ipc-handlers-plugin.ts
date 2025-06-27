@@ -22,6 +22,12 @@ app.on('ready', () => {
   ipcMain.handle('config-set', async (_event, id: string, key: string, value: string) => {
     return await serviceInstance.onConfigSet(id, key, value);
   });
+
+
+  // onOpenHotkeySettings(id: string, code: string) -> Promise<void>
+  ipcMain.handle('open-hotkey-settings', async (_event, id: string, code: string) => {
+    return await serviceInstance.onOpenHotkeySettings(id, code);
+  });
 });
     
 export namespace ipcEmitPlugin {

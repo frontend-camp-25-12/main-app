@@ -1,5 +1,6 @@
 import { PluginEnterAction } from "../../share/plugins/api.type";
 import { configManager } from "../config/service";
+import { hotkeyManager } from "./hotkeys";
 
 /**
  * 插件服务类（插件），用于向插件提供平台api
@@ -25,7 +26,7 @@ export class IpcServicePlugin {
    * @param defalut 默认值
    * @returns 配置项的值
    */
-  async onConfigGet(id: string, key: string, defalut: string): Promise<string> { 
+  async onConfigGet(id: string, key: string, defalut: string): Promise<string> {
     return configManager.get(id, key, defalut);
   }
 
@@ -37,6 +38,14 @@ export class IpcServicePlugin {
    */
   async onConfigSet(id: string, key: string, value: string): Promise<void> {
     configManager.set(id, key, value);
+  }
+
+  /**
+   * 打开快捷键设置页面
+   * @param code 要跳转到的希望用户设置快捷键的功能代码
+   */
+  async onOpenHotkeySettings(id: string, code: string): Promise<void> {
+    hotkeyManager.openHotkeySettings(id, code);
   }
 
   /**

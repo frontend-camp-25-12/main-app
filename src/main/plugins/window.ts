@@ -33,11 +33,13 @@ class PluginWindow {
     let dist = plugin.dist;
     let preload: string;
     this.internal = plugin.internal != undefined
+    preload = join(__dirname, '../preload/pluginIndex.js');
     if (plugin.internal) {
-      preload = join(__dirname, '../preload/index.js');
+      const internalPreload = join(__dirname, '../preload/index.js');
+      // 内置插件也会先从插件的preload开始，再加载内部的preload
+      this.additionalArguments = [`--plugin-id=${plugin.id}`, `--plugin-preload=${internalPreload}`];
     } else {
       // 插件的preload是特殊的为其注入平台api的preload(src/preload/plugin-index.ts)
-      preload = join(__dirname, '../preload/pluginIndex.js');
       const pluginPreload = join(dist, 'preload.js');
       // 在其中，将会读取这些参数，真正加载插件preload
       this.additionalArguments = [`--plugin-id=${plugin.id}`, `--plugin-preload=${pluginPreload}`];

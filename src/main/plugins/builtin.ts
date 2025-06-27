@@ -41,13 +41,19 @@ export const builtinPlugins: PluginMetadata[] = [
   },
   {
     id: BuiltinPluginId.HOTKEYS,
-    name: '快捷键映射',
+    name: '插件快捷键',
     version: '1.0.0',
     window: {
       width: 600,
     },
     dist: 'hotkeys',
     internal: {},
-    logoPath: '../../resources/icon-hotkeys.png'
+    logoPath: '../../resources/icon-hotkeys.png',
+    features: [{
+      code: 'open',
+      label: '转到快捷键映射',
+      searchable: false,
+      cmds: []
+    }]
   }
 ] as const

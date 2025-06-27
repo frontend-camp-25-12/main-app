@@ -34,6 +34,14 @@ export class PlatformApi {
   }
 
   /**
+    * 打开快捷键设置页面
+    * @param code 要跳转到的希望用户设置快捷键的功能代码
+    */
+  async openHotkeySettings(code: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('open-hotkey-settings', this.pluginId, code);
+  }
+
+  /**
    * 插件进入事件
     * @param action PluginEnterAction
    */

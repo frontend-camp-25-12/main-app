@@ -23,10 +23,11 @@
   "actions": "Actions",
   "searchPlaceholder": "Hi",
   "commandMatch": "Command Match",
-  "installedPlugins": "Installed Plugins",
-  "hotkeyInput": {
+  "installedPlugins": "Installed Plugins",  "hotkeyInput": {
     "title": "Hotkey Management",
-    "pleaseInput": "Please press the shortcut keys...",
-    "empty": "No shortcut set"
+    "pleaseInput": "Please press the shortcut keys, or click outside to clear",
+    "empty": "No shortcut set",
+    "undo": "Undo Changes",
+    "modified": "Modified"
   }
 }

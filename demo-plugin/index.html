@@ -7,5 +7,11 @@
 </head>
 <body>
     <h1>外部组件</h1>
+    <button id="loadComponent">跳转到快捷键设置</button>
+    <script>
+        document.getElementById('loadComponent').addEventListener('click', () => {
+            window.platform.openHotkeySettings('search')
+        });
+    </script>
 </body>
 </html>

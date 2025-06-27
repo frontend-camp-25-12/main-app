@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, Ref } from 'vue';
-import { ElButton, ElInput, ElNotification, ElScrollbar, ElFormItem, ElForm } from 'element-plus';
+import { ref, onMounted, Ref, computed } from 'vue';
+import { ElButton, ElFormItem, ElForm, ElTag } from 'element-plus';
 import HotkeyInput from './components/HotkeyInput.vue';
 import { HotkeyOption } from '../../../../share/plugins/hotkeys.type';
 import { t } from '../../utils/i18n';
@@ -8,12 +8,36 @@ import icon from '../../../../../resources/icon.png';
 
 const hotkeyOptions: Ref<HotkeyOption[]> = ref([]);
 const pluginLogos: Ref<Record<string, string>> = ref({});
+const dirtyPluginIds: Ref<Set<string>> = ref(new Set());
+let initialHotkeyOptions: HotkeyOption[] = [];
+// 计算是否有修改
+const hasModifications = computed(() => {
+  return dirtyPluginIds.value.size > 0;
+});
+
+function getKeyOfOption(id: string, code: string): string {
+  return `${id}_${code}`;
+}
+
+const highlightOption = ref<string>(''); // 用于从其他插件拉起快捷键设置时的显示效果
 
 onMounted(async () => {
-  fetchHotkeyOptions();
+  window.platform.onPluginEnter((action) => {
+    try {
+      const { id, code } = JSON.parse(action.payload) as { id: string, code: string };
+      highlightOption.value = getKeyOfOption(id, code);
+      setTimeout(() => {
+        highlightOption.value = '';
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to parse plugin enter action:', error);
+    }
+  });
+  await fetchHotkeyOptions();
   window.ipcApi.pluginLogos().then((logos) => {
     pluginLogos.value = logos;
   });
+  initialHotkeyOptions = JSON.parse(JSON.stringify(hotkeyOptions.value));
 })
 
 async function fetchHotkeyOptions() {
@@ -21,20 +45,50 @@ async function fetchHotkeyOptions() {
 }
 
 function handleHotkeyChange(id: string, code: string, value: string) {
+  const initial = initialHotkeyOptions.find(item => item.id === id);
+  if (initial) {
+    const initialValue = initial.boundHotkey || ''; // initial值可能是undefined，按照空字符串（不绑定热键）来处理
+    if (value != initialValue) {
+      dirtyPluginIds.value.add(id);
+    } else {
+      dirtyPluginIds.value.delete(id);
+    }
+  }
+
   window.ipcApi.updateHotkeyBinding(id, code, value).then(() => {
     fetchHotkeyOptions();
   });
+}
+
+// 恢复到初始状态
+async function undoChanges() {
+  // 恢复所有修改到初始状态
+  for (const id of dirtyPluginIds.value) {
+    const initial = initialHotkeyOptions.find(item => item.id === id)!;
+    await window.ipcApi.updateHotkeyBinding(initial.id, initial.code, initial.boundHotkey || '');
+  }
+  dirtyPluginIds.value.clear();
+  await fetchHotkeyOptions();
 }
 </script>
 
 <template>
   <div class="hotkeys-app">
-    <h2>{{ t('hotkeyInput.title') }}</h2>
+    <div class="header">
+      <h2>{{ t('hotkeyInput.title') }}</h2>
+      <el-button v-if="hasModifications" type="primary" @click="undoChanges" style="animation: fadeIn 0.2s ease;">
+        {{ t('hotkeyInput.undo') }}
+      </el-button>
+    </div>
     <el-form label-width="300px">
-      <el-form-item v-for="(item, index) in hotkeyOptions" :key="index">
+      <el-form-item v-for="(item, index) in hotkeyOptions" :key="index" class="option" :class="{ 'option-highlight': getKeyOfOption(item.id, item.code) === highlightOption }">
         <template #label>
           <div class="option-label-container">
-            <img width="32" :src="pluginLogos[item.id] ? `file:///${pluginLogos[item.id]}` : icon" alt="logo" class="plugin-icon" />
+            <el-tag v-if="dirtyPluginIds.has(item.id)" type="success" effect="light" round>
+              {{ t('hotkeyInput.modified') }}
+            </el-tag>
+            <img width="32" :src="pluginLogos[item.id] ? `file:///${pluginLogos[item.id]}` : icon" alt="logo"
+              class="plugin-icon" />
             <span class="option-plugin-name">{{ item.pluginName }}</span>
             <span class="option-label">{{ item.label }}</span>
           </div>
@@ -52,8 +106,15 @@ function handleHotkeyChange(id: string, code: string, value: string) {
   margin: 0 auto;
 }
 
-h2 {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+}
+
+h2 {
+  margin: 0;
   color: var(--el-text-color-primary);
 }
 
@@ -62,7 +123,6 @@ h2 {
 }
 
 .option-label-container {
-
   display: flex;
   align-items: center;
 
@@ -73,5 +133,16 @@ h2 {
 
 .option-label {
   font-weight: bold;
+}
+
+.option {
+  margin-bottom: 0; 
+  padding: 10px;
+  border-radius: var(--el-border-radius-base);
+  transition: background-color 0.3s ease;
+}
+
+.option-highlight {
+  background-color: var(--el-color-primary-light-9);
 }
 </style>

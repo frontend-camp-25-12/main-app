@@ -1,7 +1,5 @@
 import { PlatformApi } from "./generated/ipc-api-plugin";
 
-
-
 function parse(name: string): string | undefined {
   const prefix = `--${name}=`;
   const arg = process.argv.find(arg => arg.startsWith(prefix));

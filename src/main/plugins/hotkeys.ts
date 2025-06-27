@@ -3,7 +3,6 @@ import { HotkeyConfig } from "../config/hotkeys";
 import { BuiltinPluginId } from "./builtin";
 import { pluginManager } from "./loader";
 import { HotkeyOption } from "../../share/plugins/hotkeys.type";
-
 /**
  * 热键管理器
  */
@@ -151,6 +150,14 @@ export class HotkeyManager {
         }));
       HotkeyConfig.set('hotkeys', config);
     }
+  }
+
+  openHotkeySettings(id: string, code: string) {
+    pluginManager.open(BuiltinPluginId.HOTKEYS, {
+      payload: JSON.stringify({ id, code }),
+      code: 'open',
+      from: 'cmd'
+    });
   }
 }
 
