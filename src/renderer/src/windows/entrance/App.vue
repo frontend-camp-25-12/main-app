@@ -82,6 +82,13 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
 function switchViewMode() {
   viewMode.value = viewMode.value === 'grid' ? 'list' : 'grid';
 }
+
+function openFirstItem() {
+  if (displayedPlugins.value.length > 0) {
+    const firstPlugin = displayedPlugins.value[0];
+    handleOpenPlugin(firstPlugin.id, firstPlugin.feature);
+  }
+}
 </script>
 
 <template>
@@ -95,8 +102,8 @@ function switchViewMode() {
     </div>
     <div style="display: flex; gap: 8px;">
       <ElInput v-model="searchInput" class="cmd-input" :placeholder="t('entrance.searchPlaceholder')" @input="handleSearchInput"
-        @keyup.enter="handleSearchInput" size="large" />
-      <ElButton @click="switchViewMode" :icon="viewMode === 'grid' ? Grid : Expand" circle size="large" style="font-size: 18px;">
+        @keyup.enter="openFirstItem" size="large" />
+      <ElButton tabindex="-1" @click="switchViewMode" :icon="viewMode === 'grid' ? Grid : Expand" circle size="large" style="font-size: 18px;">
       </ElButton>
     </div>
 
