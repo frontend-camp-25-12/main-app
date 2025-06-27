@@ -28,6 +28,7 @@ export const builtinPlugins: PluginMetadata[] = [
     name: '设置',
     version: '1.0.0',
     dist: 'settings',
+    logoPath: '../../resources/icon-settings.png',
     internal: {}
   }
 ] as const
