@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { PluginView } from '../utils/plugin';
 import icon from '../../../../../../resources/icon.png';
@@ -13,18 +12,15 @@ const emit = defineEmits<{
 }>();
 </script>
 
-<template>  <div v-if="plugins.length" class="plugin-grid">
-    <template v-for="plugin in plugins" :key="plugin.id">
-      <div 
-        class="plugin-item" 
-        tabindex="0"
-        role="button"
+<template>
+  <div v-if="plugins.length" class="plugin-grid">
+    <template v-for="plugin in plugins" :key="plugin.id + plugin.feature?.code">
+      <div class="plugin-item" tabindex="0" role="button"
         :aria-label="`${plugin.name}${plugin.feature ? ' - ' + plugin.feature.label : ''}`"
         @click="emit('open-plugin', plugin.id, plugin.feature)"
         @keydown.enter="emit('open-plugin', plugin.id, plugin.feature)"
         @keydown.space.prevent="emit('open-plugin', plugin.id, plugin.feature)">
-        <img width="48" :src="plugin.logoPath ? `file:///${plugin.logoPath}` : icon" alt="logo"
-          class="plugin-icon" />
+        <img width="48" :src="plugin.logoPath ? `file:///${plugin.logoPath}` : icon" alt="logo" class="plugin-icon" />
         <ElText :line-clamp="2">{{ plugin.name }}</ElText>
         <div class="search-label" v-if="plugin.feature">
           <ElText>{{ plugin.feature.label }}</ElText>
@@ -32,9 +28,9 @@ const emit = defineEmits<{
       </div>
     </template>
   </div>
-  <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease; padding: 8px;">{{
-    t('noPlugins')
-  }}</div>
+  <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease; padding: 8px;">
+    {{ t('noPlugins') }}
+  </div>
 </template>
 
 
@@ -73,7 +69,7 @@ const emit = defineEmits<{
   }
 }
 
-.search-label{
+.search-label {
   position: absolute;
   left: 50%;
   top: 35%;

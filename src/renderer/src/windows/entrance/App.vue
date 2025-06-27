@@ -15,7 +15,9 @@ let displayedPlugins: Ref<PluginView[]> = ref([]);
 const fetchPlugins = async () => {
   const data = await window.ipcApi.pluginList();
   pluginList = data || {};
+  console.log('Fetched plugins:', pluginList);
   displayedPlugins.value = Object.values(pluginList).filter(plugin => !plugin.internal?.hidden).map(plugin => new PluginView(plugin));
+  console.log('Displayed plugins:', displayedPlugins.value);
 };
 
 const handleAddPlugin = async () => {
