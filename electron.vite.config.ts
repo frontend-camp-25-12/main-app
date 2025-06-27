@@ -18,6 +18,11 @@ const entries = glob.sync('src/renderer/src/windows/**/index.html').reduce((acc,
 
 export default defineConfig({
   main: {
+    build: {
+      rollupOptions: {
+        external: ['original-fs']
+      }
+    },
     plugins: [
       externalizeDepsPlugin(),
       ipcGeneratorPlugin({

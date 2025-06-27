@@ -8,10 +8,17 @@ import { app } from "electron";
 import { ipcEmitPlugin } from "../generated/ipc-handlers-plugin.js";
 import { hotkeyManager } from "./hotkeys.js";
 import asar from "asar";
+import originalFs from "original-fs";
 
-function isAsar(dirent: fs.Dirent) {
+function isAsar(dirent: fs.Dirent | string) {
   try {
-    asar.listPackage(join(dirent.parentPath, dirent.name));
+    let dirPath: string;
+    if (typeof dirent === 'string') {
+      dirPath = dirent;
+    } else {
+      dirPath = join(dirent.parentPath, dirent.name);
+    }
+    asar.listPackage(dirPath);
     return true;
   } catch (error) {
     return false;
@@ -139,7 +146,7 @@ export class PluginManager {
 
   /**
    * 安装开发中的插件目录
-   * @param dir 插件目录
+   * @param dir 插件目录或asar文件
    */
   async installDevPlugin(dir: string) {
     if (!path.isAbsolute(dir)) {
@@ -156,8 +163,12 @@ export class PluginManager {
     if (fs.existsSync(installPath)) {
       await fs.promises.rm(installPath, { recursive: true, force: true });
     }
-    // 软链接开发中的插件文件夹
-    await fs.promises.symlink(dir, installPath, 'dir');
+    if (isAsar(dir)) {
+      originalFs.copyFileSync(dir, installPath);
+    } else {
+      // 软链接开发中的插件文件夹
+      await fs.promises.symlink(dir, installPath, 'dir');
+    }
     const pluginMetadata = await this.loadPluginDir(basename);
     if (!pluginMetadata) {
       await fs.promises.rm(installPath, { recursive: true, force: true });

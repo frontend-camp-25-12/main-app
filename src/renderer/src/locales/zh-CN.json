@@ -4,7 +4,7 @@
   "showHide": "显示/隐藏",
   "quit": "退出",
   "addPlugin": "添加插件",
-  "pluginPathPlaceholder": "开发：输入插件文件夹路径进行安装，例如./demo-plugin 安装是软链接到%APPDATA%\\tools-entrance\\plugins",
+  "pluginPathPlaceholder": "开发：输入插件文件夹或.asar的路径进行安装，文件夹通过软链接安装（总是和开发状态一致），.asar文件通过复制",
   "noPlugins": "暂无插件",
   "pluginAddSuccess": "插件添加成功",
   "pluginAddFailed": "添加插件失败",

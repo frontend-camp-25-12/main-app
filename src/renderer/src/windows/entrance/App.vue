@@ -52,14 +52,6 @@ const handleSearchInput = async () => {
 
 onMounted(() => {
   fetchPlugins();
-  // 使用window.ipcApi，在main.ts中就开启事件订阅，才是合理写法
-  // if (window.electron) {
-  //   window.electron.ipcRenderer.on('settings-changed', (_event, payload) => {
-  //     if (payload.type === 'skin') {
-  //       setSkin(payload.value, payload.color, true);
-  //     }
-  //   });
-  // }
 });
 
 if (import.meta.env.DEV) {
