@@ -234,7 +234,9 @@ import { PluginApi } from '@types/plugin-api-types';
   "description": "插件描述",              // （可选）插件描述
   "version": "1.0.0",                    // 插件版本
   "logo": "./logo.png",                    // （可选）插件图标，路径相对于插件目录
-  "background": false,                // （可选）是否需要保持后台运行，默认false
+  "preload": "preload.js",                 // （可选）插件的preload脚本路径，默认preload.js
+  "content": "index.html",                 // （可选）插件的内容网页路径，默认index.html
+  "background": false,                      // （可选）是否需要保持后台运行，默认false
   "window": {                              // （可选）窗口配置
     "width": 800,                          // （可选）窗口宽度
     "height": 600,                         // （可选）窗口高度
@@ -246,15 +248,17 @@ import { PluginApi } from '@types/plugin-api-types';
   "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入，支持拼音搜索和拼音首字母搜索
     {
       "code": "featureCode",              // 功能代码，用于在onPluginEnter时，区分不同功能
-      "label": "功能名称",              // 功能名称
-      "hotKey": false,                // （可选）是否启用热键，默认false。设为true后，可在”快捷键管理”中查看对应的热键设置，通过热键进入时，action.from = 'hotkey'
-      "cmds": [                            // 可触发这个feature的命令列表, 一共支持三种类型的命令
-        "search",                        // 定义一个命令叫search
+      "label": "功能名称",                  // 功能名称，注意它仅供显示，而不会参与命令检索。应该设置cmds来定义这个feature如何被检索到。
+      "hotKey": false,                      // （可选）是否启用热键，默认false。设为true后，可在”快捷键管理”中查看对应的热键设置，通过热键进入时，action.from = 'hotkey'
+      "searchable": true,                   // （可选）是否可被搜索到，默认true。与hotkey结合可以提供仅能通过热键进入的功能
+      "cmds": [                             // 可触发这个feature的命令列表, 一共支持三种类型的命令
+        "search",                           // 定义一个命令叫search
         {                                    // 也可以定义正则匹配的命令
           "type": "regex",                // 对于正则匹配命令，固定为'regex'
           "match": "\\d+"                // 正则匹配字符串（不含/和flag）
-        },{
-          "type": "any",                // 也可以定义匹配任意输入的命令
+        },
+        {
+          "type": "any"                   // 也可以定义匹配任意输入的命令
         }
       ]
     }
