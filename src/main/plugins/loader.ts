@@ -9,7 +9,7 @@ import { ipcEmitPlugin } from "../generated/ipc-handlers-plugin.js";
 import { hotkeyManager } from "./hotkeys.js";
 
 const pluginInstallPath = join(app.getPath('userData'), 'plugins');
-const PLUGIN_REQUIRED_FILES = ['plugin.json', 'index.html', 'preload.js'];
+const PLUGIN_REQUIRED_FILES = ['plugin.json'];
 
 export class PluginManager {
   private plugins: Promise<Record<string, PluginMetadata>>;

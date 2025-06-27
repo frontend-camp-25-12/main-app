@@ -11,6 +11,8 @@ export const PluginDefinitionSchema = z.object({
   description: z.string().optional(), // 插件的描述信息
   version: z.string(),
   logo: z.string().optional(), // 插件的logo图片路径，相对于插件根目录
+  preload: z.string().optional().default('preload.js'), // 插件的preload脚本路径，相对于插件根目录，默认为"preload.js"
+  content: z.string().optional().default('index.html'), // 插件的内容网页路径，相对于插件根目录，默认为"index.html"
   background: z.boolean().optional().default(false), // 是否为后台插件，默认为false，如果为true，则即使窗口被关闭，也不会销毁preload.js
   window: z
     .object({

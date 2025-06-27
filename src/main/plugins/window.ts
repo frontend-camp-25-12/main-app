@@ -40,7 +40,7 @@ class PluginWindow {
       this.additionalArguments = [`--plugin-id=${plugin.id}`, `--plugin-preload=${internalPreload}`];
     } else {
       // 插件的preload是特殊的为其注入平台api的preload(src/preload/plugin-index.ts)
-      const pluginPreload = join(dist, 'preload.js');
+      const pluginPreload = join(dist, plugin.preload || 'preload.js');
       // 在其中，将会读取这些参数，真正加载插件preload
       this.additionalArguments = [`--plugin-id=${plugin.id}`, `--plugin-preload=${pluginPreload}`];
     }
@@ -79,7 +79,7 @@ class PluginWindow {
     if (plugin.internal) {
       loadInternalWindow(window, plugin.dist)
     } else {
-      window.loadFile(path.join(windowContent.dist, 'index.html'));
+      window.loadFile(path.join(windowContent.dist, plugin.content || 'index.html'));
     }
     this.window = window;
 
