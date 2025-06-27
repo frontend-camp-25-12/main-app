@@ -3,11 +3,6 @@
   "settings": "设置",
   "showHide": "显示/隐藏",
   "quit": "退出",
-  "addPlugin": "添加插件",
-  "pluginPathPlaceholder": "开发：输入插件文件夹或.asar的路径进行安装，文件夹通过软链接安装（总是和开发状态一致），.asar文件通过复制",
-  "noPlugins": "暂无插件",
-  "pluginAddSuccess": "插件添加成功",
-  "pluginAddFailed": "添加插件失败",
   "language": "语言",
   "english": "English",
   "chinese": "简体中文",
@@ -21,9 +16,17 @@
   "skin": "皮肤",
   "appearance": "外观",
   "actions": "操作",
-  "searchPlaceholder": "Hi",
-  "commandMatch": "命令匹配",
-  "installedPlugins": "已安装插件",  
+  "entrance": {
+    "searchPlaceholder": "Hi",
+    "addPlugin": "添加插件",
+    "commandMatch": "命令匹配",
+    "installedPlugins": "已安装插件",
+    "pluginPathPlaceholder": "开发：输入插件文件夹或.asar的路径进行安装，文件夹通过软链接安装（总是和开发状态一致），.asar文件通过复制",
+    "noPlugins": "暂无插件",
+    "pluginAddSuccess": "插件添加成功",
+    "pluginAddFailed": "添加插件失败"
+
+  },
   "hotkeyInput": {
     "title": "快捷键管理",
     "pleaseInput": "请输入快捷键，点击其它地方结束",

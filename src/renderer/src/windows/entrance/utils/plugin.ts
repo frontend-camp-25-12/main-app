@@ -15,10 +15,11 @@ export class PluginView {
   }
 
   constructor(plugin: PluginMetadata) {
-    console.debug('PluginView', plugin);
+    
     this.name = plugin.name;
     this.id = plugin.id;
     this.logoPath = plugin.logoPath;
+    this.description = plugin.description;
   }
 
   static fromSearchResult(pluginMap: Record<string, PluginMetadata>, search: SearchResult[]): PluginView[] {

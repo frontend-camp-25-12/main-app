@@ -29,7 +29,7 @@ const emit = defineEmits<{
     </template>
   </div>
   <div v-else style="color: var(--el-text-color-secondary); animation: fadeIn 0.2s ease; padding: 8px;">
-    {{ t('noPlugins') }}
+    {{ t('entrance.noPlugins') }}
   </div>
 </template>
 

@@ -22,7 +22,8 @@ export const builtinPlugins: PluginMetadata[] = [
     },
     window: {
       disableTransition: true,
-      height: 360
+      height: 400,
+      resizable: false,
     },
     features: [{
       code: 'open',
@@ -34,6 +35,7 @@ export const builtinPlugins: PluginMetadata[] = [
   {
     id: BuiltinPluginId.SETTINGS,
     name: '设置',
+    description: '管理应用本身的设置',
     version: '1.0.0',
     dist: 'settings',
     logoPath: '../../resources/icon-settings.png',
@@ -42,6 +44,7 @@ export const builtinPlugins: PluginMetadata[] = [
   {
     id: BuiltinPluginId.HOTKEYS,
     name: '插件快捷键',
+    description: '可配置所有快捷键功能的映射',
     version: '1.0.0',
     window: {
       width: 600,

@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted, Ref } from 'vue';
+import { ref, onMounted, Ref, computed } from 'vue';
 import { ElButton, ElInput, ElNotification, ElScrollbar } from 'element-plus';
 import { PluginEnterAction, PluginMetadata, SearchResult } from '../../../../share/plugins/type';
 import { t } from '../../utils/i18n';
 import GridPlugin from './components/GridPlugin.vue';
+import ListPlugin from './components/ListPlugin.vue';
 import { PluginView } from './utils/plugin';
+import { Grid, Expand } from '@element-plus/icons-vue';
 
 let pluginList: Record<string, PluginMetadata> = {};
 const pluginPath = ref('');
 const searchInput = ref('');
 
 let displayedPlugins: Ref<PluginView[]> = ref([]);
+const viewMode = ref<'grid' | 'list'>('list');
 
 const fetchPlugins = async () => {
   const data = await window.ipcApi.pluginList();
@@ -27,15 +30,15 @@ const handleAddPlugin = async () => {
     pluginPath.value = '';
     await fetchPlugins();
     ElNotification.success({
-      title: t('pluginAddSuccess'),
-      message: t('pluginAddSuccess'),
+      title: t('entrance.pluginAddSuccess'),
+      message: t('entrance.pluginAddSuccess'),
       duration: 2000,
       position: 'bottom-right',
     });
   } catch (error: any) {
     ElNotification.error({
-      title: t('pluginAddFailed'),
-      message: error?.message || t('pluginAddFailed'),
+      title: t('entrance.pluginAddFailed'),
+      message: error?.message || t('entrance.pluginAddFailed'),
       duration: 5000,
       position: 'bottom-right',
     });
@@ -75,23 +78,33 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
   }
   return window.ipcApi.pluginOpen(id, action);
 };
+
+function switchViewMode() {
+  viewMode.value = viewMode.value === 'grid' ? 'list' : 'grid';
+}
 </script>
 
 <template>
   <div class="plugin-container">
     <div style="display: flex; gap: 8px;">
-      <ElInput v-model="pluginPath" :placeholder="t('pluginPathPlaceholder')" @keyup.enter="handleAddPlugin"
+      <ElInput v-model="pluginPath" :placeholder="t('entrance.pluginPathPlaceholder')" @keyup.enter="handleAddPlugin"
         style="flex: 1" />
       <ElButton type="primary" :disabled="!pluginPath.trim()" @click="handleAddPlugin">
-        {{ t('addPlugin') }}
+        {{ t('entrance.addPlugin') }}
       </ElButton>
     </div>
-    <ElInput v-model="searchInput" class="cmd-input" :placeholder="t('searchPlaceholder')" @input="handleSearchInput"
-      @keyup.enter="handleSearchInput" size="large" />
-    <span class="plugin-category" v-if="searchInput.length">{{ t('commandMatch') }}</span>
-    <span class="plugin-category" v-else>{{ t('installedPlugins') }}</span>
+    <div style="display: flex; gap: 8px;">
+      <ElInput v-model="searchInput" class="cmd-input" :placeholder="t('entrance.searchPlaceholder')" @input="handleSearchInput"
+        @keyup.enter="handleSearchInput" size="large" />
+      <ElButton @click="switchViewMode" :icon="viewMode === 'grid' ? Grid : Expand" circle size="large" style="font-size: 18px;">
+      </ElButton>
+    </div>
+
+    <span class="plugin-category" v-if="searchInput.length">{{ t('entrance.commandMatch') }}</span>
+    <span class="plugin-category" v-else>{{ t('entrance.installedPlugins') }}</span>
     <ElScrollbar class="plugin-grid-container">
-      <GridPlugin :plugins="displayedPlugins" @open-plugin="handleOpenPlugin" />
+      <GridPlugin :plugins="displayedPlugins" @open-plugin="handleOpenPlugin" v-if="viewMode === 'grid'" />
+      <ListPlugin :plugins="displayedPlugins" @open-plugin="handleOpenPlugin" v-else />
     </ElScrollbar>
   </div>
 </template>
@@ -125,11 +138,11 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
  * 把按钮的颜色覆盖成橙色只需要在非scope style里写上：
  */
 html {
-  --el-color-primary:rgb(255, 124, 64) !important;
+  --el-color-primary: rgb(255, 124, 64) !important;
   /* 因为disabled的按钮色是el-button-disabled-bg-color，
   而primary button的el-button-disabled-bg-color 
   指向 el-color-primary-light-5 ，所以修改它 */
-  --el-color-primary-light-5:rgb(240, 174, 163) !important; 
+  --el-color-primary-light-5: rgb(240, 174, 163) !important;
 }
 
 html.dark {
@@ -139,6 +152,7 @@ html.dark {
   --el-color-primary: rgb(175, 55, 0) !important;
   --el-color-primary-light-5: rgb(100, 56, 48) !important;
 }
+
 /**
  * 为了换肤方便，让颜色动态变化，实际应该通过代码直接在html元素上用style覆盖这些变量。
  * （另一个想法是用v-bind in css，但是它的原理是在根template上加style标签，覆盖不到html元素上，不好做。）
