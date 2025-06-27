@@ -1,5 +1,7 @@
+import { HotkeyOption } from '../share/plugins/hotkeys.type';
 import type { PluginEnterAction, PluginMetadata, SearchResult } from '../share/plugins/type';
-import { AppConfig } from './config/service';
+import { AppConfig } from './config/app';
+import { hotkeyManager } from './plugins/hotkeys';
 import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
 import { nativeTheme } from 'electron';
@@ -45,6 +47,13 @@ export class IpcService {
   }
 
   /**
+   * 获得所有插件的logo
+   */
+  async onPluginLogos(): Promise<Record<string, string>> {
+    return pluginManager.getAllPluginLogos();
+  }
+
+  /**
    * 切换深浅色模式
    * @returns 切换后的主题模式（'light' | 'dark' | 'system'）
    */
@@ -78,6 +87,20 @@ export class IpcService {
   async onAppConfigSet(key: string, value: string): Promise<void> {
     console.warn('不建议直接在渲染进程操作配置项，而是应该通过设计专用的ipc接口和对应服务类来处理特定配置项的变更')
     AppConfig.set(key, value);
+  }
+
+  /**
+   * 获取所有可注册的快捷键列表
+   */
+  async onListHotkeyOptions(): Promise<HotkeyOption[]> {
+    return hotkeyManager.listHotkeyOptions();
+  }
+
+  /**
+   * 设置快捷键绑定
+   */
+  async onUpdateHotkeyBinding(id: string, code: string, hotkey: string): Promise<void> {
+    hotkeyManager.updateHotkeyBinding(id, code, hotkey);
   }
 
   /**

@@ -2,6 +2,7 @@ import { app, ipcMain } from 'electron';
 import { serviceInstance } from '../plugins/ipc-service-plugin';
 import { windowManager } from '../plugins/window';
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
+import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
 import type { PluginMetadata, MatchRange, SearchResult } from '../../share/plugins/type.d';
 app.on('ready', () => {
 
@@ -26,7 +27,7 @@ app.on('ready', () => {
 export namespace ipcEmitPlugin {
   /**
   * 插件进入事件
-    * @param action 包含code（在你的plugin.json中定义）和 payload（用户输入）
+    * @param action PluginEnterAction
   */
   export function pluginEnter(action: PluginEnterAction) {
     windowManager.emit('plugin-enter', action);
@@ -34,7 +35,7 @@ export namespace ipcEmitPlugin {
 
   /**
   * 插件进入事件
-    * @param action 包含code（在你的plugin.json中定义）和 payload（用户输入）
+    * @param action PluginEnterAction
   */
   export function pluginEnterTo(id: PluginMetadata['id'], action: PluginEnterAction) {
     windowManager.emitTo(id, 'plugin-enter', action);

@@ -73,7 +73,8 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
   const payload = searchInput.value
   let action: PluginEnterAction = {
     code: '',
-    payload
+    payload,
+    from: payload ? 'cmd' : 'menu'
   };
   if (feat) {
     action.code = feat.code

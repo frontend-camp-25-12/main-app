@@ -81,11 +81,6 @@ class PluginWindow {
     }
     this.window = window;
 
-    window.on('closed', () => {
-      const id = plugin.id;
-      windowManager.remove(id);
-    });
-
     if (plugin.background) {
       // 后台保持类型的插件不销毁实例，仅隐藏
       window.on('close', (event) => {
@@ -95,35 +90,49 @@ class PluginWindow {
     }
   }
 
-  show() {
+  private getWindow() {
     if (!this.window || this.window.isDestroyed()) {
       this.create();
     }
-    if (this.window) {
+    return this.window!;
+  }
+
+  show() {
+    const win = this.getWindow();
+    if (win && !this.isVisible()) {
       if (this.plugin.window?.disableTransition) {
         // 通过切换opacity可以取消窗口进出的过渡动画（windows上有效）
-        this.window.setOpacity(0)
-        this.window.show()
-        this.window.setOpacity(1)
+        win.setOpacity(0)
+        win.show()
+        win.setOpacity(1)
       } else {
-        this.window.show()
+        win.show()
       }
     }
   }
 
   hide() {
-    this.window?.hide();
+    this.getWindow().hide();
   }
 
   isVisible(): boolean {
-    return this.window?.isVisible() ?? false;
+    return this.getWindow().isVisible() ?? false;
   }
 
   focus() {
-    if (this.window?.isMinimized()) {
-      this.window.restore();
+    const win = this.getWindow();
+    if (win.isMinimized()) {
+      win.restore();
     }
-    this.window?.focus();
+    win.focus();
+  }
+
+  toggle() {
+    if (this.isVisible()) {
+      this.hide();
+    } else {
+      this.show();
+    }
   }
 }
 
@@ -142,12 +151,13 @@ class WindowManager {
   }
 
   /**
-   * 打开一个插件窗口
+   * 打开/创建一个插件窗口
    * @param plugin 插件元数据
    */
   open(plugin: PluginMetadata): void {
     if (this.windows[plugin.id]) {
       this.windows[plugin.id].show();
+      this.windows[plugin.id].focus();
       return;
     }
     const pluginWindow = new PluginWindow(plugin);

@@ -60,37 +60,6 @@ export function createTray(): void {
   }
 }
 
-// 切换主窗口显示状态
 function toggleMainWindow() {
-  const entranceWindow = windowManager.getWindow(entrancePluginId);
-
-  if (entranceWindow) {
-    if (entranceWindow.isVisible()) {
-      entranceWindow.hide();
-    } else {
-      entranceWindow.show();
-      entranceWindow.focus();
-    }
-  } else {
-    // 如果窗口不存在则创建
-    const entrancePlugin = builtinPlugins.find(p => p.id === entrancePluginId);
-    if (entrancePlugin) {
-      windowManager.open(entrancePlugin);
-    }
-  }
-}
-
-// 全局快捷键注册
-export function registerGlobalShortcut() {
-  const ret = globalShortcut.register('CommandOrControl+Shift+X', () => {
-    toggleMainWindow();
-  });
-
-  if (!ret) {
-    console.error('全局快捷键注册失败');
-  }
-
-  app.on('will-quit', () => {
-    globalShortcut.unregisterAll();
-  });
+  windowManager.getWindow(entrancePluginId)?.toggle()
 }

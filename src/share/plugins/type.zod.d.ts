@@ -24,6 +24,7 @@ export const PluginDefinitionSchema = z.object({
   features: z.array(z.object({
     code: z.string(), // 功能代码，用于通过命令输入进入插件时，识别用户通过哪个feature进入。无code表明用户是通过“点击”进入插件的
     label: z.string(), // 功能的显示名称
+    hotKey: z.boolean().optional().default(false), // 是否可从热键进入，默认为false
     cmds: z.array(z.union([
       z.string(),
       z.object({ // 定义命令列表，用于命令匹配方式地进入插件

@@ -1,7 +1,17 @@
 
 export interface PluginEnterAction {
-  code: string; // 功能代码
-  payload: string // 用户输入
+  /**
+   * 功能代码
+   */
+  code: string;
+  /**
+   * 用户的输入
+   */
+  payload: string;
+  /**
+   * 触发方式：快捷键、命令输入或插件入口
+   */
+  from: 'hotkey' | 'cmd' | 'menu'
 }
 
 /**

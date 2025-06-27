@@ -1,4 +1,5 @@
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
+import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
 import type { PluginMetadata, MatchRange, SearchResult } from '../../share/plugins/type.d';
 import { electronAPI } from '@electron-toolkit/preload';
 
@@ -37,6 +38,13 @@ export class IpcApi {
   }
 
   /**
+   * 获得所有插件的logo
+   */
+  async pluginLogos(): Promise<Record<string, string>> {
+    return electronAPI.ipcRenderer.invoke('plugin-logos');
+  }
+
+  /**
    * 切换深浅色模式
    */
   async toggleColorMode(): Promise<'light' | 'dark' | 'system'> {
@@ -59,6 +67,20 @@ export class IpcApi {
    */
   async appConfigSet(key: string, value: string): Promise<void> {
     return electronAPI.ipcRenderer.invoke('app-config-set', key, value);
+  }
+
+  /**
+   * 获取所有可注册的快捷键列表
+   */
+  async listHotkeyOptions(): Promise<HotkeyOption[]> {
+    return electronAPI.ipcRenderer.invoke('list-hotkey-options');
+  }
+
+  /**
+   * 设置快捷键绑定
+   */
+  async updateHotkeyBinding(id: string, code: string, hotkey: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('update-hotkey-binding', id, code, hotkey);
   }
 
   /**

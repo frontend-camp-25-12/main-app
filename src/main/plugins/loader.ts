@@ -6,6 +6,7 @@ import { windowManager } from "./window.js";
 import { PluginDefinitionSchema } from "../../share/plugins/type.zod.d.js";
 import { app } from "electron";
 import { ipcEmitPlugin } from "../generated/ipc-handlers-plugin.js";
+import { hotkeyManager } from "./hotkeys.js";
 
 const pluginInstallPath = join(app.getPath('userData'), 'plugins');
 const PLUGIN_REQUIRED_FILES = ['plugin.json', 'index.html', 'preload.js'];
@@ -19,7 +20,6 @@ export class PluginManager {
       this.pluginsResolve = resolve;
     });
   }
-
   /**
    * 发现插件并加载元数据
    */
@@ -43,6 +43,29 @@ export class PluginManager {
       }
     }
     this.pluginsResolve(allPlugins);
+    this.afterLoadPlugins();
+  }
+
+  async afterLoadPlugins() {
+    /**
+     * 注册热键
+     */
+    for (const plugin of Object.values(await this.plugins)) {
+      windowManager.add(plugin); // 添加到窗口管理器，执行其preload脚本
+
+      if (plugin.features) {
+        for (const feature of plugin.features) {
+          if (feature.hotKey) {
+            hotkeyManager.registerHotkeyOption(
+              plugin.id,
+              feature.code,
+              feature.label,
+              plugin.name
+            );
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -85,7 +108,6 @@ export class PluginManager {
       }
     }
     pluginDef.dist = pluginPath; // 为了之后从其中加载内容
-    windowManager.add(pluginDef); // 添加到窗口管理器，执行其preload脚本
     return pluginDef;
   }
 
@@ -94,8 +116,19 @@ export class PluginManager {
     return plugins;
   }
 
+  async getAllPluginLogos() {
+    const plugins = await this.plugins;
+    const logos: Record<string, string> = {};
+    for (const plugin of Object.values(plugins)) {
+      if (plugin.logoPath) {
+        logos[plugin.id] = plugin.logoPath;
+      }
+    }
+    return logos;
+  }
+
   /**
-   * 添加目录作为插件
+   * 安装开发中的插件目录
    * @param dir 插件目录
    */
   async installDevPlugin(dir: string) {

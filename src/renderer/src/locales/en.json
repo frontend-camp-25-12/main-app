@@ -23,5 +23,10 @@
   "actions": "Actions",
   "searchPlaceholder": "Hi",
   "commandMatch": "Command Match",
-  "installedPlugins": "Installed Plugins"
+  "installedPlugins": "Installed Plugins",
+  "hotkeyInput": {
+    "title": "Hotkey Management",
+    "pleaseInput": "Please press the shortcut keys...",
+    "empty": "No shortcut set"
+  }
 }

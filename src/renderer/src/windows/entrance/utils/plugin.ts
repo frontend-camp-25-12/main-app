@@ -15,6 +15,7 @@ export class PluginView {
   }
 
   constructor(plugin: PluginMetadata) {
+    console.debug('PluginView', plugin);
     this.name = plugin.name;
     this.id = plugin.id;
     this.logoPath = plugin.logoPath;

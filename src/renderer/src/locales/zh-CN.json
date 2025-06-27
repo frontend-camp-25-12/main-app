@@ -23,5 +23,10 @@
   "actions": "操作",
   "searchPlaceholder": "Hi",
   "commandMatch": "命令匹配",
-  "installedPlugins": "已安装插件"
+  "installedPlugins": "已安装插件",
+  "hotkeyInput": {
+    "title": "快捷键管理",
+    "pleaseInput": "请按下快捷键...",
+    "empty": "未设置快捷键"
+  }
 }

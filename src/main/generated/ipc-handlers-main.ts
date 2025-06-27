@@ -3,6 +3,7 @@ import { app, ipcMain } from 'electron';
 import { serviceInstance } from '../ipc-service-main';
 import { windowManager } from '../plugins/window';
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
+import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
 import type { PluginMetadata, MatchRange, SearchResult } from '../../share/plugins/type.d';
     
 app.on('ready', () => {
@@ -31,6 +32,12 @@ app.on('ready', () => {
   });
 
 
+  // onPluginLogos() -> Promise<Record<string, string>>
+  ipcMain.handle('plugin-logos', async (_event, ) => {
+    return await serviceInstance.onPluginLogos();
+  });
+
+
   // onToggleColorMode() -> Promise<'light' | 'dark' | 'system'>
   ipcMain.handle('toggle-color-mode', async (_event, ) => {
     return await serviceInstance.onToggleColorMode();
@@ -46,6 +53,18 @@ app.on('ready', () => {
   // onAppConfigSet(key: string, value: string) -> Promise<void>
   ipcMain.handle('app-config-set', async (_event, key: string, value: string) => {
     return await serviceInstance.onAppConfigSet(key, value);
+  });
+
+
+  // onListHotkeyOptions() -> Promise<HotkeyOption[]>
+  ipcMain.handle('list-hotkey-options', async (_event, ) => {
+    return await serviceInstance.onListHotkeyOptions();
+  });
+
+
+  // onUpdateHotkeyBinding(id: string, code: string, hotkey: string) -> Promise<void>
+  ipcMain.handle('update-hotkey-binding', async (_event, id: string, code: string, hotkey: string) => {
+    return await serviceInstance.onUpdateHotkeyBinding(id, code, hotkey);
   });
 });
     
