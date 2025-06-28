@@ -65,7 +65,7 @@ onUnmounted(() => {
          @mouseover="setActiveItem(index)">
       
       <div class="plugin-icon-container">
-        <img width="32" :src="plugin.logoPath ? `file:///${plugin.logoPath}` : icon" alt="logo" class="plugin-icon" />
+        <img width="32" :src="plugin.logoPath ? `${plugin.logoPath}` : icon" alt="logo" class="plugin-icon" />
         <div v-if="showNumbers" class="plugin-number">{{ index + 1 }}</div>
       </div>
       

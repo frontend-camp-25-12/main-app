@@ -10,14 +10,19 @@ export enum BuiltinPluginId {
   PLUGINSTORE = 'builtin.pluginStore',
   HOTKEYS = 'builtin.hotkeys'
 }
-
+/**
+ * 内置插件的元数据
+ * 对于logo，放置于src/renderer/src/public/icon/下
+ * logo通过vite静态资源规则，转移到out/renderer/icon下。但主应用中通过文件系统（而不是vite接管的资源路径）获取Logo文件，
+ * 所以需要写成相对于out/renderer/windows/entrance/index.html的相对路径格式
+ */
 export const builtinPlugins: PluginMetadata[] = [
   {
     id: BuiltinPluginId.ENTRANCE,
     name: '插件入口',
     version: '1.0.0',
     dist: 'entrance',
-    logoPath: '../../resources/icon-app-drawer.png',
+    logoPath: '../../icon/icon-app-drawer.png',
     internal: {
       hidden: true
     },
@@ -41,7 +46,7 @@ export const builtinPlugins: PluginMetadata[] = [
     description: '管理应用本身的设置',
     version: '1.0.0',
     dist: 'settings',
-    logoPath: '../../resources/icon-settings.png',
+    logoPath: '../../icon/icon-settings.png',
     internal: {}
   },
   {
@@ -54,7 +59,7 @@ export const builtinPlugins: PluginMetadata[] = [
     },
     dist: 'hotkeys',
     internal: {},
-    logoPath: '../../resources/icon-hotkeys.png',
+    logoPath: '../../icon/icon-hotkeys.png',
     features: [
       {
         code: 'open',

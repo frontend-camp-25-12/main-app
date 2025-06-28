@@ -94,7 +94,7 @@ async function undoChanges() {
             <el-tag v-if="dirtyPluginIds.has(item.id)" type="success" effect="light" round>
               {{ t('hotkeyInput.modified') }}
             </el-tag>
-            <img width="32" :src="pluginLogos[item.id] ? `file:///${pluginLogos[item.id]}` : icon" alt="logo"
+            <img width="32" :src="pluginLogos[item.id] ? `${pluginLogos[item.id]}` : icon" alt="logo"
               class="plugin-icon" />
             <span class="option-plugin-name">{{ item.pluginName }}</span>
             <span class="option-label">{{ item.label }}</span>

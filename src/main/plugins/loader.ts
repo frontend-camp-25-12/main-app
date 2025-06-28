@@ -9,6 +9,7 @@ import { ipcEmitPlugin } from "../generated/ipc-handlers-plugin.js";
 import { hotkeyManager } from "./hotkeys.js";
 import asar from "asar";
 import originalFs from "original-fs";
+import { pathToFileURL } from "url";
 
 function isAsar(dirent: fs.Dirent | string) {
   try {
@@ -104,7 +105,7 @@ export class PluginManager {
         const logoPath = path.resolve(pluginPath, pluginDef.logo);
         if (logoPath.startsWith(pluginPath + path.sep)) {
           if (fs.existsSync(logoPath)) {
-            pluginDef.logoPath = logoPath;
+            pluginDef.logoPath = pathToFileURL(logoPath).toString();
           }
         }
       }

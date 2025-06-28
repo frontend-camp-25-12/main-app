@@ -6,9 +6,9 @@
     "showHideMain": "显示/隐藏主窗口",
     "openSettings": "打开设置",
     "colorMode": {
-      "system": "当前：跟随系统",
-      "light": "当前：浅色模式",
-      "dark": "当前：深色模式"
+      "system": "配色方案：跟随系统",
+      "light": "配色方案：浅色",
+      "dark": "配色方案：深色"
     }
   }
 }

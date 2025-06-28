@@ -20,7 +20,7 @@ const emit = defineEmits<{
         @click="emit('open-plugin', plugin.id, plugin.feature)"
         @keydown.enter="emit('open-plugin', plugin.id, plugin.feature)"
         @keydown.space.prevent="emit('open-plugin', plugin.id, plugin.feature)">
-        <img width="48" :src="plugin.logoPath ? `file:///${plugin.logoPath}` : icon" alt="logo" class="plugin-icon" />
+        <img width="48" :src="plugin.logoPath ? `${plugin.logoPath}` : icon" alt="logo" class="plugin-icon" />
         <ElText :line-clamp="2">{{ plugin.name }}</ElText>
         <div class="search-label" v-if="plugin.feature">
           {{ plugin.feature.label }}
