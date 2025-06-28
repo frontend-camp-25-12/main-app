@@ -2,12 +2,13 @@
  * 编写“内置”的插件的plugins.json
  */
 
-import { PluginMetadata } from "../../share/plugins/type";
+import { PluginMetadata } from '../../share/plugins/type'
 
 export enum BuiltinPluginId {
   ENTRANCE = 'builtin.entrance',
   SETTINGS = 'builtin.settings',
-  HOTKEYS = 'builtin.hotkeys',
+  PLUGINSTORE = 'builtin.pluginStore',
+  HOTKEYS = 'builtin.hotkeys'
 }
 
 export const builtinPlugins: PluginMetadata[] = [
@@ -23,14 +24,16 @@ export const builtinPlugins: PluginMetadata[] = [
     window: {
       disableTransition: true,
       height: 400,
-      resizable: false,
+      resizable: false
     },
-    features: [{
-      code: 'open',
-      label: '打开插件面板',
-      hotKey: true,
-      cmds: []
-    }]
+    features: [
+      {
+        code: 'open',
+        label: '打开插件面板',
+        hotKey: true,
+        cmds: []
+      }
+    ]
   },
   {
     id: BuiltinPluginId.SETTINGS,
@@ -47,16 +50,28 @@ export const builtinPlugins: PluginMetadata[] = [
     description: '可配置所有快捷键功能的映射',
     version: '1.0.0',
     window: {
-      width: 600,
+      width: 600
     },
     dist: 'hotkeys',
     internal: {},
     logoPath: '../../resources/icon-hotkeys.png',
-    features: [{
-      code: 'open',
-      label: '转到快捷键映射',
-      searchable: false,
-      cmds: []
-    }]
+    features: [
+      {
+        code: 'open',
+        label: '转到快捷键映射',
+        searchable: false,
+        cmds: []
+      }
+    ]
+  },
+  {
+    id: BuiltinPluginId.PLUGINSTORE,
+    name: '插件市场',
+    version: '1.0.0',
+    window: {
+      width: 800
+    },
+    dist: 'pluginStore',
+    internal: {}
   }
 ] as const
