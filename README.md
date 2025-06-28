@@ -75,13 +75,13 @@ export interface ConfigSchema {
 import { AppConfig } from 'src/main/config/app'
 const config = AppConfig.get('newThing'); // 获取配置项，自带类型提示
 ```
-3. （不建议，虽然可以）在渲染进程中使用：
+3. 在渲染进程中使用：
 ```ts
 window.ipcApi.appConfigGet('key', 'default')
 window.ipcApi.appConfigSet('key', 'value')
 ```
-**不建议**这样用的原因：渲染进程使用时没有类型提示，不好重构，且通常来说新的配置项的值的保存，是“改变配置”的副作用和结果，
-通过添加**专用**的对应该设置项的ipc接口和服务类，让服务类来执行对应设置更改的处理，然后在服务逻辑内更改AppConfig，是更清晰的写法。
+对于存在额外操作的配置项，建议编写专用的ipc接口和服务，由服务来更新配置，而不是直接使用`appConfigSet`。
+但是对于仅需要简单保存起来的配置项，就直接用这个接口吧。
 
 对于插件开发者，见下文的ipcApi部分，具体原理是每个插件拥有独立的配置文件，在config/plugins目录下，文件名为插件ID.json。
 

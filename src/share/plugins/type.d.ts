@@ -24,3 +24,9 @@ export interface SearchResult {
   }[];
   score: number;
 }
+
+export interface AppConfigSchema {
+  colorMode: "light" | "dark" | "system";
+  locale: "en" | "zh-CN";
+  entrance_viewMode: "list" | "grid";
+}

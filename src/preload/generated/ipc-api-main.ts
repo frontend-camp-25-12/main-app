@@ -1,6 +1,6 @@
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
 import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
-import type { PluginMetadata, MatchRange, SearchResult } from '../../share/plugins/type.d';
+import type { PluginMetadata, MatchRange, SearchResult, AppConfigSchema } from '../../share/plugins/type.d';
 import { electronAPI } from '@electron-toolkit/preload';
 
 // 自动生成的IPC接口，请勿手动修改
@@ -56,7 +56,7 @@ export class IpcApi {
     * @param key 配置项key
     * @param defalut 默认值
    */
-  async appConfigGet(key: string, defalut: string): Promise<string> {
+  async appConfigGet<K extends keyof AppConfigSchema>(key: K, defalut: AppConfigSchema[K]): Promise<AppConfigSchema[K]> {
     return electronAPI.ipcRenderer.invoke('app-config-get', key, defalut);
   }
 
@@ -65,7 +65,7 @@ export class IpcApi {
     * @param key 配置项key
     * @param value 配置项值
    */
-  async appConfigSet(key: string, value: string): Promise<void> {
+  async appConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
     return electronAPI.ipcRenderer.invoke('app-config-set', key, value);
   }
 

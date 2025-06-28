@@ -4,7 +4,7 @@ import { serviceInstance } from '../ipc-service-main';
 import { windowManager } from '../plugins/window';
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
 import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
-import type { PluginMetadata, MatchRange, SearchResult } from '../../share/plugins/type.d';
+import type { PluginMetadata, MatchRange, SearchResult, AppConfigSchema } from '../../share/plugins/type.d';
     
 app.on('ready', () => {
 
@@ -44,14 +44,14 @@ app.on('ready', () => {
   });
 
 
-  // onAppConfigGet(key: string, defalut: string) -> Promise<string>
-  ipcMain.handle('app-config-get', async (_event, key: string, defalut: string) => {
+  // onAppConfigGet<K extends keyof AppConfigSchema>(key: K, defalut: AppConfigSchema[K]) -> Promise<AppConfigSchema[K]>
+  ipcMain.handle('app-config-get', async (_event, key: K, defalut: AppConfigSchema[K]) => {
     return await serviceInstance.onAppConfigGet(key, defalut);
   });
 
 
-  // onAppConfigSet(key: string, value: string) -> Promise<void>
-  ipcMain.handle('app-config-set', async (_event, key: string, value: string) => {
+  // onAppConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]) -> Promise<void>
+  ipcMain.handle('app-config-set', async (_event, key: K, value: AppConfigSchema[K]) => {
     return await serviceInstance.onAppConfigSet(key, value);
   });
 

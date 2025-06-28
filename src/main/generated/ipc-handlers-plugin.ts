@@ -3,7 +3,7 @@ import { serviceInstance } from '../plugins/ipc-service-plugin';
 import { windowManager } from '../plugins/window';
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
 import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
-import type { PluginMetadata, MatchRange, SearchResult } from '../../share/plugins/type.d';
+import type { PluginMetadata, MatchRange, SearchResult, AppConfigSchema } from '../../share/plugins/type.d';
 app.on('ready', () => {
 
   // onHello(id: string, content: string) -> Promise<void>

@@ -1,5 +1,5 @@
 import { HotkeyOption } from '../share/plugins/hotkeys.type';
-import type { PluginEnterAction, PluginMetadata, SearchResult } from '../share/plugins/type';
+import type { AppConfigSchema, PluginEnterAction, PluginMetadata, SearchResult } from '../share/plugins/type';
 import { AppConfig } from './config/app';
 import { hotkeyManager } from './plugins/hotkeys';
 import { pluginManager } from './plugins/loader';
@@ -74,8 +74,7 @@ export class IpcService {
    * @param defalut 默认值
    * @returns 配置项的值
    */
-  async onAppConfigGet(key: string, defalut: string): Promise<string> {
-    console.warn('不建议直接在渲染进程操作配置项，而是应该通过设计专用的ipc接口和对应服务类来处理特定配置项的变更')
+  async onAppConfigGet<K extends keyof AppConfigSchema>(key: K, defalut: AppConfigSchema[K]): Promise<AppConfigSchema[K]> {
     return AppConfig.get(key, defalut);
   }
 
@@ -84,8 +83,7 @@ export class IpcService {
    * @param key 配置项key
    * @param value 配置项值
    */
-  async onAppConfigSet(key: string, value: string): Promise<void> {
-    console.warn('不建议直接在渲染进程操作配置项，而是应该通过设计专用的ipc接口和对应服务类来处理特定配置项的变更')
+  async onAppConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
     AppConfig.set(key, value);
   }
 
