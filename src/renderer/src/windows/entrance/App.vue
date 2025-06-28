@@ -57,6 +57,9 @@ const handleSearchInput = async () => {
 
 onMounted(() => {
   fetchPlugins();
+  window.ipcApi.appConfigGet('entrance_viewMode', 'list').then(mode => {
+    viewMode.value = mode || 'list';
+  });
 });
 
 if (import.meta.env.DEV) {
@@ -81,6 +84,7 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
 
 function switchViewMode() {
   viewMode.value = viewMode.value === 'grid' ? 'list' : 'grid';
+  window.ipcApi.appConfigSet('entrance_viewMode', viewMode.value);
 }
 
 function openFirstItem() {
