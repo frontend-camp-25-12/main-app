@@ -67,6 +67,7 @@ class PluginWindow {
       show: false,
       resizable: plugin.window?.resizable ?? true,
       icon: plugin.logoPath,
+      alwaysOnTop: plugin.window?.alwaysOnTop ?? false,
       ...(process.platform === 'linux' ? { icon } : {}),
       backgroundColor: windowColor.backgroundColor(),
       webPreferences: {

@@ -243,7 +243,8 @@ import { PluginApi } from '@types/plugin-api-types';
     "disableTransition": false,            // （可选）禁用窗口动画
     "frame": true,                         // （可选）是否显示窗口边框，默认true
     "transparent": false,                  // （可选）是否透明窗口，默认false，设为true时需要同时设置`frame: false`才有效
-    "resizable": true                      // （可选）是否允许调整窗口大小，默认true
+    "resizable": true,                      // （可选）是否允许调整窗口大小，默认true
+    "alwaysOnTop": false                   // （可选）是否总在顶层显示，默认false
   },
   "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入，支持拼音搜索和拼音首字母搜索
     {
