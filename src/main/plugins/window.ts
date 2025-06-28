@@ -1,8 +1,9 @@
 import { is } from "@electron-toolkit/utils"
-import { BrowserWindow, ipcMain } from "electron"
+import { BrowserWindow, ipcMain, nativeTheme } from "electron"
 import path, { join } from "path"
 import icon from '../../../resources/icon.png?asset'
 import { PluginMetadata } from "../../share/plugins/type"
+import { AppConfig } from "../config/app"
 
 /**
  * 加载窗口内容，针对当前多窗口应用的打包格式，供打开内部插件的窗口时使用
@@ -67,6 +68,7 @@ class PluginWindow {
       resizable: plugin.window?.resizable ?? true,
       icon: plugin.logoPath,
       ...(process.platform === 'linux' ? { icon } : {}),
+      backgroundColor: windowColor.backgroundColor(),
       webPreferences: {
         preload: windowContent.preload,
         sandbox: false,
@@ -223,3 +225,35 @@ export const windowManager = new WindowManager();
 ipcMain.on('settings-changed', (_event, payload) => {
   windowManager.emit('settings-changed', payload);
 });
+
+
+class WindowColor {
+  private shouldDark: boolean;
+  constructor() {
+    this.mode = AppConfig.get('colorMode', 'system')
+    this.shouldDark = nativeTheme.shouldUseDarkColors;
+    nativeTheme.on('updated', () => {
+      this.shouldDark = nativeTheme.shouldUseDarkColors;
+    });
+  }
+
+  set mode(mode: typeof nativeTheme['themeSource']){
+    nativeTheme.themeSource = mode;
+    AppConfig.set('colorMode', mode);
+  }
+
+  get mode() {
+    return nativeTheme.themeSource;
+  }
+
+  backgroundColor(): string {
+    return this.shouldDark ? '#1e1e1e' : '#ffffff';
+  }
+
+  toggleMode() {
+    const modes: Array<typeof nativeTheme['themeSource']> = ['light', 'dark', 'system'];
+    const next = modes[(modes.indexOf(this.mode) + 1) % modes.length];
+    this.mode = next;
+  }
+}
+export const windowColor = new WindowColor();

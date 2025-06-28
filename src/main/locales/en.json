@@ -1,8 +1,14 @@
 {
   "appName": "Tools Entrance",
-  "showHideMain": "Show/Hide Main Window",
-  "openSettings": "Open Settings",
   "quit": "Quit",
   "myTools": "My Tools",
-  "toggleColorMode": "Toggle Color Mode"
+  "tray": {
+    "showHideMain": "Show/Hide Main Window",
+    "openSettings": "Open Settings",
+    "colorMode": {
+      "system": "Current: Follow System",
+      "light": "Current: Light Mode",
+      "dark": "Current: Dark Mode"
+    }
+  }
 }

@@ -66,6 +66,18 @@ app.on('ready', () => {
   ipcMain.handle('update-hotkey-binding', async (_event, id: string, code: string, hotkey: string) => {
     return await serviceInstance.onUpdateHotkeyBinding(id, code, hotkey);
   });
+
+
+  // onGetColorMode() -> Promise<AppConfigSchema['colorMode']>
+  ipcMain.handle('get-color-mode', async (_event, ) => {
+    return await serviceInstance.onGetColorMode();
+  });
+
+
+  // onSetColorMode(mode: AppConfigSchema['colorMode']) -> Promise<void>
+  ipcMain.handle('set-color-mode', async (_event, mode: AppConfigSchema['colorMode']) => {
+    return await serviceInstance.onSetColorMode(mode);
+  });
 });
     
 export namespace ipcEmit {

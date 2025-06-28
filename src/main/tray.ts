@@ -1,6 +1,6 @@
 import { Tray, Menu, nativeImage, app, globalShortcut, ipcMain, nativeTheme } from 'electron';
 import { BuiltinPluginId, builtinPlugins } from './plugins/builtin';
-import { windowManager } from './plugins/window';
+import { windowColor, windowManager } from './plugins/window';
 import trayIcon from '../../resources/tray-icon.png?asset'
 import i18next from './locales/i18n';
 
@@ -13,18 +13,22 @@ function updateTrayMenu() {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: i18next.t('showHideMain'),
+      label: i18next.t('tray.showHideMain'),
       click: () => toggleMainWindow()
     },
     {
-      label: i18next.t('openSettings'),
+      label: i18next.t('tray.openSettings'),
       click: () => windowManager.open(builtinPlugins[1])
     },
     {
-      label: i18next.t('toggleColorMode'),
+      label: {
+        "system": i18next.t('tray.colorMode.system'),
+        "light": i18next.t('tray.colorMode.light'),
+        "dark": i18next.t('tray.colorMode.dark')
+      }[windowColor.mode],
       click: () => {
-        const mode = nativeTheme.shouldUseDarkColors ? 'light' : 'dark';
-        nativeTheme.themeSource = mode;
+        windowColor.toggleMode();
+        updateTrayMenu();
       }
     },
     { type: 'separator' },

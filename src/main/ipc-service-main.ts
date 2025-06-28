@@ -5,6 +5,7 @@ import { hotkeyManager } from './plugins/hotkeys';
 import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
 import { nativeTheme } from 'electron';
+import { windowColor } from './plugins/window';
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
@@ -99,6 +100,21 @@ export class IpcService {
    */
   async onUpdateHotkeyBinding(id: string, code: string, hotkey: string): Promise<void> {
     hotkeyManager.updateHotkeyBinding(id, code, hotkey);
+  }
+
+  /**
+   * 获取当前颜色模式
+   */
+  async onGetColorMode(): Promise<AppConfigSchema['colorMode']> {
+    return windowColor.mode;
+  }
+
+  /**
+   * 设置颜色模式
+   * @param mode 颜色模式，'light' | 'dark' | 'system'
+   */
+  async onSetColorMode(mode: AppConfigSchema['colorMode']): Promise<void> {
+    windowColor.mode = mode;
   }
 
   /**
