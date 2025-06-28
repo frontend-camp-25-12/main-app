@@ -60,29 +60,14 @@ export class PluginManager {
       }
     }
     this.pluginsResolve(allPlugins);
-    this.afterLoadPlugins();
+    for (const plugin of Object.values(allPlugins)) {
+      this.afterLoadPlugin(plugin);
+    }
   }
 
-  async afterLoadPlugins() {
-    /**
-     * 注册热键
-     */
-    for (const plugin of Object.values(await this.plugins)) {
-      windowManager.add(plugin); // 添加到窗口管理器，执行其preload脚本
-
-      if (plugin.features) {
-        for (const feature of plugin.features) {
-          if (feature.hotKey) {
-            hotkeyManager.registerHotkeyOption(
-              plugin.id,
-              feature.code,
-              feature.label,
-              plugin.name
-            );
-          }
-        }
-      }
-    }
+  async afterLoadPlugin(plugin: PluginMetadata) {
+    windowManager.add(plugin);
+    hotkeyManager.add(plugin);
   }
 
   /**
@@ -177,6 +162,7 @@ export class PluginManager {
 
     const plugins = await this.plugins;
     plugins[pluginMetadata.id] = pluginMetadata;
+    this.afterLoadPlugin(pluginMetadata);
     return plugins;
   }
 

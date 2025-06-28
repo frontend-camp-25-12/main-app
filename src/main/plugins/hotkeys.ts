@@ -3,6 +3,7 @@ import { HotkeyConfig } from "../config/hotkeys";
 import { BuiltinPluginId } from "./builtin";
 import { pluginManager } from "./loader";
 import { HotkeyOption } from "../../share/plugins/hotkeys.type";
+import { PluginMetadata } from "../../share/plugins/type";
 /**
  * 热键管理器
  */
@@ -84,13 +85,25 @@ export class HotkeyManager {
   }
 
   /**
+   * 处理插件的热键注册
+   */
+  add(plugin: PluginMetadata) {
+    if (!plugin.features) return;
+    for (const feature of plugin.features) {
+      if (feature.hotKey) {
+        this.registerHotkeyOption(plugin.id, feature.code, feature.label, plugin.name);
+      }
+    }
+  }
+
+  /**
    * 注册热键可选项
    * @param id 插件id
    * @param code feature code
    * @param label feature label
    * @param pluginName 插件名称
    */
-  registerHotkeyOption(id: string, code: string, label: string, pluginName: string) {
+  private registerHotkeyOption(id: string, code: string, label: string, pluginName: string) {
     const boundKey = this.getBindingKey(id, code);
     if (this.configuredHotkeys.has(boundKey)) {
       const existingOption = this.configuredHotkeys.get(boundKey);
