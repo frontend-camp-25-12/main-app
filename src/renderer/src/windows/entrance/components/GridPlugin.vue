@@ -62,7 +62,7 @@ const emit = defineEmits<{
 
 .plugin-item:hover,
 .plugin-item:focus {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px var(--el-border-color-darker);
 
   .el-text {
     --el-text-color: var(--el-color-primary);
