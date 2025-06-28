@@ -23,7 +23,7 @@ const emit = defineEmits<{
         <img width="48" :src="plugin.logoPath ? `file:///${plugin.logoPath}` : icon" alt="logo" class="plugin-icon" />
         <ElText :line-clamp="2">{{ plugin.name }}</ElText>
         <div class="search-label" v-if="plugin.feature">
-          <ElText>{{ plugin.feature.label }}</ElText>
+          {{ plugin.feature.label }}
         </div>
       </div>
     </template>
@@ -73,10 +73,13 @@ const emit = defineEmits<{
   position: absolute;
   left: 50%;
   top: 35%;
-  transform: translate(-50%, -50%);
+  transform: translate(round(-50%, 1px), round(-50%, 1px));
   border-radius: var(--el-border-radius-base);
   backdrop-filter: blur(4px);
   padding: 2px 4px;
-  background-color: #ffffffb7;
+  color: var(--el-text-color-primary);
+  font-size: 14px;
+  line-height: 1.1em;
+  background-color: var(--el-color-primary-light-9);
 }
 </style>

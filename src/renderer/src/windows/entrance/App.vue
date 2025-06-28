@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, Ref, computed } from 'vue';
+import { ref, onMounted, Ref } from 'vue';
 import { ElButton, ElInput, ElNotification, ElScrollbar } from 'element-plus';
-import { PluginEnterAction, PluginMetadata, SearchResult } from '../../../../share/plugins/type';
+import { PluginEnterAction, PluginMetadata } from '../../../../share/plugins/type';
 import { t } from '../../utils/i18n';
 import GridPlugin from './components/GridPlugin.vue';
 import ListPlugin from './components/ListPlugin.vue';
@@ -145,19 +145,19 @@ function openFirstItem() {
  * 把按钮的颜色覆盖成橙色只需要在非scope style里写上：
  */
 html {
-  --el-color-primary: rgb(255, 124, 64) !important;
+  /* --el-color-primary: rgb(255, 124, 64) !important; */
   /* 因为disabled的按钮色是el-button-disabled-bg-color，
   而primary button的el-button-disabled-bg-color 
   指向 el-color-primary-light-5 ，所以修改它 */
-  --el-color-primary-light-5: rgb(240, 174, 163) !important;
+  /* --el-color-primary-light-5: rgb(240, 174, 163) !important; */
 }
 
 html.dark {
   /**
    * 深色模式的主题色也可以对应覆盖
    */
-  --el-color-primary: rgb(175, 55, 0) !important;
-  --el-color-primary-light-5: rgb(100, 56, 48) !important;
+  /* --el-color-primary: rgb(175, 55, 0) !important; */
+  /* --el-color-primary-light-5: rgb(100, 56, 48) !important; */
 }
 
 /**
