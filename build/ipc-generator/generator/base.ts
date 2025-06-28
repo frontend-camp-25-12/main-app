@@ -50,6 +50,12 @@ export abstract class IpcGenerator {
           // 提取TSDoc
           const tsdoc = extractTsdoc(member);
 
+          // 解析泛型类型参数
+          let typeParameters: string | undefined = undefined;
+          if (member.typeParameters && member.typeParameters.length > 0) {
+            typeParameters = `<${member.typeParameters.map(tp => tp.getText(sourceFile)).join(', ')}>`;
+          }
+
           // 解析方法参数
           const parameters: { name: string; type: string }[] = [];
           member.parameters.forEach(param => {
@@ -85,6 +91,7 @@ export abstract class IpcGenerator {
               .substring(IpcType.Emit.length))
             type = IpcType.Emit;
           }
+
           if (channelName) {
             this.methods.push({
               type,
@@ -92,7 +99,8 @@ export abstract class IpcGenerator {
               parameters,
               returnType,
               channelName,
-              tsdoc
+              tsdoc,
+              typeParameters: typeParameters || ''
             });
           }
         }
@@ -117,7 +125,7 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
     return `  /**
    * ${method.tsdoc}
    */
-  async ${methodName}(${params}): ${method.returnType} {
+  async ${methodName}${method.typeParameters}(${params}): ${method.returnType} {
     return electronAPI.ipcRenderer.invoke('${method.channelName}'${invokeParams});
   }`;
   }
@@ -155,7 +163,7 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
         return `  /**
    * ${method.tsdoc}
    */
-  ${methodName}(callback: (${callbackParams}) => void) {
+  ${methodName}${method.typeParameters}(callback: (${callbackParams}) => void) {
     electronAPI.ipcRenderer.on('${method.channelName}', (_event${method.parameters.length ? ', ' + callbackArgs : ''}) => callback(${callbackArgs}));
   }`;
       }
@@ -170,10 +178,9 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
       const params = method.parameters.map(p => p.name).join(', ');
       const paramsWithTypes = method.parameters.map(p => `${p.name}: ${p.type}`).join(', ');
       const paramList = method.parameters.length > 0 ? `, ${params}` : '';
-
       if (method.type === 'on') {
         handlers.push(`
-  // ${method.name}(${paramsWithTypes}) -> ${method.returnType}
+  // ${method.name}${method.typeParameters}(${paramsWithTypes}) -> ${method.returnType}
   ipcMain.handle('${method.channelName}', async (_event, ${paramsWithTypes}) => {
     return await serviceInstance.${method.name}(${params});
   });`);
@@ -181,13 +188,13 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
         emits.push(`  /**
   * ${method.tsdoc}
   */
-  export function ${method.name}(${paramsWithTypes}) {
+  export function ${method.name}${method.typeParameters}(${paramsWithTypes}) {
     windowManager.emit('${method.channelName}'${paramList});
   }`);
         emits.push(`  /**
   * ${method.tsdoc}
   */
-  export function ${method.name}To(id: PluginMetadata['id'], ${paramsWithTypes}) {
+  export function ${method.name}To${method.typeParameters}(id: PluginMetadata['id'], ${paramsWithTypes}) {
     windowManager.emitTo(id, '${method.channelName}'${paramList});
   }`);
       }

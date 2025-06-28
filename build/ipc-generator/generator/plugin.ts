@@ -19,6 +19,7 @@ export namespace ipcEmitPlugin {
 ${emits}
 }`;
   }
+
   override getMethodForPreload() {
     // 插件 -> 主程序 的调用需要带上插件id便于区分，但插件本身不需要关心这件事情。
     // 通过修改生成的代码来实现自动附带this.pluginId的效果。this.pluginId是在插件的初始化preload: src/preload/plugin-index.ts中通过获取窗口参数来设置的。
@@ -37,12 +38,12 @@ ${emits}
       }
     })
   }
-  override generatePreloadInvoke(method: IpcMethod, methodName: string, params: string, invokeParams: string): string {
 
+  override generatePreloadInvoke(method: IpcMethod, methodName: string, params: string, invokeParams: string): string {
     return `  /**
-    * ${method.tsdoc}
+    * ${method.tsdoc} 
     */
-  async ${methodName}(${params}): ${method.returnType} {
+  async ${methodName}${method.typeParameters}(${params}): ${method.returnType} {
     return electronAPI.ipcRenderer.invoke('${method.channelName}', this.pluginId${invokeParams});
   }`;
   }

@@ -23,4 +23,5 @@ export interface IpcMethod {
   returnType: string;
   channelName: string;
   tsdoc: string;
+  typeParameters: string;
 }
