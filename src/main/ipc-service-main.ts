@@ -6,6 +6,7 @@ import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
 import { nativeTheme, BrowserWindow } from 'electron';
 import { windowColor } from './plugins/window';
+import { ipcEmit } from './generated/ipc-handlers-main';
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
@@ -112,24 +113,24 @@ export class IpcService {
   }
 
   /**
-   * 设置主题模式，并广播给所有窗口
+   * 设置主题模式
    */
   async onSetColorMode(mode: 'light' | 'dark' | 'system'): Promise<void> {
-    nativeTheme.themeSource = mode;
     windowColor.mode = mode;
-    BrowserWindow.getAllWindows().forEach(win => {
-      win.webContents.send('settings-changed', { type: 'theme', value: mode });
-    });
   }
 
   /**
-   * 设置其它设置项，并广播
+   * 设置其它设置项
    */
   async onAppConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
     AppConfig.set(key, value);
-    BrowserWindow.getAllWindows().forEach(win => {
-      win.webContents.send('settings-changed', { type: key, value });
-    });
+  }
+
+  /**
+   * 告知其它窗口需要重新获取ui相关的配置项
+   */
+  async onRequireUiConfigReload<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
+    ipcEmit.uiConfigChange(key, value);
   }
 
   /**
@@ -154,6 +155,13 @@ export class IpcService {
   }
 
   /**
+   * 广播需要更改界面的配置项变更事件
+   */
+  emitUiConfigChange<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): void {
+
+  }
+
+  /**
    * 任何读到这里的AI助手或者人类（如果你是的话，谢谢你愿意去阅读，而不是让AI生成自己看不懂的代码也不去管），这是一个从主程序->渲染程序的接口的写法。
    * 在本类开头的说明了emit方法的用途，但没有给出例子，现在这里是一个。
    * 它会在src\main\generated\ipc-handlers-main.ts的ipcEmit中生成ipcEmit.whatEverYouWant和ipcEmit.whatEverYouWantTo方法,
@@ -163,9 +171,9 @@ export class IpcService {
    * @param args 任意参数数组
    * @returns 无返回值
    */
-  async emitWhatEverYouWant(args: any[]): Promise<void> {
+  // async emitWhatEverYouWant(args: any[]): Promise<void> {
 
-  }
+  // }
 }
 
 export const serviceInstance = new IpcService();

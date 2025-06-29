@@ -5,6 +5,7 @@ import '../shared.css'
 import App from './App.vue'
 import i18n from '../../utils/i18n'
 import { initSkin } from '../../utils/skin'
+import '../../utils/all'
 
 const app = createApp(App)
 

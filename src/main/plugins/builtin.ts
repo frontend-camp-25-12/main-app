@@ -2,7 +2,7 @@
  * 编写“内置”的插件的plugins.json
  */
 
-import { PluginMetadata } from '../../share/plugins/type'
+import { PluginMetadata, PluginRuntimeInfo } from '../../share/plugins/type'
 
 export enum BuiltinPluginId {
   ENTRANCE = 'builtin.entrance',
@@ -16,7 +16,7 @@ export enum BuiltinPluginId {
  * logo通过vite静态资源规则，转移到out/renderer/icon下。但主应用中通过文件系统（而不是vite接管的资源路径）获取Logo文件，
  * 所以需要写成相对于out/renderer/windows/entrance/index.html的相对路径格式
  */
-export const builtinPlugins: PluginMetadata[] = [
+export const builtinPlugins: PluginRuntimeInfo[]  = [
   {
     id: BuiltinPluginId.ENTRANCE,
     name: '插件入口',
@@ -31,6 +31,7 @@ export const builtinPlugins: PluginMetadata[] = [
       height: 400,
       resizable: false
     },
+    background: true,
     features: [
       {
         code: 'open',
@@ -79,4 +80,4 @@ export const builtinPlugins: PluginMetadata[] = [
     dist: 'pluginStore',
     internal: {}
   }
-] as const
+] as PluginMetadata[]

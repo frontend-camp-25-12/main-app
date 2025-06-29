@@ -46,7 +46,7 @@ export class PluginManager {
     const allPlugins: Record<string, PluginMetadata> = {};
     // 先加载内置插件
     for (const plugin of builtinPlugins) {
-      allPlugins[plugin.id] = plugin;
+      allPlugins[plugin.id] = plugin as PluginMetadata;
     }
     if (!fs.existsSync(pluginInstallPath)) {
       fs.mkdirSync(pluginInstallPath, { recursive: true });

@@ -7,9 +7,6 @@ import GridPlugin from './components/GridPlugin.vue';
 import ListPlugin from './components/ListPlugin.vue';
 import { PluginView } from './utils/plugin';
 import { Grid, Expand } from '@element-plus/icons-vue';
-import { setTheme } from '../../utils/theme'
-import { setLocale } from '../../utils/i18n'
-import { setSkin, initSkin } from '../../utils/skin'
 
 let pluginList: PluginMetadata[] = [];
 const pluginPath = ref('');
@@ -56,59 +53,11 @@ const handleSearchInput = async () => {
   displayedPlugins.value = PluginView.fromSearchResult(pluginList, filteredPlugins)
 };
 
-function updateBodyBackground(theme: string, backgroundUrl?: string) {
-  if (backgroundUrl) {
-    document.body.style.backgroundImage = `url(${backgroundUrl})`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundRepeat = 'no-repeat';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.backgroundColor = '';
-  } else {
-    document.body.style.backgroundImage = '';
-    document.body.style.backgroundColor = theme === 'dark' ? '#181818' : '#fff';
-  }
-}
-
-let currentTheme = 'light';
-let currentBackground = '';
-
 onMounted(() => {
-  initSkin();
   fetchPlugins();
   window.ipcApi.appConfigGet('entrance_viewMode', 'list').then(mode => {
     viewMode.value = mode || 'list';
   });
-  // 主动读取一次背景
-  window.ipcApi.appConfigGet('background', '').then(bg => {
-    currentBackground = bg || '';
-    updateBodyBackground(currentTheme, currentBackground);
-  });
-  if (window.electron) {
-    window.electron.ipcRenderer.on('settings-changed', (_event, payload) => {
-      if (payload.type === 'theme') {
-        setTheme(payload.value, true);
-        currentTheme = payload.value;
-        updateBodyBackground(currentTheme, currentBackground);
-      }
-      if (payload.type === 'background') {
-        currentBackground = payload.value || '';
-        updateBodyBackground(currentTheme, currentBackground);
-      }
-      if (payload.type === 'skin') {
-        if (payload.value === 'custom') {
-          window.ipcApi.appConfigGet('customColor', '#c62424').then(color => {
-            setSkin('custom', color, true);
-          });
-        } else {
-          setSkin(payload.value, undefined, true);
-        }
-      }
-      if (payload.type === 'customColor') {
-        setSkin('custom', payload.value, true);
-      }
-      if (payload.type === 'language') setLocale(payload.value, true);
-    });
-  }
 });
 
 if (import.meta.env.DEV) {
@@ -175,7 +124,7 @@ function openFirstItem() {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: transparent; /* 让内容区透明，显示body背景 */
+
   >*:not(.plugin-grid-container) {
     padding: 8px;
   }
@@ -218,13 +167,4 @@ html.dark {
  * 为了换肤方便，让颜色动态变化，实际应该通过代码直接在html元素上用style覆盖这些变量。
  * （另一个想法是用v-bind in css，但是它的原理是在根template上加style标签，覆盖不到html元素上，不好做。）
  */
-.el-button--primary {
-  background-color: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
-  color: #fff !important;
-}
-.el-button--primary:hover {
-  background-color: var(--primary-dark-color) !important;
-  border-color: var(--primary-dark-color) !important;
-}
 </style>

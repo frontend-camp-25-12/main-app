@@ -37,8 +37,7 @@ const handleLanguageChange = (lang: string) => {
 };
 
 const handleThemeChange = async (theme: string) => {
-  await window.ipcApi.setColorMode(theme as 'light' | 'dark' | 'system');
-  currentTheme.value = theme;
+  setTheme(theme as 'light' | 'dark' | 'system');
 };
 
 const handleSkinChange = (skin: string) => {
@@ -112,9 +111,10 @@ const settingsLayoutStyle = computed(() => {
       backgroundPosition: 'center'
     };
   }
-  return {
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8ee 100%)'
-  };
+  // 这不适配深色模式
+  // return {
+  //   background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8ee 100%)'
+  // };
 });
 </script>
 
