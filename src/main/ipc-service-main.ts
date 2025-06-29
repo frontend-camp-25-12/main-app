@@ -4,9 +4,10 @@ import { AppConfig } from './config/app';
 import { hotkeyManager } from './plugins/hotkeys';
 import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
-import { nativeTheme, BrowserWindow } from 'electron';
+import { nativeTheme } from 'electron';
 import { windowColor } from './plugins/window';
 import { ipcEmit } from './generated/ipc-handlers-main';
+import { changeLanguage } from './locales/i18n';
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
@@ -120,17 +121,20 @@ export class IpcService {
   }
 
   /**
-   * 设置其它设置项
+   * 设置应用内设置项
    */
   async onAppConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
     AppConfig.set(key, value);
   }
 
   /**
-   * 告知其它窗口需要重新获取ui相关的配置项
+   * 由设置界面调用，告知其它窗口需要重新获取ui相关的配置项
    */
   async onRequireUiConfigReload<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
     ipcEmit.uiConfigChange(key, value);
+    if (key === 'locale') {
+      changeLanguage(value as AppConfigSchema['locale']);
+    }
   }
 
   /**

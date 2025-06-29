@@ -99,14 +99,14 @@ export class IpcApi {
   }
 
   /**
-   * 设置其它设置项
+   * 设置应用内设置项
    */
   async appConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
     return electronAPI.ipcRenderer.invoke('app-config-set', key, value);
   }
 
   /**
-   * 告知其它窗口需要重新获取ui相关的配置项
+   * 由设置界面调用，告知其它窗口需要重新获取ui相关的配置项
    */
   async requireUiConfigReload<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
     return electronAPI.ipcRenderer.invoke('require-ui-config-reload', key, value);
