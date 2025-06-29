@@ -58,6 +58,13 @@ export class IpcServicePlugin {
   }
 
   /**
+   * 插件主动退出
+   */
+  async onCloseSelf(id: string): Promise<void> {
+    pluginManager.close(id);
+  }
+
+  /**
    * 插件进入事件
    * @param action PluginEnterAction
    */

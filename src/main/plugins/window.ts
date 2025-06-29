@@ -134,6 +134,10 @@ class PluginWindow {
     this.getWindow().hide();
   }
 
+  close() {
+    this.getWindow().close();
+  }
+
   isVisible(): boolean {
     return this.getWindow().isVisible() ?? false;
   }
@@ -186,6 +190,16 @@ class WindowManager {
     const pluginWindow = new PluginWindow(plugin);
     this.windows[plugin.id] = pluginWindow;
     pluginWindow.show();
+  }
+
+  /**
+   * 关闭指定插件窗口
+   */
+  close(pluginId: string): void {
+    const pluginWindow = this.windows[pluginId];
+    if (pluginWindow) {
+      pluginWindow.close();
+    }
   }
 
   /**

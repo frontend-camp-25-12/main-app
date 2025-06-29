@@ -49,6 +49,13 @@ export class PlatformApi {
   }
 
   /**
+    * 插件主动退出 
+    */
+  async closeSelf(): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('close-self', this.pluginId);
+  }
+
+  /**
    * 插件进入事件
     * @param action PluginEnterAction
    */

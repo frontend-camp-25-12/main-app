@@ -261,6 +261,14 @@ export class PluginManager {
   }
 
   /**
+   * 关闭插件窗口
+   */
+  async close(id: string) {
+    const plugin = await this.get(id);
+    windowManager.close(plugin.id);
+  }
+
+  /**
    * 获得上一次enter事件的action
    * @param id 
    */

@@ -64,7 +64,7 @@ onMounted(() => {
       return;
     }
     if (event.key === 'Escape') {
-      // window.ipcApi.closeSelf();
+      window.platform.closeSelf();
       return;
     }
     if (cmdInput.value && document.activeElement !== cmdInput.value.$el) {

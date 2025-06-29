@@ -34,6 +34,12 @@ app.on('ready', () => {
   ipcMain.handle('get-last-plugin-enter-action', async (_event, id: string) => {
     return await serviceInstance.onGetLastPluginEnterAction(id);
   });
+
+
+  // onCloseSelf(id: string) -> Promise<void>
+  ipcMain.handle('close-self', async (_event, id: string) => {
+    return await serviceInstance.onCloseSelf(id);
+  });
 });
     
 export namespace ipcEmitPlugin {

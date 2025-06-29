@@ -212,6 +212,7 @@ import { PluginApi } from '@types/plugin-api-types';
 | configGet    | 获取指定配置项的值，如果不存在则返回默认值。         | key: 配置项名称<br>default: 默认值         |
 | configSet    | 设置指定配置项的值。注意：读写时的key可以是'foo.bar'这样多级的json路径                             | key: 配置项名称<br>value: 要设置的值       |
 | onOpenHotkeySettings | 打开快捷键设置窗口，并高亮显示指定功能的快捷键设置 | 希望用户设置快捷键的feature的code |
+| closeSelf | 主动退出当前插件窗口 |  |
 
 
 ## 约束
