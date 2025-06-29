@@ -7,6 +7,7 @@ import './generated/ipc-handlers-plugin'
 import './config/service'
 import fs from 'fs'
 import path from 'path'
+import { windowManager } from './plugins/window'
 
 // 当前窗口的加载在src\main\plugins\loader.ts中处理
 
@@ -52,3 +53,8 @@ app.on('will-quit', () => {
 app.on('window-all-closed', () => {
   // 不退出，因为我们有托盘图标
 })
+
+export function appExit() {
+  windowManager.destroy(); // 销毁所有窗口，其中对background窗口进行了额外处理
+  app.quit();
+}

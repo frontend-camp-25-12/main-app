@@ -4,6 +4,7 @@ import { windowColor, windowManager } from './plugins/window';
 import trayIcon from '../../resources/tray-icon.png?asset'
 import i18next from './locales/i18n';
 import { pluginManager } from './plugins/loader';
+import { appExit } from '.';
 
 let tray: Tray | null = null;
 
@@ -34,7 +35,7 @@ export function updateTrayMenu() {
     { type: 'separator' },
     {
       label: i18next.t('quit'),
-      click: () => app.quit()
+      click: () => appExit()
     }
   ]);
 

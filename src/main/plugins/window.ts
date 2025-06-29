@@ -89,8 +89,13 @@ class PluginWindow {
     if (plugin.background) {
       // 后台保持类型的插件不销毁实例，仅隐藏
       window.on('close', (event) => {
-        event.preventDefault();
-        window.hide();
+        if (windowManager.shouldExit) {
+          window.destroy();
+          return;
+        } else {
+          event.preventDefault();
+          window.hide();
+        }
       });
     }
   }
@@ -146,6 +151,10 @@ class PluginWindow {
  */
 class WindowManager {
   private windows: Record<string, PluginWindow> = {};
+  private _shouldExit: boolean = false; // 用于Background插件的window退出
+  get shouldExit() {
+    return this._shouldExit;
+  }
   /**
    * 添加一个插件窗口（不打开）
    * @param plugin 插件元数据
@@ -189,6 +198,18 @@ class WindowManager {
    */
   hideAll() {
     Object.values(this.windows).forEach(window => window.hide());
+  }
+  /**
+   * 关闭所有窗口
+   */
+  destroy() {
+    this._shouldExit = true;
+    Object.values(this.windows).forEach(window => {
+      if (window.window && !window.window.isDestroyed()) {
+        window.window.close();
+      }
+    });
+    this.windows = {};
   }
   /**
    * 移除窗口
@@ -245,7 +266,7 @@ class WindowColor {
     });
   }
 
-  set mode(mode: typeof nativeTheme['themeSource']){
+  set mode(mode: typeof nativeTheme['themeSource']) {
     nativeTheme.themeSource = mode;
     AppConfig.set('colorMode', mode);
   }
