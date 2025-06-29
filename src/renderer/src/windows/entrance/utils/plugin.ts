@@ -29,7 +29,7 @@ export class PluginView {
       pluginMap.set(plugin.id, plugin);
     }
     for (const s of search) {
-      const plugin = pluginMap[s.id];
+      const plugin = pluginMap.get(s.id);
       if (plugin) {
 
         const view = new PluginView(plugin);
