@@ -20,7 +20,7 @@ function isAsar(dirent: fs.Dirent | string) {
     } else {
       dirPath = join(dirent.parentPath, dirent.name);
     }
-    asar.listPackage(dirPath);
+    asar.getRawHeader(dirPath);
     return true;
   } catch (error) {
     return false;
@@ -68,9 +68,9 @@ export class PluginManager {
   }
 
   async afterLoadPlugin(plugin: PluginMetadata) {
+    pluginUsageInfoManager.add(plugin); // 必须最先把plugin交给它，用来补充PluginUsageInfoSchema内的状态信息
     windowManager.add(plugin);
     hotkeyManager.add(plugin);
-    pluginUsageInfoManager.add(plugin);
   }
 
   /**
@@ -88,6 +88,7 @@ export class PluginManager {
         return null;
       }
     }
+
     const pluginJsonPath = join(pluginPath, 'plugin.json');
     const pluginData = await fs.promises.readFile(pluginJsonPath, "utf-8");
     const raw = JSON.parse(pluginData);
@@ -98,6 +99,7 @@ export class PluginManager {
       console.warn(`Plugin at ${pluginPath} failed zod validation:`, e);
       return null;
     }
+
     if (this.plugins[pluginDef.id]) {
       throw new Error(`插件 ${pluginDef.name} 已经存在`);
     }
@@ -126,6 +128,15 @@ export class PluginManager {
     return pluginUsageInfoManager.getRecentlyOrder().map(id => plugins[id]);
   }
 
+  async get(id: string) {
+    const plugins = await this.plugins;
+    const plugin = plugins[id];
+    if (!plugin) {
+      throw new Error(`Plugin ${id} does not exist`);
+    }
+    return plugin;
+  }
+
   async getAllPluginLogos() {
     const plugins = await this.plugins;
     const logos: Record<string, string> = {};
@@ -138,10 +149,10 @@ export class PluginManager {
   }
 
   /**
-   * 安装开发中的插件目录
+   * 安装插件
    * @param dir 插件目录或asar文件
    */
-  async installDevPlugin(dir: string) {
+  async installPlugin(dir: string) {
     if (!path.isAbsolute(dir)) {
       dir = join(process.cwd(), dir);
     }
@@ -172,6 +183,65 @@ export class PluginManager {
     plugins[pluginMetadata.id] = pluginMetadata;
     this.afterLoadPlugin(pluginMetadata);
     return plugins;
+  }
+
+  /**
+   * 卸载插件
+   * @param id 插件标识
+   */
+  async remove(id: string) {
+    const pluginList = await this.plugins;
+    const plugin = await this.get(id);
+    if (plugin.internal) {
+      return;
+    }
+
+    windowManager.remove(id);
+    hotkeyManager.remove(id);
+    pluginUsageInfoManager.remove(id);
+
+    // 从插件列表中移除
+    delete pluginList[id];
+
+    // 删除插件文件
+    const pluginPath = join(pluginInstallPath, path.basename(plugin.dist));
+    if (fs.existsSync(pluginPath)) {
+      if (isAsar(pluginPath)) {
+        originalFs.rm(pluginPath, { recursive: true, force: true }, () => { });
+      } else if (fs.lstatSync(pluginPath).isSymbolicLink()) {
+        fs.unlinkSync(pluginPath);
+      }
+    }
+
+    console.log(`Plugin ${plugin.name} (${id}) has been removed successfully`);
+  }
+
+  /**
+   * 关闭插件
+   * @param id 插件标识
+   */
+  async disable(id: string) {
+    const plugin = await this.get(id);
+    if (plugin.internal) {
+      return;
+    }
+    pluginUsageInfoManager.disable(plugin);
+    windowManager.remove(id);
+    hotkeyManager.disable(id);
+  }
+
+  /**
+   * 启用插件
+   * @param id 插件标识
+   */
+  async enable(id: string) {
+    const plugin = await this.get(id);
+    if (plugin.internal) {
+      return;
+    }
+
+    pluginUsageInfoManager.enable(plugin);
+    hotkeyManager.enable(id);
   }
 
   /**

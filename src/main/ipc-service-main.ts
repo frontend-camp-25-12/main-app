@@ -18,7 +18,7 @@ export class IpcService {
    * @returns 插件元数据对象
    */
   async onPluginDevInstall(dir: string): Promise<Record<string, PluginMetadata>> {
-    return pluginManager.installDevPlugin(dir);
+    return pluginManager.installPlugin(dir);
   }
 
   /**
@@ -60,6 +60,30 @@ export class IpcService {
    */
   async onPluginLogos(): Promise<Record<string, string>> {
     return pluginManager.getAllPluginLogos();
+  }
+
+  /**
+   * 停用插件
+   * @param id 插件ID
+   */
+  async onPluginDisable(id: string): Promise<void> {
+    await pluginManager.disable(id);
+  }
+
+  /**
+   * 启用插件
+   * @param id 插件ID
+   */
+  async onPluginEnable(id: string): Promise<void> {
+    await pluginManager.enable(id);
+  }
+
+  /**
+   * 卸载插件
+   * @param id 插件ID
+   */
+  async onPluginRemove(id: string): Promise<void> {
+    await pluginManager.remove(id);
   }
 
   /**

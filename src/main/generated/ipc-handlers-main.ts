@@ -4,7 +4,7 @@ import { serviceInstance } from '../ipc-service-main';
 import { windowManager } from '../plugins/window';
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
 import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
-import type { PluginMetadata, MatchRange, SearchResult, AppConfigSchema } from '../../share/plugins/type.d';
+import type { PluginMetadata, MatchRange, SearchResult, AppConfigSchema, PluginUsageInfoSchema } from '../../share/plugins/type.d';
     
 app.on('ready', () => {
 
@@ -41,6 +41,24 @@ app.on('ready', () => {
   // onPluginLogos() -> Promise<Record<string, string>>
   ipcMain.handle('plugin-logos', async (_event, ) => {
     return await serviceInstance.onPluginLogos();
+  });
+
+
+  // onPluginDisable(id: string) -> Promise<void>
+  ipcMain.handle('plugin-disable', async (_event, id: string) => {
+    return await serviceInstance.onPluginDisable(id);
+  });
+
+
+  // onPluginEnable(id: string) -> Promise<void>
+  ipcMain.handle('plugin-enable', async (_event, id: string) => {
+    return await serviceInstance.onPluginEnable(id);
+  });
+
+
+  // onPluginRemove(id: string) -> Promise<void>
+  ipcMain.handle('plugin-remove', async (_event, id: string) => {
+    return await serviceInstance.onPluginRemove(id);
   });
 
 

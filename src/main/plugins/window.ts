@@ -48,7 +48,7 @@ class PluginWindow {
     this.windowContent = {
       preload, dist
     }
-    if (plugin.background) {
+    if (plugin.background && !plugin.disabled) {
       this.create()
     }
   }
@@ -190,13 +190,20 @@ class WindowManager {
   hideAll() {
     Object.values(this.windows).forEach(window => window.hide());
   }
-
   /**
    * 移除窗口
    * @param pluginId
    */
   remove(pluginId: string) {
-    delete this.windows[pluginId];
+    const pluginWindow = this.windows[pluginId];
+    if (pluginWindow) {
+      // 如果窗口存在且未被销毁，先关闭窗口
+      if (pluginWindow.window && !pluginWindow.window.isDestroyed()) {
+        pluginWindow.window.removeAllListeners(); // 移除所有事件监听器
+        pluginWindow.window.close();
+      }
+      delete this.windows[pluginId];
+    }
   }
 
   /**

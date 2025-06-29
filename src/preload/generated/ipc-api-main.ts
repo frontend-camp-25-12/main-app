@@ -1,6 +1,6 @@
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
 import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
-import type { PluginMetadata, MatchRange, SearchResult, AppConfigSchema } from '../../share/plugins/type.d';
+import type { PluginMetadata, MatchRange, SearchResult, AppConfigSchema, PluginUsageInfoSchema } from '../../share/plugins/type.d';
 import { electronAPI } from '@electron-toolkit/preload';
 
 // 自动生成的IPC接口，请勿手动修改
@@ -49,6 +49,30 @@ export class IpcApi {
    */
   async pluginLogos(): Promise<Record<string, string>> {
     return electronAPI.ipcRenderer.invoke('plugin-logos');
+  }
+
+  /**
+   * 停用插件
+    * @param id 插件ID
+   */
+  async pluginDisable(id: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('plugin-disable', id);
+  }
+
+  /**
+   * 启用插件
+    * @param id 插件ID
+   */
+  async pluginEnable(id: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('plugin-enable', id);
+  }
+
+  /**
+   * 卸载插件
+    * @param id 插件ID
+   */
+  async pluginRemove(id: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('plugin-remove', id);
   }
 
   /**

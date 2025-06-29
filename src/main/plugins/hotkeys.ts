@@ -18,9 +18,12 @@ export class HotkeyManager {
     })
   }
 
-  private registerGlobalShortcut(hotkey: string, option: HotkeyOption) {
-    console.debug(`Registering hotkey: ${hotkey} for ${option.id} - ${option.code}`);
-    globalShortcut.register(hotkey, () => {
+  private registerGlobalShortcut(option: HotkeyOption) {
+    if (!option.boundHotkey) {
+      return;
+    }
+    console.debug(`Registering hotkey: ${option.boundHotkey} for ${option.id} - ${option.code}`);
+    globalShortcut.register(option.boundHotkey, () => {
       pluginManager.open(option.id, {
         code: option.code,
         payload: '',
@@ -30,8 +33,8 @@ export class HotkeyManager {
   }
 
   private unregisterGlobalShortcut(hotkey?: string) {
-    console.debug(`Unregistering hotkey: ${hotkey}`);
     if (hotkey && globalShortcut.isRegistered(hotkey)) {
+      console.debug(`Unregistering hotkey: ${hotkey}`);
       globalShortcut.unregister(hotkey);
     }
   }
@@ -45,7 +48,7 @@ export class HotkeyManager {
       if (!opt.boundHotkey) {
         return;
       }
-      this.registerGlobalShortcut(opt.boundHotkey, opt);
+      this.registerGlobalShortcut(opt);
     });
   }
 
@@ -88,7 +91,7 @@ export class HotkeyManager {
    * 处理插件的热键注册
    */
   add(plugin: PluginMetadata) {
-    if (!plugin.features) return;
+    if (!plugin.features || plugin.disabled) return;
     for (const feature of plugin.features) {
       if (feature.hotKey) {
         this.registerHotkeyOption(plugin.id, feature.code, feature.label, plugin.name);
@@ -149,8 +152,8 @@ export class HotkeyManager {
     if (option) {
       this.unregisterGlobalShortcut(option.boundHotkey);
       if (hotkey) {
-        this.registerGlobalShortcut(hotkey, option);
         option.boundHotkey = hotkey;
+        this.registerGlobalShortcut(option);
       } else {
         option.boundHotkey = undefined;
       }
@@ -171,6 +174,50 @@ export class HotkeyManager {
       code: 'open',
       from: 'cmd'
     });
+  }
+
+  /**
+   * 禁用插件的热键配置
+   * @param pluginId 插件id
+   */
+  disable(pluginId: string) {
+    for (const [_key, option] of this.configuredHotkeys) {
+      if (option.id === pluginId) {
+        this.unregisterGlobalShortcut(option.boundHotkey);
+      }
+    }
+  }
+
+  /**
+   * 启用插件的热键绑定
+   * @param plugin
+   */
+  enable(pluginId: string) {
+    for (const [_key, option] of this.configuredHotkeys) {
+      if (option.id === pluginId && option.boundHotkey) {
+        this.registerGlobalShortcut(option);
+      }
+    }
+  }
+
+  /**
+   * 移除插件的热键配置
+   * @param pluginId 插件id
+   */
+  remove(pluginId: string) {
+    this.disable(pluginId);
+    for (const [key, option] of this.configuredHotkeys) {
+      if (option.id === pluginId) {
+        this.configuredHotkeys.delete(key);
+      }
+    }
+    // 更新配置文件
+    const config = this.listBoundHotkeys().map(opt => ({
+      id: opt.id,
+      code: opt.code,
+      hotkey: opt.boundHotkey,
+    }));
+    HotkeyConfig.set('hotkeys', config);
   }
 }
 

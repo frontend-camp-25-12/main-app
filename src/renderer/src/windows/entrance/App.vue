@@ -18,7 +18,7 @@ const viewMode = ref<'grid' | 'list'>('list');
 const fetchPlugins = async () => {
   const data = await window.ipcApi.pluginListRecent();
   pluginList = data || [];
-  displayedPlugins.value = pluginList.filter(plugin => !plugin.internal?.hidden).map(plugin => new PluginView(plugin));
+  displayedPlugins.value = pluginList.filter(plugin => !plugin.internal?.hidden && !plugin.disabled).map(plugin => new PluginView(plugin));
 };
 
 const handleAddPlugin = async () => {
