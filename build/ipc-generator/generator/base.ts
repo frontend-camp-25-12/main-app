@@ -181,7 +181,7 @@ export abstract class CommonIpcGenerator extends IpcGenerator {
       if (method.type === 'on') {
         handlers.push(`
   // ${method.name}${method.typeParameters}(${paramsWithTypes}) -> ${method.returnType}
-  ipcMain.handle('${method.channelName}', async (_event, ${paramsWithTypes}) => {
+  ipcMain.handle('${method.channelName}', async ${method.typeParameters}(_event, ${paramsWithTypes}) => {
     return await serviceInstance.${method.name}(${params});
   });`);
       } else if (method.type === 'emit') {

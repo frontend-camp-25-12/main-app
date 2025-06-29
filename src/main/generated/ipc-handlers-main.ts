@@ -20,6 +20,12 @@ app.on('ready', () => {
   });
 
 
+  // onPluginListRecent() -> Promise<PluginMetadata[]>
+  ipcMain.handle('plugin-list-recent', async (_event, ) => {
+    return await serviceInstance.onPluginListRecent();
+  });
+
+
   // onPluginOpen(id: string, action: PluginEnterAction) -> Promise<void>
   ipcMain.handle('plugin-open', async (_event, id: string, action: PluginEnterAction) => {
     return await serviceInstance.onPluginOpen(id, action);
@@ -45,13 +51,13 @@ app.on('ready', () => {
 
 
   // onAppConfigGet<K extends keyof AppConfigSchema>(key: K, defalut: AppConfigSchema[K]) -> Promise<AppConfigSchema[K]>
-  ipcMain.handle('app-config-get', async (_event, key: K, defalut: AppConfigSchema[K]) => {
+  ipcMain.handle('app-config-get', async <K extends keyof AppConfigSchema>(_event, key: K, defalut: AppConfigSchema[K]) => {
     return await serviceInstance.onAppConfigGet(key, defalut);
   });
 
 
   // onAppConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]) -> Promise<void>
-  ipcMain.handle('app-config-set', async (_event, key: K, value: AppConfigSchema[K]) => {
+  ipcMain.handle('app-config-set', async <K extends keyof AppConfigSchema>(_event, key: K, value: AppConfigSchema[K]) => {
     return await serviceInstance.onAppConfigSet(key, value);
   });
 
