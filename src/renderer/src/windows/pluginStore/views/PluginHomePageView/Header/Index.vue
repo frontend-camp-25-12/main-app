@@ -23,6 +23,7 @@ function invokeFileChooseDialog(): void {
     fileInput.value?.click();
 }
 
+
 //上传插件
 async function handlePluginUpload(e): Promise<void> {
     const file = e.target.files[0];
@@ -44,14 +45,21 @@ async function handlePluginUpload(e): Promise<void> {
         const result = await response.json();
 
         if (response.ok) {
-            console.log("上传成功:", result);
-            alert(`文件 ${result.originalname} 上传成功`);
+            ElMessage({
+                message: `插件 ${result.originalname} 上传成功`,
+                type: 'success',
+                offset: 30
+            })
         } else {
             throw new Error(result.error || "上传失败");
         }
     } catch (error) {
         console.error("上传错误:", error);
-        alert("上传失败: " + error.message);
+        ElMessage({
+            message: `插件 ${file.name} 上传失败 : ${error.message}`,
+            type: 'error',
+            offset: 30
+        })
     }
 }
 </script>
