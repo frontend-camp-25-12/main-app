@@ -40,6 +40,12 @@ app.on('ready', () => {
   ipcMain.handle('close-self', async (_event, id: string) => {
     return await serviceInstance.onCloseSelf(id);
   });
+
+
+  // onGetLocalePreference(id: string) -> Promise<string>
+  ipcMain.handle('get-locale-preference', async (_event, id: string) => {
+    return await serviceInstance.onGetLocalePreference(id);
+  });
 });
     
 export namespace ipcEmitPlugin {
@@ -57,5 +63,19 @@ export namespace ipcEmitPlugin {
   */
   export function pluginEnterTo(id: PluginMetadata['id'], action: PluginEnterAction) {
     windowManager.emitTo(id, 'plugin-enter', action);
+  }
+
+  /**
+  * 语言变更事件
+  */
+  export function localePreferenceChange(language: string) {
+    windowManager.emit('locale-preference-change', language);
+  }
+
+  /**
+  * 语言变更事件
+  */
+  export function localePreferenceChangeTo(id: PluginMetadata['id'], language: string) {
+    windowManager.emitTo(id, 'locale-preference-change', language);
   }
 }

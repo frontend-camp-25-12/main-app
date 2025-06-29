@@ -213,7 +213,8 @@ import { PluginApi } from '@types/plugin-api-types';
 | configSet    | 设置指定配置项的值。注意：读写时的key可以是'foo.bar'这样多级的json路径                             | key: 配置项名称<br>value: 要设置的值       |
 | onOpenHotkeySettings | 打开快捷键设置窗口，并高亮显示指定功能的快捷键设置 | 希望用户设置快捷键的feature的code |
 | closeSelf | 主动退出当前插件窗口 |  |
-
+| getLocalePreference | 获得当前偏好语言（"en", "zh-CN"） |  |
+| onLocalePreferenceChange | 注册语言变更事件的回调 | callback: (language: string) => void |
 
 ## 约束
 1. 插件即是一个独立的electron renderer，但是相对于Electron默认的安全策略，有如下调整

@@ -8,6 +8,7 @@ import { nativeTheme } from 'electron';
 import { windowColor } from './plugins/window';
 import { ipcEmit } from './generated/ipc-handlers-main';
 import { changeLanguage } from './locales/i18n';
+import { ipcEmitPlugin } from './generated/ipc-handlers-plugin';
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
@@ -134,6 +135,7 @@ export class IpcService {
     ipcEmit.uiConfigChange(key, value);
     if (key === 'locale') {
       changeLanguage(value as AppConfigSchema['locale']);
+      ipcEmitPlugin.localePreferenceChange(value as AppConfigSchema['locale']);
     }
   }
 

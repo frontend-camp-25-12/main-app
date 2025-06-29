@@ -1,3 +1,4 @@
+import i18next from "../locales/i18n";
 import { PluginEnterAction } from "../../share/plugins/api.type";
 import { configManager } from "../config/service";
 import { hotkeyManager } from "./hotkeys";
@@ -65,10 +66,22 @@ export class IpcServicePlugin {
   }
 
   /**
+   * 获取当前本地化偏好
+   */
+  async onGetLocalePreference(id: string): Promise<string> {
+    return i18next.language;
+  }
+
+  /**
    * 插件进入事件
    * @param action PluginEnterAction
    */
   async emitPluginEnter(action: PluginEnterAction) { }
+
+  /**
+   * 语言变更事件
+   */
+  async emitLocalePreferenceChange(language: string) { }
 }
 
 export const serviceInstance = new IpcServicePlugin();

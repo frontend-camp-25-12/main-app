@@ -56,10 +56,24 @@ export class PlatformApi {
   }
 
   /**
+    * 获取当前本地化偏好 
+    */
+  async getLocalePreference(): Promise<string> {
+    return electronAPI.ipcRenderer.invoke('get-locale-preference', this.pluginId);
+  }
+
+  /**
    * 插件进入事件
     * @param action PluginEnterAction
    */
   onPluginEnter(callback: (action: PluginEnterAction) => void) {
     electronAPI.ipcRenderer.on('plugin-enter', (_event, action) => callback(action));
+  }
+
+  /**
+   * 语言变更事件
+   */
+  onLocalePreferenceChange(callback: (language: string) => void) {
+    electronAPI.ipcRenderer.on('locale-preference-change', (_event, language) => callback(language));
   }
 }
