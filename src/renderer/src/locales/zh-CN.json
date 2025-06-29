@@ -21,6 +21,7 @@
     "addPlugin": "添加插件",
     "commandMatch": "命令匹配",
     "installedPlugins": "已安装插件",
+    "recentlyUsed": "最近使用",
     "pluginPathPlaceholder": "开发：输入插件文件夹或.asar的路径进行安装，文件夹通过软链接安装（总是和开发状态一致），.asar文件通过复制",
     "noPlugins": "暂无插件",
     "pluginAddSuccess": "插件添加成功",

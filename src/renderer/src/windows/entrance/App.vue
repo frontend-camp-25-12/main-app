@@ -8,7 +8,7 @@ import ListPlugin from './components/ListPlugin.vue';
 import { PluginView } from './utils/plugin';
 import { Grid, Expand } from '@element-plus/icons-vue';
 
-let pluginList: Record<string, PluginMetadata> = {};
+let pluginList: PluginMetadata[] = [];
 const pluginPath = ref('');
 const searchInput = ref('');
 
@@ -16,11 +16,9 @@ let displayedPlugins: Ref<PluginView[]> = ref([]);
 const viewMode = ref<'grid' | 'list'>('list');
 
 const fetchPlugins = async () => {
-  const data = await window.ipcApi.pluginList();
-  pluginList = data || {};
-  console.log('Fetched plugins:', pluginList);
-  displayedPlugins.value = Object.values(pluginList).filter(plugin => !plugin.internal?.hidden).map(plugin => new PluginView(plugin));
-  console.log('Displayed plugins:', displayedPlugins.value);
+  const data = await window.ipcApi.pluginListRecent();
+  pluginList = data || [];
+  displayedPlugins.value = pluginList.filter(plugin => !plugin.internal?.hidden).map(plugin => new PluginView(plugin));
 };
 
 const handleAddPlugin = async () => {
@@ -79,7 +77,8 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
   if (feat) {
     action.code = feat.code
   }
-  return window.ipcApi.pluginOpen(id, action);
+  window.ipcApi.pluginOpen(id, action);
+  fetchPlugins();
 };
 
 function switchViewMode() {
@@ -112,7 +111,7 @@ function openFirstItem() {
     </div>
 
     <span class="plugin-category" v-if="searchInput.length">{{ t('entrance.commandMatch') }}</span>
-    <span class="plugin-category" v-else>{{ t('entrance.installedPlugins') }}</span>
+    <span class="plugin-category" v-else>{{ t('entrance.recentlyUsed') }}</span>
     <ElScrollbar class="plugin-grid-container">
       <GridPlugin :plugins="displayedPlugins" @open-plugin="handleOpenPlugin" v-if="viewMode === 'grid'" />
       <ListPlugin :plugins="displayedPlugins" @open-plugin="handleOpenPlugin" v-else />

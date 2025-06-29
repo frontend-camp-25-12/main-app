@@ -22,8 +22,12 @@ export class PluginView {
     this.description = plugin.description;
   }
 
-  static fromSearchResult(pluginMap: Record<string, PluginMetadata>, search: SearchResult[]): PluginView[] {
+  static fromSearchResult(pluginList: PluginMetadata[], search: SearchResult[]): PluginView[] {
     const results: PluginView[] = [];
+    const pluginMap: Map<PluginMetadata['id'], PluginMetadata> = new Map();
+    for (const plugin of pluginList) {
+      pluginMap.set(plugin.id, plugin);
+    }
     for (const s of search) {
       const plugin = pluginMap[s.id];
       if (plugin) {

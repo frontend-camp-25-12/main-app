@@ -21,6 +21,7 @@
     "addPlugin": "Add Plugin",
     "commandMatch": "Command Match",
     "installedPlugins": "Installed Plugins",
+    "recentlyUsed": "Recently Used",
     "pluginPathPlaceholder": "Dev: Enter the plugin folder or .asar path to install. Folders are installed via symlink (always in sync with dev), .asar files are copied.",
     "noPlugins": "No plugins available",
     "pluginAddSuccess": "Plugin added successfully",

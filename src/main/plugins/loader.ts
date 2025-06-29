@@ -10,6 +10,7 @@ import { hotkeyManager } from "./hotkeys.js";
 import asar from "asar";
 import originalFs from "original-fs";
 import { pathToFileURL } from "url";
+import { pluginUsageInfoManager } from "./usageInfo.js";
 
 function isAsar(dirent: fs.Dirent | string) {
   try {
@@ -69,6 +70,7 @@ export class PluginManager {
   async afterLoadPlugin(plugin: PluginMetadata) {
     windowManager.add(plugin);
     hotkeyManager.add(plugin);
+    pluginUsageInfoManager.add(plugin);
   }
 
   /**
@@ -117,6 +119,11 @@ export class PluginManager {
   async list() {
     const plugins = await this.plugins;
     return plugins;
+  }
+
+  async listByRecent() {
+    const plugins = await this.plugins;
+    return pluginUsageInfoManager.getRecentlyOrder().map(id => plugins[id]);
   }
 
   async getAllPluginLogos() {
@@ -180,6 +187,7 @@ export class PluginManager {
     windowManager.open(plugin);
     ipcEmitPlugin.pluginEnterTo(plugin.id, action);
     plugin.lastEnterAction = action;
+    pluginUsageInfoManager.onOpen(plugin.id);
   }
 
   /**

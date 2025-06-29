@@ -30,6 +30,14 @@ export class IpcService {
   }
 
   /**
+ * 获取插件列表(按最近使用优先)
+ * @returns 插件元数据对象
+ */
+  async onPluginListRecent(): Promise<PluginMetadata[]> {
+    return pluginManager.listByRecent();
+  }
+
+  /**
    * 打开插件
    * @param id 插件id
    * @param action PluginEnterAction

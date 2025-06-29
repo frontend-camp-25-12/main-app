@@ -21,6 +21,13 @@ export class IpcApi {
   }
 
   /**
+   * 获取插件列表(按最近使用优先)
+   */
+  async pluginListRecent(): Promise<PluginMetadata[]> {
+    return electronAPI.ipcRenderer.invoke('plugin-list-recent');
+  }
+
+  /**
    * 打开插件
     * @param id 插件id
     * @param action PluginEnterAction
