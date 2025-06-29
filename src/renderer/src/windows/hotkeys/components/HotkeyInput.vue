@@ -4,7 +4,7 @@ import { ElInput } from 'element-plus'
 import { t } from '../../../utils/i18n'
 
 const emit = defineEmits<{
-  (event: 'change', value: string): void
+  (event: 'change', value: string, reset: () => void): void
 }>()
 
 const props = defineProps<{
@@ -50,7 +50,7 @@ const stopCapture = () => {
 
   if (pressedKeys.value.size === 0) {
     displayValue.value = t('hotkeyInput.empty')
-    emit('change', '')
+    emit('change', '', () => loadInitVal(props.initialValue))
     return
   }
 
@@ -74,7 +74,7 @@ const stopCapture = () => {
   const accelerator = [...modifiers, ...normalKeys].join('+')
   displayValue.value = accelerator
 
-  emit('change', accelerator)
+  emit('change', accelerator, () => loadInitVal(props.initialValue))
 }
 
 const handleKeyDown = (event: Event | KeyboardEvent) => {
@@ -135,7 +135,9 @@ const handleKeyUp = (event: KeyboardEvent) => {
   inputRef.value?.blur()
 }
 
-watch(() => props.initialValue, (newValue) => {
+watch(() => props.initialValue, loadInitVal, { immediate: true })
+
+function loadInitVal(newValue: string | undefined) {
   if (!newValue) {
     displayValue.value = t('hotkeyInput.empty')
     pressedKeys.value.clear()
@@ -156,8 +158,7 @@ watch(() => props.initialValue, (newValue) => {
   const formatted = [...modifiers, ...normalKeys].join('+')
   displayValue.value = formatted
   pressedKeys.value = new Set([...modifiers, ...normalKeys])
-}, { immediate: true })
-
+}
 </script>
 
 <template>

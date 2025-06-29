@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, Ref, computed } from 'vue';
-import { ElButton, ElFormItem, ElForm, ElTag } from 'element-plus';
+import { ElButton, ElFormItem, ElForm, ElTag, ElMessageBox } from 'element-plus';
 import HotkeyInput from './components/HotkeyInput.vue';
 import { HotkeyOption } from '../../../../share/plugins/hotkeys.type';
 import { t } from '../../utils/i18n';
@@ -11,6 +11,48 @@ const hotkeyOptions: Ref<HotkeyOption[]> = ref([]);
 const pluginLogos: Ref<Record<string, string>> = ref({});
 const dirtyPluginKeys: Ref<Set<string>> = ref(new Set());
 let initialHotkeyOptions: HotkeyOption[] = [];
+
+// 不可用的快捷键组合列表
+const invalidHotkeyPatterns = [
+  'Alt+Shift',           // 系统输入法切换
+  'Alt+Tab',             // 系统窗口切换
+  'CmdOrCtrl+Alt+Delete', // 系统任务管理器（Windows）
+  'CmdOrCtrl+Shift+Esc', // 任务管理器
+  'Alt+F4',              // 关闭窗口
+  'CmdOrCtrl+L',         // 地址栏聚焦（浏览器）
+  'CmdOrCtrl+T',         // 新标签页（浏览器）
+  'CmdOrCtrl+W',         // 关闭标签页（浏览器）
+  'CmdOrCtrl+Shift+T',   // 恢复关闭的标签页（浏览器）
+  'F11',                 // 全屏切换
+  'CmdOrCtrl+F11',       // 全屏切换
+  'Alt+Enter',           // 属性/全屏切换
+  'CmdOrCtrl+Shift+N',   // 新无痕窗口（浏览器）
+  'CmdOrCtrl+R',         // 刷新页面
+  'CmdOrCtrl+F5',        // 强制刷新
+  'F5',                  // 刷新
+  'Shift+F5',            // 强制刷新
+  'CmdOrCtrl+D',         // 书签/收藏
+  'CmdOrCtrl+H',         // 历史记录
+  'CmdOrCtrl+J',         // 下载记录
+  'CmdOrCtrl+U',         // 查看源代码
+  'F12',                 // 开发者工具
+  'CmdOrCtrl+Shift+I',   // 开发者工具
+  'CmdOrCtrl+Shift+C',   // 元素选择器
+  'CmdOrCtrl+Shift+J',   // 控制台
+  'Alt+Left',            // 浏览器后退
+  'Alt+Right',           // 浏览器前进
+  'CmdOrCtrl+Left',      // 浏览器后退（Mac）
+  'CmdOrCtrl+Right',     // 浏览器前进（Mac）
+  'CmdOrCtrl+Shift+Delete', // 清除浏览数据
+  'CmdOrCtrl+Plus',      // 放大
+  'CmdOrCtrl+-',         // 缩小
+  'CmdOrCtrl+0',         // 重置缩放
+];
+
+// 检查快捷键是否为不可用组合
+function isInvalidHotkey(hotkey: string): boolean {
+  return invalidHotkeyPatterns.includes(hotkey);
+}
 // 计算是否有修改
 const hasModifications = computed(() => {
   return dirtyPluginKeys.value.size > 0;
@@ -50,7 +92,50 @@ async function fetchHotkeyOptions() {
   hotkeyOptions.value = await window.ipcApi.listHotkeyOptions();
 }
 
-function handleHotkeyChange(id: string, code: string, value: string) {
+async function handleHotkeyChange(id: string, code: string, value: string, reset: () => void) {
+  // 检查是否为不可用的快捷键组合
+  if (isInvalidHotkey(value)) {
+    await ElMessageBox.alert(
+      t('hotkeyInput.invalidMessage', {
+        hotkey: value
+      }),
+      t('hotkeyInput.invalidTitle'),
+      {
+        confirmButtonText: t('confirm'),
+        type: 'warning'
+      }
+    );
+
+    reset(); // 重置输入框
+    return;
+  }
+
+  // 检查快捷键冲突
+  const conflictOption = hotkeyOptions.value.find(option =>
+    option.boundHotkey === value &&
+    !(option.id === id && option.code === code) // 自己除外
+  );
+
+  if (conflictOption) {
+    // 冲突了，弹窗
+    await ElMessageBox.alert(
+      t('hotkeyInput.conflictMessage', {
+        hotkey: value,
+        pluginName: conflictOption.pluginName,
+        feature: conflictOption.label
+      }),
+      t('hotkeyInput.conflictTitle'),
+      {
+        confirmButtonText: t('confirm'),
+        type: 'warning'
+      }
+    );
+
+    reset(); // 重置输入框
+    return;
+  }
+
+  // 一切正常，更新热键绑定
   const initial = initialHotkeyOptions.find(item => item.id === id);
   if (initial) {
     const initialValue = initial.boundHotkey || ''; // initial值可能是undefined，按照空字符串（不绑定热键）来处理
@@ -87,7 +172,7 @@ async function undoChanges() {
       </el-button>
     </div>
     <el-form label-width="350px">
-      <el-form-item v-for="(item, index) in hotkeyOptions" :key="getKeyOfOption(item.id, item.code)" class="option"
+      <el-form-item v-for="item in hotkeyOptions" :key="getKeyOfOption(item.id, item.code)" class="option"
         :class="{ 'option-highlight': getKeyOfOption(item.id, item.code) === highlightOption }">
         <template #label>
           <div class="option-label-container">
@@ -100,7 +185,7 @@ async function undoChanges() {
             <span class="option-label">{{ item.label }}</span>
           </div>
         </template>
-        <HotkeyInput @change="(v) => handleHotkeyChange(item.id, item.code, v)" :initial-value="item.boundHotkey" />
+        <HotkeyInput @change="(v, reset) => handleHotkeyChange(item.id, item.code, v, reset)" :initial-value="item.boundHotkey" />
       </el-form-item>
     </el-form>
   </div>

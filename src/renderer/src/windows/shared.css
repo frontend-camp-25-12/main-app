@@ -3,6 +3,11 @@
  */
 body {
   --el-border-radius-base: 12px;
+
+  .el-message-box {
+    --el-messagebox-border-radius: 16px;
+  }
+
   margin: 0;
 }
 
@@ -10,6 +15,7 @@ body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

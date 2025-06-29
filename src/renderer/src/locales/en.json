@@ -35,8 +35,11 @@
     "pleaseInput": "Please press the shortcut keys",
     "outsideClickEmpty": "Click outside to finish (Currently set to empty)",
     "outsideClick": "Click outside to finish",
-    "empty": "No shortcut set",
-    "undo": "Undo Changes",
-    "modified": "Modified"
+    "empty": "No shortcut set",    "undo": "Undo Changes",
+    "modified": "Modified",
+    "conflictTitle": "Hotkey Conflict",
+    "conflictMessage": "The hotkey \"{hotkey}\" is already used by \"{pluginName}\" for \"{feature}\" function. Cannot set duplicate hotkeys.",
+    "invalidTitle": "Invalid Hotkey",
+    "invalidMessage": "The hotkey \"{hotkey}\" is a system reserved key combination and cannot be used. Please choose another hotkey."
   }
 }
