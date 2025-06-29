@@ -253,7 +253,7 @@ import { PluginApi } from '@types/plugin-api-types';
   "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入，支持拼音搜索和拼音首字母搜索
     {
       "code": "featureCode",              // 功能代码，用于在onPluginEnter时，区分不同功能
-      "label": "功能名称",                  // 功能名称，注意它仅供显示，而不会参与命令检索。应该设置cmds来定义这个feature如何被检索到。
+      "label": "功能名称",                  // 功能名称，注意它会参与命令检索。可以通过cmds来定义这个feature其它的匹配指令。
       "hotKey": false,                      // （可选）是否启用热键，默认false。设为true后，可在”快捷键管理”中查看对应的热键设置，通过热键进入时，action.from = 'hotkey'
       "searchable": true,                   // （可选）是否可被搜索到，默认true。与hotkey结合可以提供仅能通过热键进入的功能
       "cmds": [                             // 可触发这个feature的命令列表, 一共支持三种类型的命令

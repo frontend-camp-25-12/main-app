@@ -20,6 +20,7 @@ export interface SearchResult {
   feature: {
     code: string;
     label: string;
+    labelMatch?: MatchRange;
     score: number;
   }[];
   score: number;

@@ -60,12 +60,18 @@ export class PluginSearch {
           if (feature.searchable === false) {
             continue; // 不允许搜索，跳过
           }
-          const matchedPluginFeature: SearchResult['feature'][number]  = {
+          const matchedPluginFeature: SearchResult['feature'][number] = {
             code: feature.code,
             label: feature.label,
             score: 0
           };
-          let match = false
+          let match = false;
+          const featureLabelMatch = this.matchText(query, feature.label);
+          if (featureLabelMatch.score > 0) {
+            matchedPluginFeature.labelMatch = featureLabelMatch.range;
+            matchedPluginFeature.score += featureLabelMatch.score;
+            match = true;
+          }
           for (const cmd of feature.cmds) {
             if (typeof cmd === 'string') {
               // 字符串命令匹配
@@ -132,7 +138,7 @@ export class PluginSearch {
     const pinyinMatch = PinyinMatch.match(text, query);
     if (pinyinMatch) {
       score += MatchTypeScore.PINYIN;
-      ranges.push(pinyinMatch)
+      ranges.push([pinyinMatch[0], pinyinMatch[1] + 1]); // 统一到左闭右开
     }
 
     return {

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, h, VNode } from 'vue';
 import { PluginView } from '../utils/plugin';
 import icon from '../../../../../../resources/icon.png';
 import { t } from '../../../utils/i18n';
+import TextHighlight from './TextHighlight';
 
 const props = defineProps<{
   plugins: PluginView[]
@@ -47,31 +48,33 @@ onUnmounted(() => {
   window.removeEventListener('keyup', handleAltKey);
   window.removeEventListener('keydown', handleNumberKey);
 });
+
+
 </script>
 
 <template>
   <div v-if="plugins.length" class="plugin-list">
-    <div v-for="(plugin, index) in plugins" 
-         :key="plugin.id + plugin.feature?.code"
-         class="plugin-item"
-         :class="{ 'is-active': index === activeIndex }"
-         tabindex="0" 
-         role="button"
-         :aria-label="`${plugin.name}${plugin.feature ? ' - ' + plugin.feature.label : ''}`"
-         @click="emit('open-plugin', plugin.id, plugin.feature)"
-         @keydown.enter="emit('open-plugin', plugin.id, plugin.feature)"
-         @keydown.space.prevent="emit('open-plugin', plugin.id, plugin.feature)"
-         @focus="setActiveItem(index)"
-         @mouseover="setActiveItem(index)">
-      
+    <div v-for="(plugin, index) in plugins" :key="plugin.id + plugin.feature?.code" class="plugin-item"
+      :class="{ 'is-active': index === activeIndex }" tabindex="0" role="button"
+      :aria-label="`${plugin.name}${plugin.feature ? ' - ' + plugin.feature.label : ''}`"
+      @click="emit('open-plugin', plugin.id, plugin.feature)"
+      @keydown.enter="emit('open-plugin', plugin.id, plugin.feature)"
+      @keydown.space.prevent="emit('open-plugin', plugin.id, plugin.feature)" @focus="setActiveItem(index)"
+      @mouseover="setActiveItem(index)">
+
       <div class="plugin-icon-container">
         <img width="32" :src="plugin.logoPath ? `${plugin.logoPath}` : icon" alt="logo" class="plugin-icon" />
         <div v-if="showNumbers" class="plugin-number">{{ index + 1 }}</div>
       </div>
-      
+
       <div class="plugin-info">
-        <div class="plugin-name">{{ plugin.feature ? plugin.feature.label : plugin.name }}</div>
-        <div class="plugin-description" v-if="plugin.description">{{ plugin.description }}</div>
+        <div class="plugin-name">
+          <TextHighlight v-if="plugin.feature" :text="plugin.feature.label" :ranges="plugin.feature.labelMatch" />
+          <TextHighlight v-else :text="plugin.name" :ranges="plugin.matchedName" />
+        </div>
+        <div class="plugin-description" v-if="plugin.description">
+          <TextHighlight :text="plugin.description" :ranges="plugin.matchedDescription" />
+        </div>
       </div>
 
       <div class="plugin-right-name">
@@ -142,6 +145,10 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
+.plugin-info :deep(.highlight) {
+  background-color: var(--el-color-success-light-7);
+}
+
 .plugin-name {
   color: var(--el-text-color-primary);
   font-weight: 500;
@@ -160,7 +167,12 @@ onUnmounted(() => {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 </style>

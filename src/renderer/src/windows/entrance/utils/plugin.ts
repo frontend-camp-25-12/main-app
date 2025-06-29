@@ -12,10 +12,10 @@ export class PluginView {
   feature?: {  // 当被搜索时
     code: string; // 功能代码
     label: string; // 功能标签
+    labelMatch?: MatchRange; // 功能标签匹配范围
   }
 
   constructor(plugin: PluginMetadata) {
-    
     this.name = plugin.name;
     this.id = plugin.id;
     this.logoPath = plugin.logoPath;
@@ -37,7 +37,8 @@ export class PluginView {
               ...view,
               feature: {
                 code: feat.code,
-                label: feat.label
+                label: feat.label,
+                labelMatch: feat.labelMatch
               }
             });
           }
