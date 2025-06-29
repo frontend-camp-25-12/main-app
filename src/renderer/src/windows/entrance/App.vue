@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, Ref } from 'vue';
+import { ref, onMounted, Ref, useTemplateRef } from 'vue';
 import { ElButton, ElInput, ElNotification, ElScrollbar } from 'element-plus';
 import { PluginEnterAction, PluginMetadata } from '../../../../share/plugins/type';
 import { t } from '../../utils/i18n';
@@ -11,6 +11,7 @@ import { Grid, Expand } from '@element-plus/icons-vue';
 let pluginList: PluginMetadata[] = [];
 const pluginPath = ref('');
 const searchInput = ref('');
+const cmdInput = useTemplateRef<InstanceType<typeof ElInput>>('cmd-input');;
 
 let displayedPlugins: Ref<PluginView[]> = ref([]);
 const viewMode = ref<'grid' | 'list'>('list');
@@ -58,6 +59,14 @@ onMounted(() => {
   window.ipcApi.appConfigGet('entrance_viewMode', 'list').then(mode => {
     viewMode.value = mode || 'list';
   });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' || event.key == 'Tab' || (event.ctrlKey || event.metaKey || event.shiftKey)) {
+      return;
+    }
+    if (cmdInput.value && document.activeElement !== cmdInput.value.$el) {
+      cmdInput.value.focus();
+    }
+  });
 });
 
 if (import.meta.env.DEV) {
@@ -98,15 +107,16 @@ function openFirstItem() {
   <div class="plugin-container">
     <div style="display: flex; gap: 8px;">
       <ElInput v-model="pluginPath" :placeholder="t('entrance.pluginPathPlaceholder')" @keyup.enter="handleAddPlugin"
-        style="flex: 1" />
-      <ElButton type="primary" :disabled="!pluginPath.trim()" @click="handleAddPlugin">
+        style="flex: 1" tabindex="-1"/>
+      <ElButton type="primary" :disabled="!pluginPath.trim()" @click="handleAddPlugin" tabindex="-1">
         {{ t('entrance.addPlugin') }}
       </ElButton>
     </div>
     <div style="display: flex; gap: 8px;">
-      <ElInput v-model="searchInput" class="cmd-input" :placeholder="t('entrance.searchPlaceholder')" @input="handleSearchInput"
-        @keyup.enter="openFirstItem" size="large" />
-      <ElButton tabindex="-1" @click="switchViewMode" :icon="viewMode === 'grid' ? Grid : Expand" circle size="large" style="font-size: 18px;">
+      <ElInput v-model="searchInput" class="cmd-input" :placeholder="t('entrance.searchPlaceholder')"
+        @input="handleSearchInput" @keyup.enter="openFirstItem" size="large" ref="cmd-input" tabindex="-1"/>
+      <ElButton tabindex="-1" @click="switchViewMode" :icon="viewMode === 'grid' ? Grid : Expand" circle size="large"
+        style="font-size: 18px;">
       </ElButton>
     </div>
 
