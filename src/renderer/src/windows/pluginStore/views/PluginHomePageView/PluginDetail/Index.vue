@@ -129,26 +129,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+import { getPluginInfoById } from '../../../api/plugin'
 //router实例
 const router = useRouter();
 
 //从route得到的pluginId，用于请求服务器插件信息，在router配置里设置了props为true会自动注入到props里，实际是从route传过来的
 const { pluginId } = defineProps(["pluginId"]);
+const plugin = ref({});
+//通过pluginId请求插件信息
+getPluginInfoById(pluginId).then((data) => {
+    plugin.value = data
+})
 const emit = defineEmits(["back-to-list", "toggle-favorite"]);
-//插件信息,暂时是mock数据
-const plugin = ref({
-    id: 1,
-    name: "局域网数据传输",
-    logo: "fas fa-search",
-    description: "局域网数据传输",
-    version: "1.0,0",
-    category: "效率工具",
-    rating: 9.3,
-    downloads: 12000
-});
 
+//表示插件是否已安装
 const installed = ref(false);
 
 //格式化下载量
@@ -163,7 +159,7 @@ const formatDownloads = computed(() => {
 async function handleDownload() {
     // 触发文件下载
     const link = document.createElement("a");
-    link.href = "http://localhost:8080/plugin";
+    link.href = `http://localhost:8080/plugin/${pluginId}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

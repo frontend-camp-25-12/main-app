@@ -33,7 +33,7 @@ async function handlePluginUpload(e): Promise<void> {
     }
 
     const formData = new FormData();
-    formData.append("plugin", file);
+    formData.append("plugin", file, file.name);
 
     try {
         const response = await fetch("http://localhost:8080/plugin", {

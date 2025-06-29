@@ -19,15 +19,40 @@
                     @select-plugin="showDetail(plugin.id)">
                 </PluginCard>
             </div>
+            <div class="pagination">
+                <el-pagination v-model:current-page="pagination.curretPage" layout="prev, pager, next"
+                    hide-on-single-page :page-count="pagination.totalPages" :pager-count="11"
+                    @current-change="handleCurrentChange" />
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ref, } from 'vue'
 import PluginCard from "../PluginCard/Index.vue";
 import { useRouter } from "vue-router";
+import { getPluginInfoByPage } from '../../../api/plugin'
 
 const router = useRouter();
+
+//插件信息
+const plugins = ref([])
+//分页信息
+const pagination = ref({})
+//初始化插件市场，获取第一页，以及分页信息
+getPluginInfoByPage(1).then((res) => {
+    plugins.value = res.data
+    pagination.value = res.pagination
+})
+
+//页码改变时获取对应页的插件信息
+async function handleCurrentChange(val: number) {
+    const res = await getPluginInfoByPage(val)
+    plugins.value = res.data
+}
+
+
 //显示插件分类
 function filterplugin(category): void { }
 //PluginCard 选中插件事件的处理函数,跳转到对应详情页面
@@ -37,19 +62,7 @@ function showDetail(pluginId): void {
         params: { pluginId }
     });
 }
-//插件数据
-const plugins = [
-    {
-        id: 1,
-        name: "局域网数据传输",
-        logo: "fas fa-search",
-        description: "局域网数据传输",
-        version: "1.0,0",
-        category: "效率工具",
-        rating: 9.3,
-        downloads: 12000
-    }
-];
+
 </script>
 
 <style scoped>
@@ -99,6 +112,13 @@ const plugins = [
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
 }
 
 /* 响应式设计 */
