@@ -230,11 +230,6 @@ class WindowManager {
 
 export const windowManager = new WindowManager();
 
-ipcMain.on('settings-changed', (_event, payload) => {
-  windowManager.emit('settings-changed', payload);
-});
-
-
 class WindowColor {
   private shouldDark: boolean;
   constructor() {
@@ -242,6 +237,11 @@ class WindowColor {
     this.shouldDark = nativeTheme.shouldUseDarkColors;
     nativeTheme.on('updated', () => {
       this.shouldDark = nativeTheme.shouldUseDarkColors;
+      BrowserWindow.getAllWindows().forEach((win) => {
+        if (!win.isDestroyed()) {
+          win.setBackgroundColor(this.backgroundColor());
+        }
+      });
     });
   }
 
