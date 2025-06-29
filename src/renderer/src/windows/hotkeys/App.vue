@@ -9,11 +9,11 @@ import { PluginEnterAction } from '../../../../share/plugins/api.type';
 
 const hotkeyOptions: Ref<HotkeyOption[]> = ref([]);
 const pluginLogos: Ref<Record<string, string>> = ref({});
-const dirtyPluginIds: Ref<Set<string>> = ref(new Set());
+const dirtyPluginKeys: Ref<Set<string>> = ref(new Set());
 let initialHotkeyOptions: HotkeyOption[] = [];
 // 计算是否有修改
 const hasModifications = computed(() => {
-  return dirtyPluginIds.value.size > 0;
+  return dirtyPluginKeys.value.size > 0;
 });
 
 function getKeyOfOption(id: string, code: string): string {
@@ -55,9 +55,9 @@ function handleHotkeyChange(id: string, code: string, value: string) {
   if (initial) {
     const initialValue = initial.boundHotkey || ''; // initial值可能是undefined，按照空字符串（不绑定热键）来处理
     if (value != initialValue) {
-      dirtyPluginIds.value.add(id);
+      dirtyPluginKeys.value.add(getKeyOfOption(id, code));
     } else {
-      dirtyPluginIds.value.delete(id);
+      dirtyPluginKeys.value.delete(getKeyOfOption(id, code));
     }
   }
 
@@ -69,11 +69,11 @@ function handleHotkeyChange(id: string, code: string, value: string) {
 // 恢复到初始状态
 async function undoChanges() {
   // 恢复所有修改到初始状态
-  for (const id of dirtyPluginIds.value) {
-    const initial = initialHotkeyOptions.find(item => item.id === id)!;
+  for (const key of dirtyPluginKeys.value) {
+    const initial = initialHotkeyOptions.find(item => getKeyOfOption(item.id, item.code) === key)!;
     await window.ipcApi.updateHotkeyBinding(initial.id, initial.code, initial.boundHotkey || '');
   }
-  dirtyPluginIds.value.clear();
+  dirtyPluginKeys.value.clear();
   await fetchHotkeyOptions();
 }
 </script>
@@ -86,12 +86,12 @@ async function undoChanges() {
         {{ t('hotkeyInput.undo') }}
       </el-button>
     </div>
-    <el-form label-width="300px">
-      <el-form-item v-for="(item, index) in hotkeyOptions" :key="index" class="option"
+    <el-form label-width="350px">
+      <el-form-item v-for="(item, index) in hotkeyOptions" :key="getKeyOfOption(item.id, item.code)" class="option"
         :class="{ 'option-highlight': getKeyOfOption(item.id, item.code) === highlightOption }">
         <template #label>
           <div class="option-label-container">
-            <el-tag v-if="dirtyPluginIds.has(item.id)" type="success" effect="light" round>
+            <el-tag v-if="dirtyPluginKeys.has(getKeyOfOption(item.id, item.code))" type="success" effect="light" round>
               {{ t('hotkeyInput.modified') }}
             </el-tag>
             <img width="32" :src="pluginLogos[item.id] ? `${pluginLogos[item.id]}` : icon" alt="logo"
@@ -109,7 +109,6 @@ async function undoChanges() {
 <style scoped>
 .hotkeys-app {
   padding: 20px;
-  max-width: 600px;
   margin: 0 auto;
 }
 

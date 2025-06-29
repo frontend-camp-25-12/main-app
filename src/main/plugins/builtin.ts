@@ -56,7 +56,7 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
     description: '可配置所有快捷键功能的映射',
     version: '1.0.0',
     window: {
-      width: 600
+      width: 700
     },
     dist: 'hotkeys',
     internal: {},

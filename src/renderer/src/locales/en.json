@@ -32,7 +32,9 @@
   },
   "hotkeyInput": {
     "title": "Hotkey Management",
-    "pleaseInput": "Please press the shortcut keys, or click outside to clear",
+    "pleaseInput": "Please press the shortcut keys",
+    "outsideClickEmpty": "Click outside to finish (Currently set to empty)",
+    "outsideClick": "Click outside to finish",
     "empty": "No shortcut set",
     "undo": "Undo Changes",
     "modified": "Modified"

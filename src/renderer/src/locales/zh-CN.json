@@ -33,7 +33,9 @@
   },
   "hotkeyInput": {
     "title": "快捷键管理",
-    "pleaseInput": "请输入快捷键，点击其它地方结束",
+    "pleaseInput": "请输入快捷键",
+    "outsideClickEmpty": "点击空白处确认（当前设置为空）",
+    "outsideClick": "点击空白处确认",
     "empty": "未设置快捷键",
     "undo": "取消更改",
     "modified": "已修改"

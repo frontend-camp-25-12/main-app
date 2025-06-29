@@ -164,6 +164,9 @@ watch(() => props.initialValue, (newValue) => {
   <ElInput :value="displayValue" :placeholder="t('hotkeyInput.empty')" readonly @click="startCapture"
     @focus="startCapture" @blur="stopCapture" @keydown="handleKeyDown" @keyup="handleKeyUp" tabindex="-1" ref="inputRef"
     class="hotkey-input" />
+  <div v-if="isCapturing" style="color: var(--el-text-color-secondary)">
+    {{ pressedKeys.size > 0 ? t('hotkeyInput.outsideClick') : t('hotkeyInput.outsideClickEmpty') }}
+  </div>
 </template>
 
 <style scoped></style>
