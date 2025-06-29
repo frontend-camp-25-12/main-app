@@ -4,7 +4,7 @@ import { AppConfig } from './config/app';
 import { hotkeyManager } from './plugins/hotkeys';
 import { pluginManager } from './plugins/loader';
 import { pluginSearch } from './plugins/search';
-import { nativeTheme } from 'electron';
+import { nativeTheme, BrowserWindow } from 'electron';
 import { windowColor } from './plugins/window';
 /**
  * 插件服务类
@@ -112,12 +112,24 @@ export class IpcService {
   }
 
   /**
-   * 设置应用配置项
-   * @param key 配置项key
-   * @param value 配置项值
+   * 设置主题模式，并广播给所有窗口
+   */
+  async onSetColorMode(mode: 'light' | 'dark' | 'system'): Promise<void> {
+    nativeTheme.themeSource = mode;
+    windowColor.mode = mode;
+    BrowserWindow.getAllWindows().forEach(win => {
+      win.webContents.send('settings-changed', { type: 'theme', value: mode });
+    });
+  }
+
+  /**
+   * 设置其它设置项，并广播
    */
   async onAppConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
     AppConfig.set(key, value);
+    BrowserWindow.getAllWindows().forEach(win => {
+      win.webContents.send('settings-changed', { type: key, value });
+    });
   }
 
   /**
@@ -139,14 +151,6 @@ export class IpcService {
    */
   async onGetColorMode(): Promise<AppConfigSchema['colorMode']> {
     return windowColor.mode;
-  }
-
-  /**
-   * 设置颜色模式
-   * @param mode 颜色模式，'light' | 'dark' | 'system'
-   */
-  async onSetColorMode(mode: AppConfigSchema['colorMode']): Promise<void> {
-    windowColor.mode = mode;
   }
 
   /**

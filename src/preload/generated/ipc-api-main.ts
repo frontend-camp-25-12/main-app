@@ -92,9 +92,14 @@ export class IpcApi {
   }
 
   /**
-   * 设置应用配置项
-    * @param key 配置项key
-    * @param value 配置项值
+   * 设置主题模式，并广播给所有窗口
+   */
+  async setColorMode(mode: 'light' | 'dark' | 'system'): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('set-color-mode', mode);
+  }
+
+  /**
+   * 设置其它设置项，并广播
    */
   async appConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
     return electronAPI.ipcRenderer.invoke('app-config-set', key, value);
@@ -119,14 +124,6 @@ export class IpcApi {
    */
   async getColorMode(): Promise<AppConfigSchema['colorMode']> {
     return electronAPI.ipcRenderer.invoke('get-color-mode');
-  }
-
-  /**
-   * 设置颜色模式
-    * @param mode 颜色模式，'light' | 'dark' | 'system'
-   */
-  async setColorMode(mode: AppConfigSchema['colorMode']): Promise<void> {
-    return electronAPI.ipcRenderer.invoke('set-color-mode', mode);
   }
 
   /**

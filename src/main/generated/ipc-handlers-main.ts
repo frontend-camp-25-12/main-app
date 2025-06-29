@@ -74,6 +74,12 @@ app.on('ready', () => {
   });
 
 
+  // onSetColorMode(mode: 'light' | 'dark' | 'system') -> Promise<void>
+  ipcMain.handle('set-color-mode', async (_event, mode: 'light' | 'dark' | 'system') => {
+    return await serviceInstance.onSetColorMode(mode);
+  });
+
+
   // onAppConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]) -> Promise<void>
   ipcMain.handle('app-config-set', async <K extends keyof AppConfigSchema>(_event, key: K, value: AppConfigSchema[K]) => {
     return await serviceInstance.onAppConfigSet(key, value);
@@ -95,12 +101,6 @@ app.on('ready', () => {
   // onGetColorMode() -> Promise<AppConfigSchema['colorMode']>
   ipcMain.handle('get-color-mode', async (_event, ) => {
     return await serviceInstance.onGetColorMode();
-  });
-
-
-  // onSetColorMode(mode: AppConfigSchema['colorMode']) -> Promise<void>
-  ipcMain.handle('set-color-mode', async (_event, mode: AppConfigSchema['colorMode']) => {
-    return await serviceInstance.onSetColorMode(mode);
   });
 });
     

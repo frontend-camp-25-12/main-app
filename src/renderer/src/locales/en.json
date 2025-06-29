@@ -16,6 +16,9 @@
   "skin": "Skin",
   "appearance": "Appearance",
   "actions": "Actions",
+  "background": "Background",
+  "applyBackground": "Apply Background",
+  "confirm": "Confirm",
   "entrance": {
     "searchPlaceholder": "Hi",
     "addPlugin": "Add Plugin",

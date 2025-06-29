@@ -61,8 +61,16 @@ export function getTheme(): Theme {
 }
 
 // 设置主题
-export function setTheme(theme: Theme, fromIpc = false) {
-  applyTheme(theme);
+export function setTheme(theme: 'light' | 'dark' | 'system', fromIpc = false) {
+  let effectiveTheme = theme;
+  if (theme === 'system') {
+    effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    // 监听系统主题变化
+    window.matchMedia('(prefers-color-scheme: dark)').onchange = () => {
+      setTheme('system', true);
+    };
+  }
+  document.documentElement.classList.toggle('dark', effectiveTheme === 'dark');
   // 只有不是IPC广播时才通知主进程
   if (!fromIpc && window.electron) {
     window.electron.ipcRenderer.send('settings-changed', { type: 'theme', value: theme });

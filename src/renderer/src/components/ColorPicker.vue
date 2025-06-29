@@ -35,23 +35,33 @@
 import { ref, watch } from 'vue';
 
 const props = defineProps({
-  modelValue: String
+  modelValue: String,
+  customColor: {
+    type: [String, Object], // 支持 ref 传递
+    default: ''
+  }
 });
 
 const emit = defineEmits(['update:modelValue', 'custom-color']);
 
 const selectedSkin = ref<string>(props.modelValue || 'custom');
-const customColor = ref<string>('');
+const customColor = ref<string>(props.customColor || '');
 const showCustomPicker = ref<boolean>(false);
 
 watch(() => props.modelValue, (newVal) => {
   selectedSkin.value = newVal || 'custom';
 });
 
+watch(() => props.customColor, (newVal) => {
+  if (typeof newVal === 'string') {
+    customColor.value = newVal;
+  }
+});
+
 const selectCustomColor = () => {
   if (customColor.value) {
     selectedSkin.value = 'custom';
-    emit('update:modelValue', customColor.value); // 传递颜色值
+    emit('update:modelValue', customColor.value);
     setTimeout(() => {
       emit('custom-color', customColor.value);
     }, 10);

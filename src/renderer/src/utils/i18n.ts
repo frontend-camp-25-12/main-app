@@ -34,4 +34,17 @@ export function getLocale(): string {
 
 export const t = i18n.global.t;
 
-export default i18n;
+export default {
+  zh: {
+    // ...其它翻译...
+    background: '背景',
+    applyBackground: '应用背景',
+    remove: '移除'
+  },
+  en: {
+    // ...其它翻译...
+    background: 'Background',
+    applyBackground: 'Apply Background',
+    remove: 'Remove'
+  }
+}

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { ElButton, ElDivider, ElRow, ElCol, ElSelect, ElOption } from 'element-plus';
 import ColorPicker from '../../components/ColorPicker.vue';
+import BackgroundUploader from '../../components/BackgroundUploader.vue';
 import { 
   t, 
   getLocale, 
@@ -28,23 +29,24 @@ const customColor = ref(getCustomColor());
 const tab = ref('theme'); // 默认选中“主题”
 const pendingSkin = ref(currentSkin.value);
 const pendingCustomColor = ref(customColor.value);
+const backgroundImage = ref(localStorage.getItem('app_bg') || '');
+const pendingBackgroundImage = ref(backgroundImage.value);
 
 const handleLanguageChange = (lang: string) => {
   setLocale(lang);
 };
 
-const handleThemeChange = (theme: string) => {
-  setTheme(theme as 'light' | 'dark' | 'system');
-  currentTheme.value = getTheme();
+const handleThemeChange = async (theme: string) => {
+  await window.ipcApi.setColorMode(theme as 'light' | 'dark' | 'system');
+  currentTheme.value = theme;
 };
 
 const handleSkinChange = (skin: string) => {
-  // 判断是否为自定义色（#开头的HEX）
   if (skin.startsWith('#')) {
-    customColor.value = skin;
-    setSkin('custom', skin);
+    window.ipcApi.appConfigSet('skin', 'custom');
+    window.ipcApi.appConfigSet('customColor', skin);
   } else {
-    setSkin(skin);
+    window.ipcApi.appConfigSet('skin', skin);
   }
   currentSkin.value = skin;
 };
@@ -56,10 +58,13 @@ const handleCustomColor = (color: string) => {
 };
 
 onMounted(() => {
-  currentLanguage.value = getLocale();
-  currentTheme.value = getTheme();
-  currentSkin.value = getSkin();
-  customColor.value = getCustomColor();
+  // 不再设置 body 背景
+  // const bg = localStorage.getItem('app_bg');
+  // if (bg) {
+  //   document.body.style.backgroundImage = `url(${bg})`;
+  //   document.body.style.backgroundSize = 'cover';
+  //   document.body.style.backgroundRepeat = 'no-repeat';
+  // }
 });
 
 watch(tab, (val) => {
@@ -79,19 +84,46 @@ async function handleToggleColorMode() {
   // 这里不用再手动加 dark class，window.matchMedia 会自动通知
 }
 
-const applySkin = () => {
+const applySkin = async () => {
   if (pendingSkin.value.startsWith('#')) {
-    setSkin('custom', pendingSkin.value);
+    await window.ipcApi.appConfigSet('skin', 'custom');
+    await window.ipcApi.appConfigSet('customColor', pendingSkin.value);
     customColor.value = pendingSkin.value;
+    pendingCustomColor.value = pendingSkin.value;
+    setSkin('custom', pendingSkin.value);
   } else {
+    await window.ipcApi.appConfigSet('skin', pendingSkin.value);
     setSkin(pendingSkin.value);
   }
   currentSkin.value = pendingSkin.value;
 };
+
+function applyBackground() {
+  backgroundImage.value = pendingBackgroundImage.value;
+  localStorage.setItem('app_bg', backgroundImage.value);
+}
+
+const settingsLayoutStyle = computed(() => {
+  if (backgroundImage.value) {
+    return {
+      backgroundImage: `url(${backgroundImage.value})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center'
+    };
+  }
+  return {
+    background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8ee 100%)'
+  };
+});
 </script>
 
 <template>
-  <div class="settings-layout">
+  <div
+    class="settings-layout"
+    :style="settingsLayoutStyle"
+  >
+    <div v-if="backgroundImage" class="bg-mask"></div>
     <aside class="settings-sidebar">
       <ul>
         <li :class="{active: tab==='theme'}" @click="tab='theme'">
@@ -102,6 +134,9 @@ const applySkin = () => {
         </li>
         <li :class="{active: tab==='skin'}" @click="tab='skin'">
           <button class="sidebar-btn" :class="{selected: tab==='skin'}">{{ t('skin') }}</button>
+        </li>
+        <li :class="{active: tab==='background'}" @click="tab='background'">
+          <button class="sidebar-btn" :class="{selected: tab==='background'}">{{ t('background') }}</button>
         </li>
       </ul>
     </aside>
@@ -148,7 +183,7 @@ const applySkin = () => {
           <ElCol :span="18">
             <ColorPicker 
               v-model="pendingSkin" 
-              :custom-color="pendingCustomColor.value"
+              :custom-color="pendingCustomColor"
               @custom-color="val => pendingCustomColor.value = val"
             />
             <ElButton 
@@ -159,15 +194,30 @@ const applySkin = () => {
           </ElCol>
         </ElRow>
       </section>
+      <section v-if="tab==='background'">
+        <h2>{{ t('background') }}</h2>
+        <ElDivider />
+        <BackgroundUploader v-model="pendingBackgroundImage" />
+        <ElButton type="primary" @click="applyBackground">{{ t('applyBackground') }}</ElButton>
+      </section>
     </main>
   </div>
 </template>
 
 <style scoped>
+.bg-mask {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: rgba(255,255,255,0.50); /* 浅白色，可调整蒙版的透明度 */
+  pointer-events: none;
+  border-radius: 18px;
+}
 .settings-layout {
+  position: relative; /* 新增，确保蒙版绝对定位于容器内 */
   display: flex;
   min-height: 80vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e3e8ee 100%);
+  /* background: linear-gradient(135deg, #f5f7fa 0%, #e3e8ee 100%); */ /* 删除或注释此行 */
   border-radius: 18px;
   box-shadow: 0 6px 32px 0 rgba(60, 60, 100, 0.10);
   max-width: 900px;
@@ -182,6 +232,8 @@ const applySkin = () => {
   justify-content: center;
   align-items: center;
   border-right: 1.5px solid var(--border-color);
+  position: relative;
+  z-index: 2; /* 保证内容在蒙版之上 */
 }
 .settings-sidebar ul {
   list-style: none;
@@ -231,8 +283,11 @@ const applySkin = () => {
 .settings-main {
   flex: 1;
   padding: 48px 36px;
-  background: var(--settings-card-bg);
+  /*background: var(--settings-card-bg);*/
+  background: transparent;
   min-height: 400px;
+  position: relative;
+  z-index: 2; /* 保证内容在蒙版之上 */
 }
 .settings-main h2 {
   color: var(--title-color);
