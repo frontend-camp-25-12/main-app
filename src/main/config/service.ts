@@ -26,11 +26,11 @@ class StoreManager {
     return store;
   }
 
-  get(id: PluginMetadata['id'], key: string, defalut: string) {
+  get(id: PluginMetadata['id'], key: string, defalut: any) {
     return this.getStore(id).get(key, defalut);
   }
 
-  set(id: PluginMetadata['id'], key: string, value: string) {
+  set(id: PluginMetadata['id'], key: string, value: any) {
     this.getStore(id).set(key, value);
   }
 }

@@ -27,7 +27,7 @@ export class IpcServicePlugin {
    * @param defalut 默认值
    * @returns 配置项的值
    */
-  async onConfigGet(id: string, key: string, defalut: string): Promise<string> {
+  async onConfigGet(id: string, key: string, defalut: any): Promise<any> {
     return configManager.get(id, key, defalut);
   }
 
@@ -37,7 +37,7 @@ export class IpcServicePlugin {
    * @param value 配置项值
    * @returns 无返回值
    */
-  async onConfigSet(id: string, key: string, value: string): Promise<void> {
+  async onConfigSet(id: string, key: string, value: any): Promise<void> {
     configManager.set(id, key, value);
   }
 

@@ -12,14 +12,14 @@ app.on('ready', () => {
   });
 
 
-  // onConfigGet(id: string, key: string, defalut: string) -> Promise<string>
-  ipcMain.handle('config-get', async (_event, id: string, key: string, defalut: string) => {
+  // onConfigGet(id: string, key: string, defalut: any) -> Promise<any>
+  ipcMain.handle('config-get', async (_event, id: string, key: string, defalut: any) => {
     return await serviceInstance.onConfigGet(id, key, defalut);
   });
 
 
-  // onConfigSet(id: string, key: string, value: string) -> Promise<void>
-  ipcMain.handle('config-set', async (_event, id: string, key: string, value: string) => {
+  // onConfigSet(id: string, key: string, value: any) -> Promise<void>
+  ipcMain.handle('config-set', async (_event, id: string, key: string, value: any) => {
     return await serviceInstance.onConfigSet(id, key, value);
   });
 

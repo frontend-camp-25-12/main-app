@@ -1,4 +1,4 @@
-export type StoreRecord = Record<string, string>
+export type StoreRecord = Record<string, any>
 export type StoreType = Store<StoreRecord>
 
 export const configFolder = './config';

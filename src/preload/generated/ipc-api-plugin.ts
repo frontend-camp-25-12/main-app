@@ -20,7 +20,7 @@ export class PlatformApi {
     * @param key 配置项key
     * @param defalut 默认值 
     */
-  async configGet(key: string, defalut: string): Promise<string> {
+  async configGet(key: string, defalut: any): Promise<any> {
     return electronAPI.ipcRenderer.invoke('config-get', this.pluginId, key, defalut);
   }
 
@@ -29,7 +29,7 @@ export class PlatformApi {
     * @param key 配置项key
     * @param value 配置项值 
     */
-  async configSet(key: string, value: string): Promise<void> {
+  async configSet(key: string, value: any): Promise<void> {
     return electronAPI.ipcRenderer.invoke('config-set', this.pluginId, key, value);
   }
 
