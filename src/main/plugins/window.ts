@@ -98,6 +98,15 @@ class PluginWindow {
         }
       });
     }
+
+    if (plugin.window?.closeOnBlur) {
+      // 失去焦点时关闭窗口
+      window.on('blur', () => {
+        if (window.isVisible()) {
+          window.close();
+        }
+      });
+    }
   }
 
   private getWindow() {

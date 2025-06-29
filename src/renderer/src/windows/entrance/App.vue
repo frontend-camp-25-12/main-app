@@ -63,6 +63,10 @@ onMounted(() => {
     if (event.key === 'Enter' || event.key == 'Tab' || (event.ctrlKey || event.metaKey || event.shiftKey)) {
       return;
     }
+    if (event.key === 'Escape') {
+      // window.ipcApi.closeSelf();
+      return;
+    }
     if (cmdInput.value && document.activeElement !== cmdInput.value.$el) {
       cmdInput.value.focus();
     }

@@ -29,7 +29,8 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
     window: {
       disableTransition: true,
       height: 400,
-      resizable: false
+      resizable: false,
+      closeOnBlur: true
     },
     background: true,
     features: [
