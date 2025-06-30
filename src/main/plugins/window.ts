@@ -3,7 +3,6 @@ import { BrowserWindow, nativeTheme } from "electron"
 import path, { join } from "path"
 import { PluginMetadata } from "../../share/plugins/type"
 import { AppConfig } from "../config/app"
-import { fileURLToPath } from "url"
 import { appIcon } from "../icon"
 
 /**
@@ -110,16 +109,20 @@ class PluginWindow {
     }
   }
 
-  private getWindow() {
+  private getWindowOrCreate() {
     if (!this.window || this.window.isDestroyed()) {
       this.create();
     }
     return this.window!;
   }
 
+  private getWindow(): BrowserWindow | undefined {
+    return this.window;
+  }
+
   show() {
-    const win = this.getWindow();
-    if (win && !this.isVisible()) {
+    const win = this.getWindowOrCreate();
+    if (!this.isVisible()) {
       if (this.plugin.window?.disableTransition) {
         // 通过切换opacity可以取消窗口进出的过渡动画（windows上有效）
         win.setOpacity(0)
@@ -132,23 +135,23 @@ class PluginWindow {
   }
 
   hide() {
-    this.getWindow().hide();
+    this.getWindow()?.hide();
   }
 
   close() {
-    this.getWindow().close();
+    this.getWindow()?.close();
   }
 
   isVisible(): boolean {
-    return this.getWindow().isVisible() ?? false;
+    return this.getWindow()?.isVisible() ?? false;
   }
 
   focus() {
     const win = this.getWindow();
-    if (win.isMinimized()) {
+    if (win?.isMinimized()) {
       win.restore();
     }
-    win.focus();
+    win?.focus();
   }
 
   toggle() {
@@ -174,8 +177,11 @@ class WindowManager {
    * @param plugin 插件元数据
    */
   add(plugin: PluginMetadata): void {
-    const pluginWindow = new PluginWindow(plugin);
-    this.windows[plugin.id] = pluginWindow;
+    if (plugin.background && !plugin.disabled) {
+      // 如果是后台插件，直接创建窗口
+      const pluginWindow = new PluginWindow(plugin);
+      this.windows[plugin.id] = pluginWindow;
+    }
   }
 
   /**
