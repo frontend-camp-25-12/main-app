@@ -1,5 +1,8 @@
 <template>
     <div class="plugin-list-container">
+        <div class="aside">
+            <Aside @show-detail="showDetail"></Aside>
+        </div>
         <div class="plugin-page">
             <div class="category-filters">
                 <div class="category-btn active">全部</div>
@@ -29,8 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, } from 'vue'
+import { ref } from 'vue'
 import PluginCard from "../PluginCard/Index.vue";
+import Aside from "./Aside/Index.vue"
 import { getPluginInfoByPage } from '../../../api/plugin'
 import mitter from '@renderer/windows/pluginStore/utils/mitter';
 import type { PluginStoreInfo, PaginationInfo } from '../../../types/plugin'
@@ -51,7 +55,6 @@ getPluginInfoByPage(1).then((res) => {
     plugins.value = res.data
     pagination.value = res.pagination
 })
-
 
 
 //页码改变时获取对应页的插件信息
@@ -81,10 +84,13 @@ function showDetail(pluginId: string): void {
 
 <style scoped>
 .plugin-list-container {
-    padding: 20px;
+    display: flex;
+    height: calc(100% - 70px);
 }
 
 .plugin-page {
+    padding: 20px;
+    flex: 1;
     animation: fadeIn 0.5s;
 }
 

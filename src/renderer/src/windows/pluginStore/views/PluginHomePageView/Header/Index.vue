@@ -81,6 +81,7 @@ async function handlePluginUpload(e): Promise<void> {
     align-items: center;
     position: sticky;
     top: 0;
+    height: 70px;
     z-index: 100;
 }
 

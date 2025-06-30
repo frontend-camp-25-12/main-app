@@ -20,4 +20,8 @@ function handleShowDetail(pluginId) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.plugin-homepage-view-container {
+    height: 100vh;
+}
+</style>
