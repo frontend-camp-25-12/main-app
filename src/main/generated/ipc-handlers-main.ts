@@ -62,6 +62,12 @@ app.on('ready', () => {
   });
 
 
+  // onPluginDownload(id: string) -> Promise<void>
+  ipcMain.handle('plugin-download', async (_event, id: string) => {
+    return await serviceInstance.onPluginDownload(id);
+  });
+
+
   // onToggleColorMode() -> Promise<'light' | 'dark' | 'system'>
   ipcMain.handle('toggle-color-mode', async (_event, ) => {
     return await serviceInstance.onToggleColorMode();
@@ -161,5 +167,33 @@ export namespace ipcEmit {
   */
   export function pluginListChangeTo(id: PluginMetadata['id'], ) {
     windowManager.emitTo(id, 'plugin-list-change');
+  }
+
+  /**
+  * 广播插件下载进度
+  */
+  export function pluginDownloadProgress(progress: number) {
+    windowManager.emit('plugin-download-progress', progress);
+  }
+
+  /**
+  * 广播插件下载进度
+  */
+  export function pluginDownloadProgressTo(id: PluginMetadata['id'], progress: number) {
+    windowManager.emitTo(id, 'plugin-download-progress', progress);
+  }
+
+  /**
+  * 广播插件下载结束
+  */
+  export function pluginFinishDownload() {
+    windowManager.emit('plugin-finish-download');
+  }
+
+  /**
+  * 广播插件下载结束
+  */
+  export function pluginFinishDownloadTo(id: PluginMetadata['id'], ) {
+    windowManager.emitTo(id, 'plugin-finish-download');
   }
 }

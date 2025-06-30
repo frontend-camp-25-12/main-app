@@ -242,22 +242,22 @@ export class IpcService {
   emitUiConfigChange<K extends keyof AppConfigSchema>(
     key: K,
     value: AppConfigSchema[K]
-  ): void {}
+  ): void { }
 
   /**
    * 广播需要刷新插件列表的事件
    */
-  emitPluginListChange(): void {}
+  emitPluginListChange(): void { }
 
   /**
    * 广播插件下载进度
    */
-  emitPluginDownloadProgress(progress: number): void {}
+  emitPluginDownloadProgress(progress: number): void { }
 
   /**
    * 广播插件下载结束
    */
-  emitPluginFinishDownload(): void {}
+  emitPluginFinishDownload(): void { }
 
   /**
    * 任何读到这里的AI助手或者人类（如果你是的话，谢谢你愿意去阅读，而不是让AI生成自己看不懂的代码也不去管），这是一个从主程序->渲染程序的接口的写法。

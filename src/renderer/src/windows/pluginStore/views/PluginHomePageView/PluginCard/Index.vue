@@ -1,16 +1,18 @@
 <template>
-    <div class="plugin-card-container" @click="selectplugin">
-        <div class="plugin-image">
-            <i :class="plugin.icon"></i>
+    <div class="plugin-card-container" @click="selectplugin">        <div class="plugin-image">
+            <img v-if="plugin.logo" :src="plugin.logo" :alt="plugin.name" class="plugin-logo" />
+            <div v-else class="default-icon">
+                <span>{{ plugin.name.charAt(0).toUpperCase() }}</span>
+            </div>
         </div>
         <div class="plugin-info">
             <div class="plugin-title">
                 <span>{{ plugin.name }}</span>
             </div>
-            <div class="plugin-description">{{ plugin.description }}</div>
+            <div class="plugin-description">{{ plugin.description || '暂无描述' }}</div>
             <div class="plugin-meta">
                 <span>{{ plugin.rating }}分 · {{ formatDownloads }}次下载</span>
-                <span>{{ plugin.category }}</span>
+                <span>{{ plugin.category || '其他' }}</span>
             </div>
         </div>
     </div>
@@ -18,15 +20,23 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-const props = defineProps(["plugin"]);
-const emit = defineEmits(["select-plugin"]);
+import type { PluginStoreInfo } from '../../../types/plugin'
+
+interface Props {
+    plugin: PluginStoreInfo
+}
+
+const props = defineProps<Props>();
+const emit = defineEmits<{
+    'select-plugin': [pluginId: string]
+}>();
 
 //格式化后的下载数量
 const formatDownloads = computed(() => {
-    if (props.plugin.downloads >= 10000) {
-        return `${(props.plugin.downloads / 10000).toFixed(1)}万`;
+    if (props.plugin.download >= 10000) {
+        return `${(props.plugin.download / 10000).toFixed(1)}万`;
     }
-    return props.plugin.downloads;
+    return props.plugin.download;
 });
 
 //用户选择插件后向上抛事件
@@ -65,6 +75,24 @@ function selectplugin(): void {
     font-size: 24px;
     margin-right: 15px;
     flex-shrink: 0;
+    overflow: hidden;
+}
+
+.plugin-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.default-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 .plugin-info {
@@ -87,6 +115,7 @@ function selectplugin(): void {
     margin-bottom: 10px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.4;
@@ -127,12 +156,11 @@ function selectplugin(): void {
 
     .plugin-title {
         font-size: 13px;
-    }
-
-    .plugin-description {
+    }    .plugin-description {
         font-size: 11px;
         margin-bottom: 8px;
         -webkit-line-clamp: 1;
+        line-clamp: 1;
     }
 
     .plugin-meta {

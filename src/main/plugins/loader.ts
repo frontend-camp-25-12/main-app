@@ -246,9 +246,9 @@ export class PluginManager {
 
     // 删除插件文件
     const pluginPath = join(pluginInstallPath, path.basename(plugin.dist))
-    if (fs.existsSync(pluginPath)) {
+    if (originalFs.existsSync(pluginPath)) {
       if (isAsar(pluginPath)) {
-        originalFs.rm(pluginPath, { recursive: true, force: true }, () => {})
+        originalFs.rmSync(pluginPath, { recursive: true, force: true })
       } else if (fs.lstatSync(pluginPath).isSymbolicLink()) {
         fs.unlinkSync(pluginPath)
       }
@@ -268,7 +268,7 @@ export class PluginManager {
     const file = fs.createWriteStream(tempPath)
     http
       .get(`http:localhost:8080/plugin/${id}`, (response) => {
-        const totalBytes = parseInt(response.headers['content-length'])
+        const totalBytes = parseInt(response.headers['content-length'] || '0')
         let receivedBytes = 0
 
         response.on('data', (chunk) => {

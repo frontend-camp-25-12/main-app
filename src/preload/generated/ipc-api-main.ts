@@ -76,6 +76,14 @@ export class IpcApi {
   }
 
   /**
+   * 下载插件
+    * @param id 插件ID
+   */
+  async pluginDownload(id: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('plugin-download', id);
+  }
+
+  /**
    * 切换深浅色模式
    */
   async toggleColorMode(): Promise<'light' | 'dark' | 'system'> {
@@ -177,6 +185,20 @@ export class IpcApi {
    */
   onPluginListChange(callback: () => void) {
     electronAPI.ipcRenderer.on('plugin-list-change', (_event) => callback());
+  }
+
+  /**
+   * 广播插件下载进度
+   */
+  onPluginDownloadProgress(callback: (progress: number) => void) {
+    electronAPI.ipcRenderer.on('plugin-download-progress', (_event, progress) => callback(progress));
+  }
+
+  /**
+   * 广播插件下载结束
+   */
+  onPluginFinishDownload(callback: () => void) {
+    electronAPI.ipcRenderer.on('plugin-finish-download', (_event) => callback());
   }
 }
 

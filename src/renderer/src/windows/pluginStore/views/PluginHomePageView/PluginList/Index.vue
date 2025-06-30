@@ -33,13 +33,19 @@ import { ref, } from 'vue'
 import PluginCard from "../PluginCard/Index.vue";
 import { getPluginInfoByPage } from '../../../api/plugin'
 import mitter from '@renderer/windows/pluginStore/utils/mitter';
+import type { PluginStoreInfo, PaginationInfo } from '../../../types/plugin'
 
-const emit = defineEmits(['show-detail'])
+const emit = defineEmits<{
+  'show-detail': [pluginId: string]
+}>()
 
 //插件信息
-const plugins = ref([])
+const plugins = ref<PluginStoreInfo[]>([])
 //分页信息
-const pagination = ref({})
+const pagination = ref<PaginationInfo>({
+  curretPage: 1,
+  totalPages: 1
+})
 //初始化插件市场，获取第一页，以及分页信息
 getPluginInfoByPage(1).then((res) => {
     plugins.value = res.data
@@ -53,12 +59,21 @@ async function handleCurrentChange(val: number) {
     const res = await getPluginInfoByPage(val)
     plugins.value = res.data
 }
-mitter.on('refresh-list', handleCurrentChange)
+
+// 监听刷新事件
+function handleRefreshList(event: unknown) {
+    if (typeof event === 'number') {
+        handleCurrentChange(event)
+    }
+}
+mitter.on('refresh-list', handleRefreshList)
 
 //显示插件分类
-function filterplugin(category): void { }
+function filterplugin(_category: string): void { 
+    // TODO: 实现分类过滤功能
+}
 //PluginCard 选中插件事件的处理函数,跳转到对应详情页面
-function showDetail(pluginId): void {
+function showDetail(pluginId: string): void {
     emit('show-detail', pluginId)
 }
 
