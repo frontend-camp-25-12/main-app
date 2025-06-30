@@ -1,4 +1,4 @@
-import { safeStorage } from 'electron';
+import { app, safeStorage } from 'electron';
 import { User } from "../share/plugins/type";
 import { AuthTokens, UserInfo, RegisterRequest, LoginRequest } from "./api/index.d";
 import { authApi } from "./api/auth";
@@ -10,18 +10,22 @@ class UserManager {
   private refreshPromise: Promise<string | null> | null = null;
 
   constructor() {
-    this.loadUserFromConfig();
+    app.on('ready', () => {
+      this.loadUserFromConfig();
+    });
   }
   /**
    * 从配置中加载用户信息并尝试刷新token
    */
   private loadUserFromConfig() {
+
     const userName = UserStore.get('userName', '');
     if (userName) {
       const refreshToken = this.getRefreshToken();
       if (refreshToken) {
         // 启动时刷新
         this.performTokenRefresh()
+        this.fetchCurrentUserInfo()
       }
     }
   }
@@ -160,7 +164,7 @@ class UserManager {
    * 获取当前用户详细信息
    * @returns 当前用户信息
    */
-  async getCurrentUserInfo(): Promise<User | undefined> {
+  private async fetchCurrentUserInfo(): Promise<User | undefined> {
     try {
       const response = await authApi.getCurrentUser();
       if (response.success && response.data) {

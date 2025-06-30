@@ -128,9 +128,9 @@ app.on('ready', () => {
   });
 
 
-  // onUserMe() -> Promise<{ name: string }>
-  ipcMain.handle('user-me', async (_event, ) => {
-    return await serviceInstance.onUserMe();
+  // onUserInfo() -> Promise<User | undefined>
+  ipcMain.handle('user-info', async (_event, ) => {
+    return await serviceInstance.onUserInfo();
   });
 });
     

@@ -161,8 +161,8 @@ export class IpcApi {
   /**
    * 用户获取个人信息
    */
-  async userMe(): Promise<{ name: string }> {
-    return electronAPI.ipcRenderer.invoke('user-me');
+  async userInfo(): Promise<User | undefined> {
+    return electronAPI.ipcRenderer.invoke('user-info');
   }
 
   /**

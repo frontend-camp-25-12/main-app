@@ -9,7 +9,8 @@ export enum BuiltinPluginId {
   ENTRANCE = 'builtin.entrance',
   SETTINGS = 'builtin.settings',
   PLUGINSTORE = 'builtin.pluginStore',
-  HOTKEYS = 'builtin.hotkeys'
+  HOTKEYS = 'builtin.hotkeys',
+  USER_DEV = 'builtin.userDev',
 }
 /**
  * 内置插件的元数据
@@ -84,5 +85,12 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
     },
     dist: 'pluginStore',
     internal: {}
+  },
+  {
+    id: BuiltinPluginId.USER_DEV,
+    name: '用户系统测试',
+    version: '1.0.0',
+    dist: 'userDev',
+    internal: {},
   }
 ] as PluginMetadata[]

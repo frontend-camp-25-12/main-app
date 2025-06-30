@@ -199,8 +199,8 @@ export class IpcService {
    * @returns 用户信息对象
    * 如果用户未登录，则返回undefined
    */
-  async onUserMe(): Promise<User | undefined> {
-    const user = await userManager.getCurrentUserInfo();
+  async onUserInfo(): Promise<User | undefined> {
+    const user = await userManager.getCurrentUser();
     if (user) {
       return user;
     }
