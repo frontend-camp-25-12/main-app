@@ -13,6 +13,7 @@ import { windowManager } from './plugins/window'
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron')
+
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
@@ -43,6 +44,10 @@ app.whenReady().then(() => {
 
   // 创建托盘图标
   createTray()
+  // macOS下隐藏Dock图标
+  if (process.platform === 'darwin') {
+    app.dock?.hide()
+  }
 })
 
 // 应用退出时取消快捷键注册
