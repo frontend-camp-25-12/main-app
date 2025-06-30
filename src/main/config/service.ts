@@ -2,8 +2,11 @@ import Store from 'electron-store';
 
 import { PluginMetadata } from '../../share/plugins/type';
 import './app/index'
-import { StoreType, StoreRecord, pluginConfigFolder } from './type.d';
+import { pluginConfigFolder } from './type.d';
+import { SyncStore } from './syncStore';
 
+type StoreRecord = Record<string, any>;
+type StoreType = SyncStore<StoreRecord>;
 /**
  * 向插件提供的配置管理器
  */
