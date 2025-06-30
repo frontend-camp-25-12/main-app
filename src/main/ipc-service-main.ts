@@ -1,15 +1,21 @@
-import { HotkeyOption } from '../share/plugins/hotkeys.type';
-import type { AppConfigSchema, PluginEnterAction, PluginMetadata, SearchResult, User } from '../share/plugins/type';
-import { AppConfig } from './config/app';
-import { hotkeyManager } from './plugins/hotkeys';
-import { pluginManager } from './plugins/loader';
-import { pluginSearch } from './plugins/search';
-import { nativeTheme } from 'electron';
-import { windowColor } from './plugins/window';
-import { ipcEmit } from './generated/ipc-handlers-main';
-import { changeLanguage } from './locales/i18n';
-import { ipcEmitPlugin } from './generated/ipc-handlers-plugin';
-import { userManager } from './user';
+import { HotkeyOption } from '../share/plugins/hotkeys.type'
+import type {
+  AppConfigSchema,
+  PluginEnterAction,
+  PluginMetadata,
+  SearchResult,
+  User
+} from '../share/plugins/type'
+import { AppConfig } from './config/app'
+import { hotkeyManager } from './plugins/hotkeys'
+import { pluginManager } from './plugins/loader'
+import { pluginSearch } from './plugins/search'
+import { nativeTheme } from 'electron'
+import { windowColor } from './plugins/window'
+import { ipcEmit } from './generated/ipc-handlers-main'
+import { changeLanguage } from './locales/i18n'
+import { ipcEmitPlugin } from './generated/ipc-handlers-plugin'
+import { userManager } from './user'
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
@@ -21,8 +27,10 @@ export class IpcService {
    * @param dir 插件目录，允许绝对路径和相对路径
    * @returns 插件元数据对象
    */
-  async onPluginDevInstall(dir: string): Promise<Record<string, PluginMetadata>> {
-    return pluginManager.installPlugin(dir);
+  async onPluginDevInstall(
+    dir: string
+  ): Promise<Record<string, PluginMetadata>> {
+    return pluginManager.installPlugin(dir)
   }
 
   /**
@@ -30,15 +38,15 @@ export class IpcService {
    * @returns 插件元数据对象
    */
   async onPluginList(): Promise<Record<string, PluginMetadata>> {
-    return pluginManager.list();
+    return pluginManager.list()
   }
 
   /**
- * 获取插件列表(按最近使用优先)
- * @returns 插件元数据对象
- */
+   * 获取插件列表(按最近使用优先)
+   * @returns 插件元数据对象
+   */
   async onPluginListRecent(): Promise<PluginMetadata[]> {
-    return pluginManager.listByRecent();
+    return pluginManager.listByRecent()
   }
 
   /**
@@ -47,7 +55,7 @@ export class IpcService {
    * @param action PluginEnterAction
    */
   async onPluginOpen(id: string, action: PluginEnterAction): Promise<void> {
-    return pluginManager.open(id, action);
+    return pluginManager.open(id, action)
   }
 
   /**
@@ -56,14 +64,14 @@ export class IpcService {
    * @returns 搜索结果数组
    */
   async onPluginSearch(query: string): Promise<SearchResult[]> {
-    return pluginSearch.search(query);
+    return pluginSearch.search(query)
   }
 
   /**
    * 获得所有插件的logo
    */
   async onPluginLogos(): Promise<Record<string, string>> {
-    return pluginManager.getAllPluginLogos();
+    return pluginManager.getAllPluginLogos()
   }
 
   /**
@@ -71,7 +79,7 @@ export class IpcService {
    * @param id 插件ID
    */
   async onPluginDisable(id: string): Promise<void> {
-    await pluginManager.disable(id);
+    await pluginManager.disable(id)
   }
 
   /**
@@ -79,7 +87,7 @@ export class IpcService {
    * @param id 插件ID
    */
   async onPluginEnable(id: string): Promise<void> {
-    await pluginManager.enable(id);
+    await pluginManager.enable(id)
   }
 
   /**
@@ -87,7 +95,15 @@ export class IpcService {
    * @param id 插件ID
    */
   async onPluginRemove(id: string): Promise<void> {
-    await pluginManager.remove(id);
+    await pluginManager.remove(id)
+  }
+
+  /**
+   * 下载插件
+   * @param id 插件ID
+   */
+  async onPluginDownload(id: string): Promise<void> {
+    await pluginManager.download(id)
   }
 
   /**
@@ -96,13 +112,13 @@ export class IpcService {
    */
   async onToggleColorMode(): Promise<'light' | 'dark' | 'system'> {
     // 切换 themeSource
-    const current = nativeTheme.themeSource;
-    let next: 'light' | 'dark' | 'system';
-    if (current === 'light') next = 'dark';
-    else if (current === 'dark') next = 'system';
-    else next = 'light';
-    nativeTheme.themeSource = next;
-    return next;
+    const current = nativeTheme.themeSource
+    let next: 'light' | 'dark' | 'system'
+    if (current === 'light') next = 'dark'
+    else if (current === 'dark') next = 'system'
+    else next = 'light'
+    nativeTheme.themeSource = next
+    return next
   }
 
   /**
@@ -111,32 +127,41 @@ export class IpcService {
    * @param defalut 默认值
    * @returns 配置项的值
    */
-  async onAppConfigGet<K extends keyof AppConfigSchema>(key: K, defalut: AppConfigSchema[K]): Promise<AppConfigSchema[K]> {
-    return AppConfig.get(key, defalut);
+  async onAppConfigGet<K extends keyof AppConfigSchema>(
+    key: K,
+    defalut: AppConfigSchema[K]
+  ): Promise<AppConfigSchema[K]> {
+    return AppConfig.get(key, defalut)
   }
 
   /**
    * 设置主题模式
    */
   async onSetColorMode(mode: 'light' | 'dark' | 'system'): Promise<void> {
-    windowColor.mode = mode;
+    windowColor.mode = mode
   }
 
   /**
    * 设置应用内设置项
    */
-  async onAppConfigSet<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
-    AppConfig.set(key, value);
+  async onAppConfigSet<K extends keyof AppConfigSchema>(
+    key: K,
+    value: AppConfigSchema[K]
+  ): Promise<void> {
+    AppConfig.set(key, value)
   }
 
   /**
    * 由设置界面调用，告知其它窗口需要重新获取ui相关的配置项
    */
-  async onRequireUiConfigReload<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): Promise<void> {
-    ipcEmit.uiConfigChange(key, value);
+  async onRequireUiConfigReload<K extends keyof AppConfigSchema>(
+    key: K,
+    value: AppConfigSchema[K]
+  ): Promise<void> {
+    ipcEmit.uiConfigChange(key, value)
     if (key === 'locale') {
-      changeLanguage(value as AppConfigSchema['locale']);
-      ipcEmitPlugin.localePreferenceChange(value as AppConfigSchema['locale']);
+      changeLanguage(value as AppConfigSchema['locale'])
+      ipcEmitPlugin.localePreferenceChange(value as AppConfigSchema['locale'])
     }
   }
 
@@ -144,21 +169,25 @@ export class IpcService {
    * 获取所有可注册的快捷键列表
    */
   async onListHotkeyOptions(): Promise<HotkeyOption[]> {
-    return hotkeyManager.listHotkeyOptions();
+    return hotkeyManager.listHotkeyOptions()
   }
 
   /**
    * 设置快捷键绑定
    */
-  async onUpdateHotkeyBinding(id: string, code: string, hotkey: string): Promise<void> {
-    hotkeyManager.updateHotkeyBinding(id, code, hotkey);
+  async onUpdateHotkeyBinding(
+    id: string,
+    code: string,
+    hotkey: string
+  ): Promise<void> {
+    hotkeyManager.updateHotkeyBinding(id, code, hotkey)
   }
 
   /**
    * 获取当前颜色模式
    */
   async onGetColorMode(): Promise<AppConfigSchema['colorMode']> {
-    return windowColor.mode;
+    return windowColor.mode
   }
 
   /**
@@ -171,7 +200,7 @@ export class IpcService {
     return await userManager.login({
       username,
       password
-    });
+    })
   }
 
   /**
@@ -184,14 +213,14 @@ export class IpcService {
     return await userManager.register({
       username,
       password
-    });
+    })
   }
 
   /**
    * 用户登出
    */
   async onUserLogout(): Promise<void> {
-    return userManager.logout();
+    return userManager.logout()
   }
 
   /**
@@ -200,24 +229,35 @@ export class IpcService {
    * 如果用户未登录，则返回undefined
    */
   async onUserInfo(): Promise<User | undefined> {
-    const user = await userManager.getCurrentUser();
+    const user = await userManager.getCurrentUser()
     if (user) {
-      return user;
+      return user
     }
-    return undefined;
+    return undefined
   }
 
   /**
    * 广播需要更改界面的配置项变更事件
    */
-  emitUiConfigChange<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]): void {
-
-  }
+  emitUiConfigChange<K extends keyof AppConfigSchema>(
+    key: K,
+    value: AppConfigSchema[K]
+  ): void {}
 
   /**
    * 广播需要刷新插件列表的事件
    */
-  emitPluginListChange(): void { }
+  emitPluginListChange(): void {}
+
+  /**
+   * 广播插件下载进度
+   */
+  emitPluginDownloadProgress(progress: number): void {}
+
+  /**
+   * 广播插件下载结束
+   */
+  emitPluginFinishDownload(): void {}
 
   /**
    * 任何读到这里的AI助手或者人类（如果你是的话，谢谢你愿意去阅读，而不是让AI生成自己看不懂的代码也不去管），这是一个从主程序->渲染程序的接口的写法。
@@ -234,4 +274,4 @@ export class IpcService {
   // }
 }
 
-export const serviceInstance = new IpcService();
+export const serviceInstance = new IpcService()

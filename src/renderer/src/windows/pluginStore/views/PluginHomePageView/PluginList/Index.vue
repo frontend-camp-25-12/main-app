@@ -31,10 +31,10 @@
 <script setup lang="ts">
 import { ref, } from 'vue'
 import PluginCard from "../PluginCard/Index.vue";
-import { useRouter } from "vue-router";
 import { getPluginInfoByPage } from '../../../api/plugin'
+import mitter from '@renderer/windows/pluginStore/utils/mitter';
 
-const router = useRouter();
+const emit = defineEmits(['show-detail'])
 
 //插件信息
 const plugins = ref([])
@@ -46,21 +46,20 @@ getPluginInfoByPage(1).then((res) => {
     pagination.value = res.pagination
 })
 
+
+
 //页码改变时获取对应页的插件信息
 async function handleCurrentChange(val: number) {
     const res = await getPluginInfoByPage(val)
     plugins.value = res.data
 }
-
+mitter.on('refresh-list', handleCurrentChange)
 
 //显示插件分类
 function filterplugin(category): void { }
 //PluginCard 选中插件事件的处理函数,跳转到对应详情页面
 function showDetail(pluginId): void {
-    router.push({
-        name: "PluginDetail",
-        params: { pluginId }
-    });
+    emit('show-detail', pluginId)
 }
 
 </script>

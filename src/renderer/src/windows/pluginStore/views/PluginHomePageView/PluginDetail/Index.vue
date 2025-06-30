@@ -15,13 +15,17 @@
                     <div>{{ plugin.description }}</div>
 
                     <div class="plugin-actions">
-                        <button v-if="!installed" class="action-btn install-btn" @click="handleDownload">
+                        <button :disabled="isDownloading" :class="installBtnClass" v-if="!installed" class="action-btn"
+                            @click="handleDownload">
                             <i class="fas fa-download"></i>
-                            {{ installed ? "已安装" : "安装" }}
+                            {{ isDownloading ? `${downloadProgress}%` : '安装' }}
                         </button>
                         <template v-else>
-                            <button class="action-btn install-btn" @click="handleDownload">
-                                打开
+                            <button v-if="!isEnable" class="action-btn install-btn" @click="handleEnablePlugin">
+                                启用
+                            </button>
+                            <button v-else class="action-btn install-btn" @click="handleDisablePlugin">
+                                禁用
                             </button>
                             <button class="action-btn uninstall-btn" @click="handleUninstall">
                                 <i class="fa-solid fa-circle-minus"></i>
@@ -35,9 +39,9 @@
             <div class="detail-content">
                 <div class="main-content">
                     <div class="section">
-                        <h2 class="section-title">应用介绍</h2>
+                        <h2 class="section-title">应用详情</h2>
                         <p>
-                            这是一个强大的工具，让您可以迅速完成任务。它支持多种功能，大大提高工作效率。
+                            {{ plugin.description }}
                         </p>
 
                         <h3 style="margin: 15px 0 8px; font-size: 16px">主要功能</h3>
@@ -60,11 +64,11 @@
                     </div> -->
 
                     <div class="section">
-                        <h2 class="section-title">详细参数</h2>
+                        <h2 class="section-title">详细信息</h2>
                         <div class="info-grid">
                             <div class="info-item">
                                 <div class="info-label">版本号</div>
-                                <div class="info-value">v2.3.1</div>
+                                <div class="info-value">v{{ plugin.version }}</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">更新日期</div>
@@ -72,7 +76,7 @@
                             </div>
                             <div class="info-item">
                                 <div class="info-label">文件大小</div>
-                                <div class="info-value">15.6 MB</div>
+                                <div class="info-value">{{ size }}</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">开发者</div>
@@ -88,29 +92,16 @@
                                     {{ plugin.rating }}/10 (1,258个评分)
                                 </div>
                             </div>
+                            <div class="info-item">
+                                <div class="info-label">下载量</div>
+                                <div class="info-value">
+                                    {{ formatDownloads }}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="sidebar">
-                        <div class="section sidebar-card">
-                            <h2 class="section-title">应用信息</h2>
-
-                            <div class="stat-item">
-                                <div class="stat-label">下载量</div>
-                                <div class="stat-value">{{ formatDownloads }}</div>
-                            </div>
-
-                            <div class="stat-item">
-                                <div class="stat-label">评分</div>
-                                <div class="stat-value">{{ plugin.rating }}/10</div>
-                            </div>
-
-                            <div class="stat-item">
-                                <div class="stat-label">支持平台</div>
-                                <div class="stat-value">Windows/macOS/Linux</div>
-                            </div>
-                        </div>
-
                         <div class="section sidebar-card">
                             <h2 class="section-title">标签</h2>
                             <div class="tags">
@@ -137,38 +128,106 @@ const router = useRouter();
 
 //从route得到的pluginId，用于请求服务器插件信息，在router配置里设置了props为true会自动注入到props里，实际是从route传过来的
 const { pluginId } = defineProps(["pluginId"]);
+
 const plugin = ref({});
+const pluginMetadata = ref({})
 //通过pluginId请求插件信息
 getPluginInfoById(pluginId).then((data) => {
     plugin.value = data
 })
+
+//插件是否已安装
+const installed = ref(false);
+//插件是否已启用
+const isEnable = ref(false)
+isInstalled(pluginId)
+
+//判断当前插件是否已安装
+async function isInstalled(pluginId) {
+    const installedPlugins = await window.ipcApi.pluginList()
+    if (pluginId in installedPlugins) {
+        installed.value = true
+        pluginMetadata.value = installedPlugins[pluginId]
+        console.log(pluginMetadata.value)
+        //如果已经安装，判断插件是否运行
+        isEnable.value = !pluginMetadata.value.disabled
+        console.log(isEnable.value)
+    } else {
+        installed.value = false
+    }
+}
+
 const emit = defineEmits(["back-to-list", "toggle-favorite"]);
 
-//表示插件是否已安装
-const installed = ref(false);
+
 
 //格式化下载量
 const formatDownloads = computed(() => {
-    if (plugin.value.downloads >= 10000) {
-        return `${(plugin.value.downloads / 10000).toFixed(1)}万`;
+    if (plugin.value.download >= 10000) {
+        return `${(plugin.value.download / 10000).toFixed(1)}万`;
     }
-    return plugin.value.downloads;
+    return plugin.value.download;
 });
+const isDownloading = ref(false)
 
-//模拟a标签下载，方便被主进程监听并处理
+const installBtnClass = computed(() => ({
+    'install-btn': !isDownloading.value,
+    'downloading-btn': isDownloading.value,
+}))
+
+const size = computed(() => {
+    let bytes = plugin.value.size
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    // 计算最合适的单位索引
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    // 格式化为保留指定位数的小数，并移除多余的零
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)).toString() + ' ' + units[i];
+})
+const downloadProgress = ref(0)
+
+//通知主进程下载插件
 async function handleDownload() {
-    // 触发文件下载
-    const link = document.createElement("a");
-    link.href = `http://localhost:8080/plugin/${pluginId}`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    // fetch("http://localhost:8080/plugin");
-    installed.value = true;
+    isDownloading.value = true
+    window.ipcApi.onPluginDownloadProgress((progress) => {
+        downloadProgress.value = progress
+    })
+
+    window.ipcApi.onPluginFinishDownload(() => {
+        isDownloading.value = false
+        installed.value = true
+    })
+    await window.ipcApi.pluginDownload(pluginId)
+}
+
+async function handleEnablePlugin() {
+    await window.ipcApi.pluginEnable(pluginId)
+    if (pluginMetadata.value.window.frame) {
+        await window.ipcApi.pluginOpen(pluginId)
+    }
+    await isInstalled(pluginId)
+}
+
+async function handleDisablePlugin() {
+    await window.ipcApi.pluginDisable(pluginId)
+    await isInstalled(pluginId)
 }
 
 //卸载插件
-function handleUninstall() { }
+async function handleUninstall() {
+    await window.ipcApi.pluginRemove(pluginId)
+    ElMessage({
+        message: `插件${plugin.value.name} 卸载成功`,
+        type: 'success',
+        offset: 30
+    })
+    installed.value = false
+
+}
 
 //返回插件市场
 function backToList(): void {
@@ -287,6 +346,14 @@ function toggleFavorite(): void {
     color: white;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     background-color: var(--primary-color);
+}
+
+.downloading-btn {
+    border: 0;
+    background: var(--dark-gray);
+    font-weight: 600;
+    color: white;
+    cursor: not-allowed;
 }
 
 .uninstall-btn {

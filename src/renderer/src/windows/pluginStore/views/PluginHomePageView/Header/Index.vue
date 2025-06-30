@@ -4,17 +4,23 @@
             <i class="fas fa-plug"></i>
             <span>插件市场</span>
         </div>
-        <div class="upload-btn" @click="invokeFileChooseDialog">上传插件</div>
-        <input ref="fileInput" style="display: none" type="file" @change="handlePluginUpload" />
-        <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="搜索插件..." />
-        </div>
+        <template v-if="route.name === 'PluginList'">
+            <div class="upload-btn" @click="invokeFileChooseDialog">上传插件</div>
+            <input ref="fileInput" style="display: none" type="file" @change="handlePluginUpload" />
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="搜索插件..." />
+            </div>
+        </template>
     </nav>
 </template>
 
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
+import mitter from "@renderer/windows/pluginStore/utils/mitter";
+import { useRoute } from "vue-router";
+
+const route = useRoute()
 
 //隐藏的input
 const fileInput = useTemplateRef("fileInput");
@@ -50,6 +56,7 @@ async function handlePluginUpload(e): Promise<void> {
                 type: 'success',
                 offset: 30
             })
+            mitter.emit('refresh-list', 1)
         } else {
             throw new Error(result.error || "上传失败");
         }

@@ -6,8 +6,6 @@ import './generated/ipc-handlers-main'
 import './generated/ipc-handlers-plugin'
 import './config/service'
 import './user'
-import fs from 'fs'
-import path from 'path'
 import { windowManager } from './plugins/window'
 
 // 当前窗口的加载在src\main\plugins\loader.ts中处理
@@ -17,30 +15,6 @@ app.whenReady().then(() => {
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
-  })
-
-  //监听渲染进程的下载事件
-  session.defaultSession.on('will-download', (event, item, webContents) => {
-    //文件名
-    const fileName = item.getFilename()
-    // 设置下载路径
-    const downloadsPath = path.join(app.getPath('userData'), 'plugins')
-
-    // 确保下载目录存在
-    if (!fs.existsSync(downloadsPath)) {
-      fs.mkdirSync(downloadsPath, { recursive: true })
-    }
-    //文件路径
-    const filePath = path.join(downloadsPath, fileName)
-    item.setSavePath(filePath)
-    //监听下载完成
-    item.once('done', (event, state) => {
-      if (state === 'completed') {
-        console.log('下载完成，文件保存至: ', filePath)
-      } else {
-        console.log(`下载失败: ${state}`)
-      }
-    })
   })
 
   // 创建托盘图标
@@ -61,6 +35,6 @@ app.on('window-all-closed', () => {
 })
 
 export function appExit() {
-  windowManager.destroy(); // 销毁所有窗口，其中对background窗口进行了额外处理
-  app.quit();
+  windowManager.destroy() // 销毁所有窗口，其中对background窗口进行了额外处理
+  app.quit()
 }
