@@ -4,7 +4,7 @@ import { serviceInstance } from '../ipc-service-main';
 import { windowManager } from '../plugins/window';
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
 import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
-import type { PluginRuntimeInfo, PluginMetadata, MatchRange, SearchResult, AppConfigSchema, PluginUsageInfoSchema } from '../../share/plugins/type.d';
+import type { PluginRuntimeInfo, PluginMetadata, MatchRange, SearchResult, AppConfigSchema, PluginUsageInfoSchema, User } from '../../share/plugins/type.d';
     
 app.on('ready', () => {
 
@@ -107,6 +107,30 @@ app.on('ready', () => {
   // onGetColorMode() -> Promise<AppConfigSchema['colorMode']>
   ipcMain.handle('get-color-mode', async (_event, ) => {
     return await serviceInstance.onGetColorMode();
+  });
+
+
+  // onUserLogin(username: string, password: string) -> Promise<boolean>
+  ipcMain.handle('user-login', async (_event, username: string, password: string) => {
+    return await serviceInstance.onUserLogin(username, password);
+  });
+
+
+  // onUserRegister(username: string, password: string) -> Promise<boolean>
+  ipcMain.handle('user-register', async (_event, username: string, password: string) => {
+    return await serviceInstance.onUserRegister(username, password);
+  });
+
+
+  // onUserLogout() -> Promise<void>
+  ipcMain.handle('user-logout', async (_event, ) => {
+    return await serviceInstance.onUserLogout();
+  });
+
+
+  // onUserMe() -> Promise<{ name: string }>
+  ipcMain.handle('user-me', async (_event, ) => {
+    return await serviceInstance.onUserMe();
   });
 });
     

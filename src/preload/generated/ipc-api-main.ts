@@ -1,6 +1,6 @@
 import type { PluginEnterAction } from '../../share/plugins/api.type.d';
 import type { HotkeyOption } from '../../share/plugins/hotkeys.type.d';
-import type { PluginRuntimeInfo, PluginMetadata, MatchRange, SearchResult, AppConfigSchema, PluginUsageInfoSchema } from '../../share/plugins/type.d';
+import type { PluginRuntimeInfo, PluginMetadata, MatchRange, SearchResult, AppConfigSchema, PluginUsageInfoSchema, User } from '../../share/plugins/type.d';
 import { electronAPI } from '@electron-toolkit/preload';
 
 // 自动生成的IPC接口，请勿手动修改
@@ -131,6 +131,38 @@ export class IpcApi {
    */
   async getColorMode(): Promise<AppConfigSchema['colorMode']> {
     return electronAPI.ipcRenderer.invoke('get-color-mode');
+  }
+
+  /**
+   * 发起用户登录
+    * @param username 用户名
+    * @param password 密码
+   */
+  async userLogin(username: string, password: string): Promise<boolean> {
+    return electronAPI.ipcRenderer.invoke('user-login', username, password);
+  }
+
+  /**
+   * 发起用户注册
+    * @param username 用户名
+    * @param password 密码
+   */
+  async userRegister(username: string, password: string): Promise<boolean> {
+    return electronAPI.ipcRenderer.invoke('user-register', username, password);
+  }
+
+  /**
+   * 用户登出
+   */
+  async userLogout(): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('user-logout');
+  }
+
+  /**
+   * 用户获取个人信息
+   */
+  async userMe(): Promise<{ name: string }> {
+    return electronAPI.ipcRenderer.invoke('user-me');
   }
 
   /**

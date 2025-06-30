@@ -44,3 +44,7 @@ export interface PluginUsageInfoSchema {
     usedAt: number; // 插件上次使用时间戳
   }[]
 }
+
+export interface User {
+  name: string; // 用户名
+}

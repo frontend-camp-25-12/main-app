@@ -1,5 +1,5 @@
 import { HotkeyOption } from '../share/plugins/hotkeys.type';
-import type { AppConfigSchema, PluginEnterAction, PluginMetadata, SearchResult } from '../share/plugins/type';
+import type { AppConfigSchema, PluginEnterAction, PluginMetadata, SearchResult, User } from '../share/plugins/type';
 import { AppConfig } from './config/app';
 import { hotkeyManager } from './plugins/hotkeys';
 import { pluginManager } from './plugins/loader';
@@ -9,6 +9,7 @@ import { windowColor } from './plugins/window';
 import { ipcEmit } from './generated/ipc-handlers-main';
 import { changeLanguage } from './locales/i18n';
 import { ipcEmitPlugin } from './generated/ipc-handlers-plugin';
+import { userManager } from './user';
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
@@ -158,6 +159,52 @@ export class IpcService {
    */
   async onGetColorMode(): Promise<AppConfigSchema['colorMode']> {
     return windowColor.mode;
+  }
+
+  /**
+   * 发起用户登录
+   * @param username 用户名
+   * @param password 密码
+   * @return 是否登录成功
+   */
+  async onUserLogin(username: string, password: string): Promise<boolean> {
+    return await userManager.login({
+      username,
+      password
+    });
+  }
+
+  /**
+   * 发起用户注册
+   * @param username 用户名
+   * @param password 密码
+   * @return 是否注册成功
+   */
+  async onUserRegister(username: string, password: string): Promise<boolean> {
+    return await userManager.register({
+      username,
+      password
+    });
+  }
+
+  /**
+   * 用户登出
+   */
+  async onUserLogout(): Promise<void> {
+    return userManager.logout();
+  }
+
+  /**
+   * 用户获取个人信息
+   * @returns 用户信息对象
+   * 如果用户未登录，则返回undefined
+   */
+  async onUserMe(): Promise<User | undefined> {
+    const user = await userManager.getCurrentUserInfo();
+    if (user) {
+      return user;
+    }
+    return undefined;
   }
 
   /**
