@@ -7,7 +7,7 @@ export type * from './api.type.d.ts';
 
 export interface PluginRuntimeInfo extends PluginDefinition {
   dist: string;         // 插件的内容目录，用于装载内容
-  logoPath?: string;
+  logoPath?: string;     // 插件的logo路径，file://协议
   internal?: {             // 内置插件相关
     hidden?: boolean;   // 是否在插件列表中隐藏
   },

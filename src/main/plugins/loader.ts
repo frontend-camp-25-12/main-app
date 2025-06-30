@@ -69,8 +69,49 @@ export class PluginManager {
 
   async afterLoadPlugin(plugin: PluginMetadata) {
     pluginUsageInfoManager.add(plugin); // 必须最先把plugin交给它，用来补充PluginUsageInfoSchema内的状态信息
+    this.resolveLogo(plugin);
     windowManager.add(plugin);
     hotkeyManager.add(plugin);
+  }
+
+  /**
+   * 处理插件的logo路径
+   * 对于外部插件：
+   * 确保plugin.logo是绝对路径
+   * logoPath是一个file://URL
+   */
+  private resolveLogo(plugin: PluginMetadata) {
+    if (plugin.logo) {
+      if (plugin.internal) {
+        // @see src/main/plugins/builtin.ts
+        /**
+         * logo通过vite静态资源规则，转移到out/renderer/icon下。
+         * plugin.logo是图标的文件名，不含路径信息。
+         * 对于主进程，需要转换成相对于out/main/index.js的相对路径格式，如'../renderer/icon/icon-settings.png'
+         * 对于渲染进程，需要转换成成相对于out/renderer/windows/xxx/index.html的相对路径格式，如'../../icon/icon-settings.png'
+         */
+        const logoFileName = plugin.logo;
+        plugin.logo = path.join(__dirname, '..', 'renderer', 'icon', logoFileName);
+        plugin.logoPath = path.join('..', '..', 'icon', logoFileName);
+      } else {
+        let pass = false;
+        if (!path.isAbsolute(plugin.logo)) {
+          // 确保路径是相对的且不超出其目录范围
+          const logoPath = path.resolve(plugin.dist, plugin.logo);
+          if (logoPath.startsWith(plugin.dist + path.sep)) {
+            if (fs.existsSync(logoPath)) {
+              pass = true;
+              plugin.logo = logoPath;
+              plugin.logoPath = pathToFileURL(logoPath).toString();
+            }
+          }
+        }
+        if (!pass) {
+          plugin.logo = undefined;
+          plugin.logoPath = undefined;
+        }
+      }
+    }
   }
 
   /**
@@ -103,17 +144,7 @@ export class PluginManager {
     if (this.plugins[pluginDef.id]) {
       throw new Error(`插件 ${pluginDef.name} 已经存在`);
     }
-    if (pluginDef.logo) {
-      if (!path.isAbsolute(pluginDef.logo)) {
-        // 确保路径是相对的且不超出其目录范围
-        const logoPath = path.resolve(pluginPath, pluginDef.logo);
-        if (logoPath.startsWith(pluginPath + path.sep)) {
-          if (fs.existsSync(logoPath)) {
-            pluginDef.logoPath = pathToFileURL(logoPath).toString();
-          }
-        }
-      }
-    }
+
     pluginDef.dist = pluginPath; // 为了之后从其中加载内容
     return pluginDef;
   }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PluginView } from '../utils/plugin';
-import icon from '../../../../../../resources/icon.png';
+import icon from '../../../../../../resources/icon/icon.png';
 import { t } from '../../../utils/i18n';
 
 defineProps<{

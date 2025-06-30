@@ -1,9 +1,10 @@
 import { is } from "@electron-toolkit/utils"
-import { BrowserWindow, ipcMain, nativeTheme } from "electron"
+import { BrowserWindow, nativeTheme } from "electron"
 import path, { join } from "path"
-import icon from '../../../resources/icon.png?asset'
 import { PluginMetadata } from "../../share/plugins/type"
 import { AppConfig } from "../config/app"
+import { fileURLToPath } from "url"
+import { appIcon } from "../icon"
 
 /**
  * 加载窗口内容，针对当前多窗口应用的打包格式，供打开内部插件的窗口时使用
@@ -66,9 +67,8 @@ class PluginWindow {
       frame: plugin.window?.frame ?? true,
       show: false,
       resizable: plugin.window?.resizable ?? true,
-      icon: plugin.logoPath,
+      icon: plugin.logo || appIcon,
       alwaysOnTop: plugin.window?.alwaysOnTop ?? false,
-      ...(process.platform === 'linux' ? { icon } : {}),
       backgroundColor: windowColor.backgroundColor(),
       webPreferences: {
         preload: windowContent.preload,

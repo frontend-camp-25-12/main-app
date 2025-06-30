@@ -4,7 +4,7 @@ import { ElButton, ElFormItem, ElForm, ElTag, ElMessageBox } from 'element-plus'
 import HotkeyInput from './components/HotkeyInput.vue';
 import { HotkeyOption } from '../../../../share/plugins/hotkeys.type';
 import { t } from '../../utils/i18n';
-import icon from '../../../../../resources/icon.png';
+import icon from '../../../../../resources/icon/icon.png';
 import { PluginEnterAction } from '../../../../share/plugins/api.type';
 
 const hotkeyOptions: Ref<HotkeyOption[]> = ref([]);

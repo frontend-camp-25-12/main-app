@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, h, VNode } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { PluginView } from '../utils/plugin';
-import icon from '../../../../../../resources/icon.png';
+import icon from '../../../../../../resources/icon/icon.png';
 import { t } from '../../../utils/i18n';
 import TextHighlight from './TextHighlight';
 

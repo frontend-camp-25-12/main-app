@@ -3,6 +3,7 @@
  */
 
 import { PluginMetadata, PluginRuntimeInfo } from '../../share/plugins/type'
+import type { PluginManager } from './loader'
 
 export enum BuiltinPluginId {
   ENTRANCE = 'builtin.entrance',
@@ -12,9 +13,10 @@ export enum BuiltinPluginId {
 }
 /**
  * 内置插件的元数据
+ * 
  * 对于logo，放置于src/renderer/src/public/icon/下
- * logo通过vite静态资源规则，转移到out/renderer/icon下。但主应用中通过文件系统（而不是vite接管的资源路径）获取Logo文件，
- * 所以需要写成相对于out/renderer/windows/entrance/index.html的相对路径格式
+ * 然后在logo中直接给出文件名
+ * @see PluginManager.resolveLogo
  */
 export const builtinPlugins: PluginRuntimeInfo[]  = [
   {
@@ -22,7 +24,7 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
     name: '插件入口',
     version: '1.0.0',
     dist: 'entrance',
-    logoPath: '../../icon/icon-app-drawer.png',
+    logo: 'icon-app-drawer.png',
     internal: {
       hidden: true
     },
@@ -30,6 +32,7 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
       disableTransition: true,
       height: 400,
       resizable: false,
+      frame: false,
       closeOnBlur: true
     },
     background: true,
@@ -48,7 +51,7 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
     description: '管理应用本身的设置',
     version: '1.0.0',
     dist: 'settings',
-    logoPath: '../../icon/icon-settings.png',
+    logo: 'icon-settings.png',
     internal: {}
   },
   {
@@ -61,7 +64,7 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
     },
     dist: 'hotkeys',
     internal: {},
-    logoPath: '../../icon/icon-hotkeys.png',
+    logo: 'icon-hotkeys.png',
     features: [
       {
         code: 'open',

@@ -239,7 +239,7 @@ import { PluginApi } from '@types/plugin-api-types';
   "name": "插件名称",                     // 插件名称
   "description": "插件描述",              // （可选）插件描述
   "version": "1.0.0",                    // 插件版本
-  "logo": "./logo.png",                    // （可选）插件图标，路径相对于插件目录
+  "logo": "./logo.png",                    // （可选）插件图标，路径相对于插件目录。不建议使用svg，否则窗口的图标会无法显示。
   "preload": "preload.js",                 // （可选）插件的preload脚本路径，默认preload.js
   "content": "index.html",                 // （可选）插件的内容网页路径，默认index.html
   "background": false,                      // （可选）是否需要保持后台运行，默认false

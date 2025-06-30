@@ -1,7 +1,7 @@
 import { Tray, Menu, nativeImage, app } from 'electron';
 import { BuiltinPluginId } from './plugins/builtin';
 import { windowColor, windowManager } from './plugins/window';
-import trayIcon from '../../resources/tray-icon.png?asset'
+import { trayIcon } from './icon'
 import i18next from './locales/i18n';
 import { pluginManager } from './plugins/loader';
 import { appExit } from '.';
