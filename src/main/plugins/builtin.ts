@@ -33,7 +33,8 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
       height: 400,
       resizable: false,
       frame: false,
-      closeOnBlur: true
+      closeOnBlur: true,
+      skipTaskbar: true,
     },
     background: true,
     features: [

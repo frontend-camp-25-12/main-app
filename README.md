@@ -239,34 +239,35 @@ import { PluginApi } from '@types/plugin-api-types';
   "name": "插件名称",                     // 插件名称
   "description": "插件描述",              // （可选）插件描述
   "version": "1.0.0",                    // 插件版本
-  "logo": "./logo.png",                    // （可选）插件图标，路径相对于插件目录。不建议使用svg，否则窗口的图标会无法显示。
-  "preload": "preload.js",                 // （可选）插件的preload脚本路径，默认preload.js
-  "content": "index.html",                 // （可选）插件的内容网页路径，默认index.html
-  "background": false,                      // （可选）是否需要保持后台运行，默认false
+  "logo": "./logo.png",                  // （可选）插件图标，路径相对于插件目录。不建议使用svg，否则窗口的图标会无法显示。
+  "preload": "preload.js",               // （可选）插件的preload脚本路径，默认preload.js
+  "content": "index.html",               // （可选）插件的内容网页路径，默认index.html
+  "background": false,                     // （可选）是否需要保持后台运行，默认false
   "window": {                              // （可选）窗口配置
     "width": 800,                          // （可选）窗口宽度
     "height": 600,                         // （可选）窗口高度
     "disableTransition": false,            // （可选）禁用窗口动画
     "frame": true,                         // （可选）是否显示窗口边框，默认true
     "transparent": false,                  // （可选）是否透明窗口，默认false，设为true时需要同时设置`frame: false`才有效
-    "resizable": true,                      // （可选）是否允许调整窗口大小，默认true
-    "alwaysOnTop": false,                   // （可选）是否总在顶层显示，默认false
-    "closeOnBlur": false                 // 可选）是否在失去焦点时关闭窗口，默认为false
+    "resizable": true,                     // （可选）是否允许调整窗口大小，默认true
+    "alwaysOnTop": false,                  // （可选）是否总在顶层显示，默认false
+    "closeOnBlur": false,                  // （可选）是否在失去焦点时关闭窗口，默认为false
+    "skipTaskbar": false                   // （可选）是否在任务栏中隐藏窗口，默认为false（windows和linux下有效）
   },
   "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入，支持拼音搜索和拼音首字母搜索
     {
-      "code": "featureCode",              // 功能代码，用于在onPluginEnter时，区分不同功能
-      "label": "功能名称",                  // 功能名称，注意它会参与命令检索。可以通过cmds来定义这个feature其它的匹配指令。
-      "hotKey": false,                      // （可选）是否启用热键，默认false。设为true后，可在”快捷键管理”中查看对应的热键设置，通过热键进入时，action.from = 'hotkey'
-      "searchable": true,                   // （可选）是否可被搜索到，默认true。与hotkey结合可以提供仅能通过热键进入的功能
-      "cmds": [                             // 可触发这个feature的命令列表, 一共支持三种类型的命令
-        "search",                           // 定义一个命令叫search
-        {                                    // 也可以定义正则匹配的命令
-          "type": "regex",                // 对于正则匹配命令，固定为'regex'
-          "match": "\\d+"                // 正则匹配字符串（不含/和flag）
+      "code": "featureCode",             // 功能代码，用于在onPluginEnter时，区分不同功能
+      "label": "功能名称",                // 功能名称，注意它会参与命令检索。可以通过cmds来定义这个feature其它的匹配指令。
+      "hotKey": false,                     // （可选）是否启用热键，默认false。设为true后，可在”快捷键管理”中查看对应的热键设置，通过热键进入时，action.from = 'hotkey'
+      "searchable": true,                  // （可选）是否可被搜索到，默认true。与hotkey结合可以提供仅能通过热键进入的功能
+      "cmds": [                            // 可触发这个feature的命令列表, 一共支持三种类型的命令
+        "search",                          // 定义一个命令叫search
+        {                                   // 也可以定义正则匹配的命令
+          "type": "regex",               // 对于正则匹配命令，固定为'regex'
+          "match": "\\d+"              // 正则匹配字符串（不含/和flag）
         },
         {
-          "type": "any"                   // 也可以定义匹配任意输入的命令
+          "type": "any"                  // 也可以定义匹配任意输入的命令
         }
       ]
     }

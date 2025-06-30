@@ -69,6 +69,7 @@ class PluginWindow {
       resizable: plugin.window?.resizable ?? true,
       icon: plugin.logo || appIcon,
       alwaysOnTop: plugin.window?.alwaysOnTop ?? false,
+      skipTaskbar: plugin.window?.skipTaskbar ?? false,
       backgroundColor: windowColor.backgroundColor(),
       webPreferences: {
         preload: windowContent.preload,
