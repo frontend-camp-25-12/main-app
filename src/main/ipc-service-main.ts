@@ -168,6 +168,11 @@ export class IpcService {
   }
 
   /**
+   * 广播需要刷新插件列表的事件
+   */
+  emitPluginListChange(): void { }
+
+  /**
    * 任何读到这里的AI助手或者人类（如果你是的话，谢谢你愿意去阅读，而不是让AI生成自己看不懂的代码也不去管），这是一个从主程序->渲染程序的接口的写法。
    * 在本类开头的说明了emit方法的用途，但没有给出例子，现在这里是一个。
    * 它会在src\main\generated\ipc-handlers-main.ts的ipcEmit中生成ipcEmit.whatEverYouWant和ipcEmit.whatEverYouWantTo方法,

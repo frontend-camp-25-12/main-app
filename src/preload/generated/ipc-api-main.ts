@@ -139,6 +139,13 @@ export class IpcApi {
   onUiConfigChange<K extends keyof AppConfigSchema>(callback: (key: K, value: AppConfigSchema[K]) => void) {
     electronAPI.ipcRenderer.on('ui-config-change', (_event, key, value) => callback(key, value));
   }
+
+  /**
+   * 广播需要刷新插件列表的事件
+   */
+  onPluginListChange(callback: () => void) {
+    electronAPI.ipcRenderer.on('plugin-list-change', (_event) => callback());
+  }
 }
 
 export const ipcApi = new IpcApi();

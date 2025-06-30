@@ -11,6 +11,7 @@ import asar from "asar";
 import originalFs from "original-fs";
 import { pathToFileURL } from "url";
 import { pluginUsageInfoManager } from "./usageInfo.js";
+import { ipcEmit } from "../generated/ipc-handlers-main.js";
 
 function isAsar(dirent: fs.Dirent | string) {
   try {
@@ -213,6 +214,7 @@ export class PluginManager {
     const plugins = await this.plugins;
     plugins[pluginMetadata.id] = pluginMetadata;
     this.afterLoadPlugin(pluginMetadata);
+    ipcEmit.pluginListChange();
     return plugins;
   }
 
@@ -245,6 +247,7 @@ export class PluginManager {
     }
 
     console.log(`Plugin ${plugin.name} (${id}) has been removed successfully`);
+    ipcEmit.pluginListChange();
   }
 
   /**
@@ -259,6 +262,7 @@ export class PluginManager {
     pluginUsageInfoManager.disable(plugin);
     windowManager.remove(id);
     hotkeyManager.disable(id);
+    ipcEmit.pluginListChange();
   }
 
   /**
@@ -273,6 +277,7 @@ export class PluginManager {
 
     pluginUsageInfoManager.enable(plugin);
     hotkeyManager.enable(id);
+    ipcEmit.pluginListChange();
   }
 
   /**

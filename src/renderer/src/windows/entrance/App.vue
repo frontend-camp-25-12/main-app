@@ -59,6 +59,9 @@ onMounted(() => {
   window.ipcApi.appConfigGet('entrance_viewMode', 'list').then(mode => {
     viewMode.value = mode || 'list';
   });
+  window.ipcApi.onPluginListChange(() => {
+    fetchPlugins();
+  })
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Enter' || event.key == 'Tab' || (event.ctrlKey || event.metaKey || event.shiftKey)) {
       return;

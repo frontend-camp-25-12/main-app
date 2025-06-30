@@ -124,4 +124,18 @@ export namespace ipcEmit {
   export function uiConfigChangeTo<K extends keyof AppConfigSchema>(id: PluginMetadata['id'], key: K, value: AppConfigSchema[K]) {
     windowManager.emitTo(id, 'ui-config-change', key, value);
   }
+
+  /**
+  * 广播需要刷新插件列表的事件
+  */
+  export function pluginListChange() {
+    windowManager.emit('plugin-list-change');
+  }
+
+  /**
+  * 广播需要刷新插件列表的事件
+  */
+  export function pluginListChangeTo(id: PluginMetadata['id'], ) {
+    windowManager.emitTo(id, 'plugin-list-change');
+  }
 }
