@@ -142,6 +142,7 @@ export class PluginManager {
     const pluginJsonPath = join(pluginPath, 'plugin.json')
     const pluginData = await fs.promises.readFile(pluginJsonPath, 'utf-8')
     const raw = JSON.parse(pluginData)
+
     let pluginDef: PluginMetadata
     try {
       pluginDef = PluginDefinitionSchema.parse(raw) as PluginMetadata // 用zod校验和清理字段
@@ -196,7 +197,6 @@ export class PluginManager {
     if (!path.isAbsolute(dir)) {
       dir = join(process.cwd(), dir)
     }
-    console.log(`Add plugin directory: ${dir}`)
 
     if (!fs.existsSync(dir)) {
       console.error(`Plugin directory ${dir} does not exist`)
@@ -223,6 +223,7 @@ export class PluginManager {
     plugins[pluginMetadata.id] = pluginMetadata
     this.afterLoadPlugin(pluginMetadata)
     ipcEmit.pluginListChange()
+    console.log(`Added plugin directory: ${dir}`)
     return plugins
   }
 
@@ -358,4 +359,6 @@ export class PluginManager {
 }
 
 export const pluginManager = new PluginManager()
-pluginManager.loadPlugins()
+app.whenReady().then(() => {
+  pluginManager.loadPlugins()
+})
