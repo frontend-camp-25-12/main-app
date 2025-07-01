@@ -10,20 +10,20 @@
             <div class="plugin-title">
                 <span>{{ plugin.name }}</span>
             </div>
-            <div class="plugin-description">{{ plugin.description || '暂无描述' }}</div>
+            <div class="plugin-description">{{ plugin.description || t('pluginStore.noDescription') }}</div>
             <div class="plugin-footer">
                 <span>{{ installedPkg[plugin.id] && updateAvaliable(plugin) ? `${installedPkg[plugin.id].version} →` :
                     '' }}{{
                         plugin.version }}</span>
                 <span style="margin-left: auto; margin-right: 6px;">{{ formatFileSize(plugin.size) }}</span>
-                <ElButton size="small" v-if="!installedPkg[plugin.id]" @click="installPlugin(plugin)">安装</ElButton>
+                <ElButton size="small" v-if="!installedPkg[plugin.id]" @click="installPlugin(plugin)">{{ t('pluginStore.install') }}</ElButton>
                 <ElButton size="small" type="primary" v-else-if="updateAvaliable(plugin)" @click="updatePlugin(plugin)">
-                    更新</ElButton>
+                    {{ t('pluginStore.update') }}</ElButton>
                 <div v-else class="plugin-installed">
                     <el-icon size="18">
                         <SuccessFilled color="var(--el-color-success)" />
                     </el-icon>
-                    已安装
+                    {{ t('pluginStore.installed') }}
                 </div>
             </div>
         </div>
@@ -38,6 +38,7 @@ import { installedPkg } from '../../../utils/installedPkg';
 import { ElIcon } from 'element-plus';
 import { SuccessFilled } from '@element-plus/icons-vue';
 import { compareVersions } from 'compare-versions';
+import { t } from '../../../../../utils/i18n';
 
 defineProps<{
     plugin: PluginStoreInfo

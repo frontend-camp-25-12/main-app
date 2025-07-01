@@ -2,14 +2,14 @@
     <nav class="nav-bar">
         <div class="logo">
             <i class="fas fa-plug"></i>
-            <span>插件市场</span>
+            <span>{{ t('pluginStore.title') }}</span>
         </div>
         <template v-if="route.name === 'PluginList'">
-            <div class="upload-btn" @click="invokeFileChooseDialog">上传插件</div>
+            <div class="upload-btn" @click="invokeFileChooseDialog">{{ t('pluginStore.uploadPlugin') }}</div>
             <input ref="fileInput" style="display: none" type="file" accept=".asar" @change="handlePluginUpload" />
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="搜索插件..." />
+                <input type="text" :placeholder="t('pluginStore.searchPlaceholder')" />
             </div>
         </template>
     </nav>
@@ -20,6 +20,7 @@ import { useTemplateRef } from "vue";
 import { useRoute } from "vue-router";
 import { pluginListReload } from "../../../utils/pluginListReload";
 import { HOST } from "../../../api/plugin";
+import { t } from '../../../../../utils/i18n';
 
 const route = useRoute()
 
@@ -36,14 +37,14 @@ async function handlePluginUpload(e): Promise<void> {
     const file = e.target.files[0];
 
     if (!file) {
-        alert("请选择文件");
+        alert(t('pluginStore.fileSelectError'));
         return;
     }
 
     // 检查文件类型
     if (!file.name.endsWith('.asar')) {
         ElMessage({
-            message: '请选择.asar文件',
+            message: t('pluginStore.fileTypeError'),
             type: 'warning',
             offset: 30
         });
@@ -64,7 +65,7 @@ async function handlePluginUpload(e): Promise<void> {
 
         if (response.ok) {
             ElMessage({
-                message: `插件 ${result.originalname} 上传成功`,
+                message: t('pluginStore.uploadSuccess', { name: result.originalname }),
                 type: 'success',
                 offset: 30
             })
@@ -75,7 +76,7 @@ async function handlePluginUpload(e): Promise<void> {
     } catch (error: any) {
         console.error("上传错误:", error);
         ElMessage({
-            message: `插件 ${file.name} 上传失败 : ${error.message}`,
+            message: t('pluginStore.uploadFailed', { name: file.name, error: error.message }),
             type: 'error',
             offset: 30
         })

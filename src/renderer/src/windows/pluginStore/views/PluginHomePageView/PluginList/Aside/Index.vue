@@ -3,7 +3,7 @@
     <div class="sidebar-container">
         <div class="sidebar-header">
             <div class="sidebar-title">
-                已安装
+                {{ t('pluginStore.installedSection') }}
             </div>
             <div class="divider"></div>
         </div>
@@ -15,11 +15,12 @@
                         <div class="plugin-name">{{ plugin.name }}</div>
                         <div class="plugin-version">{{ plugin.version }}</div>
                         <div class="plugin-usedAt" v-if="plugin.usedAt && plugin.usedAt !== 0">
-                            上次使用{{ formatDateNow(new Date(plugin.usedAt)) }}</div>
+                            {{ t('pluginStore.lastUsed', { time: formatDateNow(new Date(plugin.usedAt)) }) }}</div>
                     </div>
                     <div class="plugin-actions">
-                        <div class="plugin-disabled-label" :style="{ visibility: plugin.disabled ? 'visible' : 'hidden' }">
-                            <span>未启用</span>
+                        <div class="plugin-disabled-label"
+                            :style="{ visibility: plugin.disabled ? 'visible' : 'hidden' }">
+                            <span>{{ t('pluginStore.notEnabled') }}</span>
                         </div>
                         <el-dropdown trigger="click" class="plugin-dropdown">
                             <el-icon>
@@ -27,8 +28,10 @@
                             </el-icon>
                             <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item @click="toggleDisabled(plugin)">{{ plugin.disabled ? '启用' : '停用' }}</el-dropdown-item>
-                                    <el-dropdown-item @click="uninstallPlugin(plugin)">卸载</el-dropdown-item>
+                                    <el-dropdown-item @click="toggleDisabled(plugin)">{{ plugin.disabled ?
+                                        t('pluginStore.enable') : t('pluginStore.disable') }}</el-dropdown-item>
+                                    <el-dropdown-item @click="uninstallPlugin(plugin)">{{ t('pluginStore.uninstall')
+                                        }}</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
@@ -46,6 +49,7 @@ import { installedPkg } from '../../../../utils/installedPkg';
 import { formatDateNow } from '../../../../utils/timeFormat';
 import { ElScrollbar, ElIcon } from 'element-plus';
 import { MoreFilled } from '@element-plus/icons-vue';
+import { t } from '../../../../../../utils/i18n';
 
 const externalPlugins = computed(() => {
     const plugins: PluginMetadata[] = []

@@ -35,11 +35,31 @@
     "pleaseInput": "Please press the shortcut keys",
     "outsideClickEmpty": "Click outside to finish (Currently set to empty)",
     "outsideClick": "Click outside to finish",
-    "empty": "No shortcut set",    "undo": "Undo Changes",
+    "empty": "No shortcut set",    
+    "undo": "Undo Changes",
     "modified": "Modified",
     "conflictTitle": "Hotkey Conflict",
     "conflictMessage": "The hotkey \"{hotkey}\" is already used by \"{pluginName}\" for \"{feature}\" function. Cannot set duplicate hotkeys.",
     "invalidTitle": "Invalid Hotkey",
     "invalidMessage": "The hotkey \"{hotkey}\" is a system reserved key combination and cannot be used. Please choose another hotkey."
+  },
+  "pluginStore": {
+    "title": "Plugin Store",
+    "uploadPlugin": "Upload Plugin",
+    "searchPlaceholder": "Search plugins...",
+    "fileSelectError": "Please select a file",
+    "fileTypeError": "Please select an .asar file",
+    "uploadSuccess": "Plugin {name} uploaded successfully",
+    "uploadFailed": "Plugin {name} upload failed: {error}",
+    "installedSection": "Installed",
+    "noDescription": "No description",
+    "install": "Install",
+    "update": "Update",
+    "installed": "Installed",
+    "lastUsed": "Last used {time}",
+    "notEnabled": "Disabled",
+    "enable": "Enable",
+    "disable": "Disable",
+    "uninstall": "Uninstall"
   }
 }
