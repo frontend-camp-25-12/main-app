@@ -95,6 +95,7 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
   }
   window.ipcApi.pluginOpen(id, action);
   fetchPlugins();
+  searchInput.value = '';
 };
 
 function switchViewMode() {
