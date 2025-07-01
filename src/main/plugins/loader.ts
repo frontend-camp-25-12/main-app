@@ -166,7 +166,7 @@ export class PluginManager {
 
   async listByRecent() {
     const plugins = await this.plugins
-    return pluginUsageInfoManager.getRecentlyOrder().map((id) => plugins[id])
+    return pluginUsageInfoManager.getRecentlyOrder().map((id) => plugins[id]).filter(Boolean)
   }
 
   async get(id: string) {
