@@ -83,7 +83,6 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
     name: '插件市场',
     version: '1.0.0',
     window: {
-      width: 800
     },
     dist: 'pluginStore',
     internal: {}

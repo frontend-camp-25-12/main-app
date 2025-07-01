@@ -56,9 +56,9 @@ app.on('ready', () => {
   });
 
 
-  // onPluginRemove(id: string) -> Promise<void>
-  ipcMain.handle('plugin-remove', async (_event, id: string) => {
-    return await serviceInstance.onPluginRemove(id);
+  // onPluginRemove(id: string, version: string) -> Promise<void>
+  ipcMain.handle('plugin-remove', async (_event, id: string, version: string) => {
+    return await serviceInstance.onPluginRemove(id, version);
   });
 
 

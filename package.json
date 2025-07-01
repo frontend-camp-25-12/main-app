@@ -30,7 +30,6 @@
     "electron-store": "^8.2.0",
     "element-plus": "^2.10.2",
     "i18next": "^25.2.1",
-    "mitt": "^3.0.1",
     "open": "^10.1.2",
     "pinyin-match": "^1.2.8",
     "ranges-merge": "^9.0.18",

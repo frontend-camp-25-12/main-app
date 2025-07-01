@@ -11,9 +11,8 @@ export interface PluginStoreInfo {
   description: string | null;
   version: string;
   logo: string; // base64编码的图片数据
-  rating: number;
   download: number;
-  category?: string;
+  size: number; // 插件大小，单位为字节
 }
 
 /**

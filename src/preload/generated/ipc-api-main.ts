@@ -70,9 +70,10 @@ export class IpcApi {
   /**
    * 卸载插件
     * @param id 插件ID
+    * @param version 插件版本
    */
-  async pluginRemove(id: string): Promise<void> {
-    return electronAPI.ipcRenderer.invoke('plugin-remove', id);
+  async pluginRemove(id: string, version: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('plugin-remove', id, version);
   }
 
   /**

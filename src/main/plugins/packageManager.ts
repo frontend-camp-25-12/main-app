@@ -8,7 +8,7 @@ import { ipcEmit } from "../generated/ipc-handlers-main";
 import { BuiltinPluginId } from "./builtin";
 import { pluginDownloadClient } from "../api";
 import { PluginMetadata } from "../../share/plugins/type";
-import { compare } from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 
 
 export interface PluginPackage {
@@ -75,19 +75,26 @@ class PluginPackageManager {
         if (orphanPackage.has(fullPath)) {
           const pkg = orphanPackage.get(fullPath);
           if (pkg?.pendingDelete) {
-            originalFs.rmSync(fullPath, { recursive: true, force: true });
+            try {
+              originalFs.rmSync(fullPath, { recursive: true, force: true });
+            } catch (error) {
+              // 文件被占用删除失败，不清除其记录，留待下次启动时再处理
+              orphanPackage.delete(fullPath);
+              console.error(`Failed to remove plugin directory ${fullPath}:`, error);
+            }
+          } else {
+            orphanPackage.delete(fullPath);
           }
-          orphanPackage.delete(fullPath);
         } else {
-          newPackages.push(fullPath);
+          newPackages.push(dirent.name);
         }
       }
     }
     for (const orphan of orphanPackage.keys()) {
       PluginPackageStorePersist.set(storedPackages.filter(pkg => pkg.path !== orphan));
     }
-    for (const dir of newPackages) {
-      this.installExternal(dir)
+    for (const basename of newPackages) {
+      this.install(basename)
     }
   }
 
@@ -120,18 +127,22 @@ class PluginPackageManager {
     }
 
     const existingPkgs = PluginPackageStorePersist.get();
-    const sameIdPkg = existingPkgs.find(pkg => pkg.id === pluginDef.id);
+    // 为了处理更新和重新安装，需要找出安装记录中相同id的且版本最大的插件。
+    const sameIdPkg = existingPkgs.filter(pkg => pkg.id === pluginDef.id)
+      .sort((a, b) => compareVersions(b.version, a.version))[0];
+    
     let isDowngrade = false;
     if (sameIdPkg) {
-      if (compare(pluginDef.version, sameIdPkg.version, '>')) {
+      const compareResult = compareVersions(pluginDef.version, sameIdPkg.version);
+      if (compareResult === 1) {
         // 表明是更新
-        this.uninstall(sameIdPkg.id, sameIdPkg.version); // 卸载旧版本
-      } else if (compare(pluginDef.version, sameIdPkg.version, '<')) {
+        await this.uninstall(sameIdPkg.id, sameIdPkg.version); // 卸载旧版本
+      } else if (compareResult === -1) {
         // 低版本，接下来直接标记为待删除
         isDowngrade = true;
       } else {
         // 重新安装同版本插件，删除旧安装管理记录
-        PluginPackageStorePersist.set(existingPkgs.filter(pkg => pkg.id !== pluginDef.id));
+        existingPkgs.splice(existingPkgs.indexOf(sameIdPkg), 1);
       }
     }
 
@@ -201,16 +212,17 @@ class PluginPackageManager {
    * 卸载插件。将其标记为待清理。下次启动时会删除。
    * @param id 插件ID
    */
-  async uninstall(id: string, version: string): Promise<void> {
+  async uninstall(id: string, version: string) {
     const pkgs = PluginPackageStorePersist.get();
     const target = PluginPackageStorePersist.find(id, version);
     if (!target) {
       console.warn(`Plugin ${id} not found in installed packages.`);
+      console.warn(`current installed packages:`, pkgs);
       return;
     }
     target.pendingDelete = true; // 标记为待删除
     PluginPackageStorePersist.set(pkgs);
-    pluginManager.remove(id); // 从插件管理器中移除
+    return pluginManager.remove(id); // 从插件管理器中移除。需要返回给调用方来确保时序
   }
   /**
    * 下载插件后安装

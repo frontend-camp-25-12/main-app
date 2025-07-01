@@ -6,7 +6,7 @@
         </div>
         <template v-if="route.name === 'PluginList'">
             <div class="upload-btn" @click="invokeFileChooseDialog">上传插件</div>
-            <input ref="fileInput" style="display: none" type="file" @change="handlePluginUpload" />
+            <input ref="fileInput" style="display: none" type="file" accept=".asar" @change="handlePluginUpload" />
             <div class="search-bar">
                 <i class="fas fa-search"></i>
                 <input type="text" placeholder="搜索插件..." />
@@ -17,8 +17,8 @@
 
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
-import mitter from "@renderer/windows/pluginStore/utils/mitter";
 import { useRoute } from "vue-router";
+import { pluginListReload } from "../../../utils/pluginListReload";
 
 const route = useRoute()
 
@@ -39,6 +39,17 @@ async function handlePluginUpload(e): Promise<void> {
         return;
     }
 
+    // 检查文件类型
+    if (!file.name.endsWith('.asar')) {
+        ElMessage({
+            message: '请选择.asar文件',
+            type: 'warning',
+            offset: 30
+        });
+        e.target.value = '';
+        return;
+    }
+
     const formData = new FormData();
     formData.append("plugin", file, file.name);
 
@@ -56,17 +67,19 @@ async function handlePluginUpload(e): Promise<void> {
                 type: 'success',
                 offset: 30
             })
-            mitter.emit('refresh-list', 1)
+            pluginListReload.value += 1;
         } else {
             throw new Error(result.error || "上传失败");
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error("上传错误:", error);
         ElMessage({
             message: `插件 ${file.name} 上传失败 : ${error.message}`,
             type: 'error',
             offset: 30
         })
+    } finally {
+        e.target.value = '';
     }
 }
 </script>
@@ -74,8 +87,8 @@ async function handlePluginUpload(e): Promise<void> {
 <style scoped>
 /* 导航栏样式 */
 .nav-bar {
-    background: var(--white);
-    box-shadow: var(--shadow);
+    background: var(--el-bg-color);
+    box-shadow: var(--el-box-shadow-light);
     padding: 15px 40px;
     display: flex;
     align-items: center;
@@ -87,20 +100,20 @@ async function handlePluginUpload(e): Promise<void> {
 
 .upload-btn {
     padding: 7px 12px;
-    background: var(--white);
-    border: 1px solid var(--medium-gray);
+    background: var(--el-bg-color);
+    border: 1px solid var(--el-border-color);
     border-radius: 20px;
     cursor: pointer;
     font-size: 13px;
     transition: all 0.3s;
     white-space: nowrap;
-    color: var(--primary-color);
+    color: var(--el-color-primary);
 }
 
 .upload-btn:hover {
-    background: var(--primary-color);
-    color: var(--white);
-    border-color: var(--primary-color);
+    background: var(--el-color-primary);
+    color: var(--el-bg-color);
+    border-color: var(--el-color-primary);
 }
 
 .logo {
@@ -108,7 +121,7 @@ async function handlePluginUpload(e): Promise<void> {
     align-items: center;
     font-size: 22px;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--el-color-primary);
     margin-right: 30px;
 }
 
@@ -117,25 +130,7 @@ async function handlePluginUpload(e): Promise<void> {
     font-size: 28px;
 }
 
-.nav-tabs {
-    display: flex;
-    list-style: none;
-}
 
-.nav-tabs li {
-    padding: 8px 15px;
-    border-radius: 4px;
-    margin-right: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-weight: 500;
-}
-
-.nav-tabs li.active,
-.nav-tabs li:hover {
-    background: rgba(30, 128, 255, 0.1);
-    color: var(--primary-color);
-}
 
 .search-bar {
     position: relative;
@@ -145,15 +140,15 @@ async function handlePluginUpload(e): Promise<void> {
 .search-bar input {
     width: 280px;
     padding: 10px 15px 10px 40px;
-    border: 1px solid var(--medium-gray);
+    border: 1px solid var(--el-border-color);
     border-radius: 20px;
     outline: none;
     transition: all 0.3s;
 }
 
 .search-bar input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(30, 128, 255, 0.15);
+    border-color: var(--el-color-primary);
+    box-shadow: 0 0 0 3px var(--el-color-primary-light-9);
 }
 
 .search-bar i {
@@ -161,7 +156,7 @@ async function handlePluginUpload(e): Promise<void> {
     left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--dark-gray);
+    color: var(--el-text-color-secondary);
 }
 
 /* 响应式设计 */
@@ -183,23 +178,11 @@ async function handlePluginUpload(e): Promise<void> {
     .logo i {
         font-size: 22px;
     }
-
-    .nav-tabs li {
-        font-size: 14px;
-        padding: 6px 10px;
-    }
 }
 
 @media (max-width: 480px) {
     .nav-bar {
         flex-wrap: wrap;
-    }
-
-    .nav-tabs {
-        order: 3;
-        width: 100%;
-        margin-top: 10px;
-        justify-content: center;
     }
 
     .search-bar {

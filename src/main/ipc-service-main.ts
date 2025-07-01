@@ -97,9 +97,10 @@ export class IpcService {
   /**
    * 卸载插件
    * @param id 插件ID
+   * @param version 插件版本
    */
-  async onPluginRemove(id: string): Promise<void> {
-    await pluginPackageManager.uninstall(id)
+  async onPluginRemove(id: string, version: string): Promise<void> {
+    await pluginPackageManager.uninstall(id, version)
   }
 
   /**

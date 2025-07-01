@@ -1,5 +1,6 @@
 <template>
-    <div class="plugin-card-container" @click="selectplugin">        <div class="plugin-image">
+    <div class="plugin-card-container">
+        <div class="plugin-image">
             <img v-if="plugin.logo" :src="plugin.logo" :alt="plugin.name" class="plugin-logo" />
             <div v-else class="default-icon">
                 <span>{{ plugin.name.charAt(0).toUpperCase() }}</span>
@@ -10,67 +11,76 @@
                 <span>{{ plugin.name }}</span>
             </div>
             <div class="plugin-description">{{ plugin.description || '暂无描述' }}</div>
-            <div class="plugin-meta">
-                <span>{{ plugin.rating }}分 · {{ formatDownloads }}次下载</span>
-                <span>{{ plugin.category || '其他' }}</span>
+            <div class="plugin-footer">
+                <span>{{ installedPkg[plugin.id] && updateAvaliable(plugin) ? `${installedPkg[plugin.id].version} →` :
+                    '' }}{{
+                        plugin.version }}</span>
+                <span style="margin-left: auto; margin-right: 6px;">{{ formatFileSize(plugin.size) }}</span>
+                <ElButton size="small" v-if="!installedPkg[plugin.id]" @click="installPlugin(plugin)">安装</ElButton>
+                <ElButton size="small" type="primary" v-else-if="updateAvaliable(plugin)" @click="updatePlugin(plugin)">
+                    更新</ElButton>
+                <div v-else class="plugin-installed">
+                    <el-icon size="18">
+                        <SuccessFilled color="var(--el-color-success)" />
+                    </el-icon>
+                    已安装
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { formatFileSize } from '../../../utils/fileSizeFormat';
 import type { PluginStoreInfo } from '../../../types/plugin'
+import { ElButton } from 'element-plus';
+import { installedPkg } from '../../../utils/installedPkg';
+import { ElIcon } from 'element-plus';
+import { SuccessFilled } from '@element-plus/icons-vue';
+import { compareVersions } from 'compare-versions';
 
-interface Props {
+defineProps<{
     plugin: PluginStoreInfo
-}
-
-const props = defineProps<Props>();
-const emit = defineEmits<{
-    'select-plugin': [pluginId: string]
 }>();
 
-//格式化后的下载数量
-const formatDownloads = computed(() => {
-    if (props.plugin.download >= 10000) {
-        return `${(props.plugin.download / 10000).toFixed(1)}万`;
-    }
-    return props.plugin.download;
-});
+function installPlugin(plugin: PluginStoreInfo) {
+    window.ipcApi.pluginFetchInstall(plugin.id)
+}
 
-//用户选择插件后向上抛事件
-function selectplugin(): void {
-    emit("select-plugin", props.plugin.id);
+function updateAvaliable(plugin: PluginStoreInfo) {
+    if (!installedPkg.value[plugin.id]) {
+        return false
+    }
+    return compareVersions(installedPkg.value[plugin.id].version, plugin.version) === -1
+};
+
+function updatePlugin(plugin: PluginStoreInfo) {
+    window.ipcApi.pluginFetchInstall(plugin.id)
 }
 </script>
 
 <style scoped>
 .plugin-card-container {
-    background: var(--white);
+    background: var(--el-bg-color);
     border-radius: 12px;
     overflow: hidden;
     transition: all 0.3s;
-    box-shadow: var(--shadow);
-    cursor: pointer;
+    box-shadow: var(--el-box-shadow-light);
     display: flex;
     align-items: center;
     padding: 12px;
+    align-items: stretch;
 }
 
-.plugin-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
 
 .plugin-image {
-    width: 60px;
-    height: 60px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--el-bg-color);
     font-size: 24px;
     margin-right: 15px;
     flex-shrink: 0;
@@ -98,6 +108,8 @@ function selectplugin(): void {
     flex: 1;
     padding: 0;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .plugin-title {
@@ -109,8 +121,8 @@ function selectplugin(): void {
 }
 
 .plugin-description {
-    color: var(--dark-gray);
-    font-size: 12px;
+    color: var(--el-text-color-regular);
+    font-size: 14px;
     margin-bottom: 10px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -118,18 +130,26 @@ function selectplugin(): void {
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.4;
+    flex: 1;
 }
 
-.plugin-meta {
+.plugin-footer {
     display: flex;
     justify-content: space-between;
-    color: #999;
-    font-size: 11px;
+    align-items: center;
+    color: var(--el-text-color-secondary);
+    font-size: 13px;
+}
+
+.plugin-installed {
+    display: flex;
+    align-items: center;
+    color: var(--el-color-success);
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-    .plugin-card {
+    .plugin-card-container {
         padding: 10px;
     }
 
@@ -142,7 +162,7 @@ function selectplugin(): void {
 }
 
 @media (max-width: 480px) {
-    .plugin-card {
+    .plugin-card-container {
         padding: 8px;
     }
 
@@ -155,14 +175,16 @@ function selectplugin(): void {
 
     .plugin-title {
         font-size: 13px;
-    }    .plugin-description {
+    }
+
+    .plugin-description {
         font-size: 11px;
         margin-bottom: 8px;
         -webkit-line-clamp: 1;
         line-clamp: 1;
     }
 
-    .plugin-meta {
+    .plugin-footer {
         font-size: 10px;
     }
 }

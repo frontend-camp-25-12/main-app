@@ -1,25 +1,11 @@
 <template>
     <div class="plugin-list-container">
         <div class="aside">
-            <Aside @show-detail="showDetail"></Aside>
+            <Aside></Aside>
         </div>
         <div class="plugin-page">
-            <div class="category-filters">
-                <div class="category-btn active">全部</div>
-                <div class="category-btn" @click="filterplugin('效率工具')">
-                    效率工具
-                </div>
-                <div class="category-btn" @click="filterplugin('开发者工具')">
-                    开发者工具
-                </div>
-                <div class="category-btn" @click="filterplugin('设计工具')">
-                    设计工具
-                </div>
-            </div>
-
             <div class="plugin-grid">
-                <PluginCard v-for="plugin in plugins" :key="plugin.id" :plugin="plugin"
-                    @select-plugin="showDetail(plugin.id)">
+                <PluginCard v-for="plugin in plugins" :key="plugin.id + plugin.version" :plugin="plugin">
                 </PluginCard>
             </div>
             <div class="pagination">
@@ -32,53 +18,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import PluginCard from "../PluginCard/Index.vue";
 import Aside from "./Aside/Index.vue"
 import { getPluginInfoByPage } from '../../../api/plugin'
-import mitter from '@renderer/windows/pluginStore/utils/mitter';
 import type { PluginStoreInfo, PaginationInfo } from '../../../types/plugin'
-
-const emit = defineEmits<{
-  'show-detail': [pluginId: string]
-}>()
+import { pluginListReload } from '../../../utils/pluginListReload';
 
 //插件信息
 const plugins = ref<PluginStoreInfo[]>([])
 //分页信息
 const pagination = ref<PaginationInfo>({
-  curretPage: 1,
-  totalPages: 1
+    curretPage: 1,
+    totalPages: 1
 })
 //初始化插件市场，获取第一页，以及分页信息
-getPluginInfoByPage(1).then((res) => {
-    plugins.value = res.data
+function loadPageData(page: number) {
+    return getPluginInfoByPage(page).then(res => {
+        plugins.value = res.data
+        return res
+    })
+}
+
+async function reload() {
+    const res = await loadPageData(1)
     pagination.value = res.pagination
+}
+
+onMounted(async () => {
+    reload()
 })
 
-
-//页码改变时获取对应页的插件信息
 async function handleCurrentChange(val: number) {
     const res = await getPluginInfoByPage(val)
     plugins.value = res.data
 }
 
-// 监听刷新事件
-function handleRefreshList(event: unknown) {
-    if (typeof event === 'number') {
-        handleCurrentChange(event)
-    }
-}
-mitter.on('refresh-list', handleRefreshList)
-
-//显示插件分类
-function filterplugin(_category: string): void { 
-    // TODO: 实现分类过滤功能
-}
-//PluginCard 选中插件事件的处理函数,跳转到对应详情页面
-function showDetail(pluginId: string): void {
-    emit('show-detail', pluginId)
-}
+watch(() => pluginListReload.value, async () => {
+    reload()
+})
 
 </script>
 
@@ -94,37 +72,8 @@ function showDetail(pluginId: string): void {
     animation: fadeIn 0.5s;
 }
 
-.page-title {
-    margin: 20px 0 15px;
-    font-size: 22px;
-    font-weight: 700;
-    color: #222;
-}
-
-.category-filters {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-}
-
-.category-btn {
-    padding: 7px 12px;
-    background: var(--white);
-    border: 1px solid var(--medium-gray);
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 13px;
-    transition: all 0.3s;
-    white-space: nowrap;
-}
-
-.category-btn.active,
-.category-btn:hover {
-    background: var(--primary-color);
-    color: var(--white);
-    border-color: var(--primary-color);
+.aside {
+    position: relative;
 }
 
 /* 两列布局 */
@@ -148,10 +97,6 @@ function showDetail(pluginId: string): void {
     .plugin-grid {
         grid-template-columns: 1fr;
         gap: 15px;
-    }
-
-    .category-filters {
-        gap: 6px;
     }
 }
 </style>

@@ -3,87 +3,98 @@
     <div class="sidebar-container">
         <div class="sidebar-header">
             <div class="sidebar-title">
-                已安装的插件
+                已安装
             </div>
             <div class="divider"></div>
-            <div class="sidebar-section">
-                <ul class="plugin-list">
-                    <li @click="showDetail(plugin.id)" v-for="plugin in externalPlugins" class="plugin-item">
-                        <div class="plugin-logo">
-                            <img width="32" :src="plugin.logoPath" alt="">
+        </div>
+        <ElScrollbar class="sidebar-section">
+            <ul class="plugin-list">
+                <li v-for="plugin in externalPlugins" class="plugin-item" :key="plugin.id + plugin.version">
+                    <img width="36" height="36" :src="plugin.logoPath" alt="">
+                    <div class=" plugin-info">
+                        <div class="plugin-name">{{ plugin.name }}</div>
+                        <div class="plugin-version">{{ plugin.version }}</div>
+                        <div class="plugin-usedAt" v-if="plugin.usedAt && plugin.usedAt !== 0">
+                            上次使用{{ formatDateNow(new Date(plugin.usedAt)) }}</div>
+                    </div>
+                    <div class="plugin-actions">
+                        <div class="plugin-disabled-label" :style="{ visibility: plugin.disabled ? 'visible' : 'hidden' }">
+                            <span>未启用</span>
                         </div>
-                        {{ plugin.name }}
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="user-profile">
-            <div class="user-avatar">U</div>
-            <div class="user-info">
-                <div class="user-name">插件开发者</div>
-                <div class="user-email">developer@example.com</div>
-            </div>
-        </div>
+                        <el-dropdown trigger="click" class="plugin-dropdown">
+                            <el-icon>
+                                <MoreFilled />
+                            </el-icon>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item @click="toggleDisabled(plugin)">{{ plugin.disabled ? '启用' : '停用' }}</el-dropdown-item>
+                                    <el-dropdown-item @click="uninstallPlugin(plugin)">卸载</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                    </div>
+                </li>
+            </ul>
+        </ElScrollbar>
     </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, computed } from 'vue';
+import { computed } from 'vue';
 import { PluginMetadata } from 'src/share/plugins/type';
-
-const installedPlugins = ref<Record<string, PluginMetadata>>({})
-
-const emit = defineEmits(['show-detail'])
-
-onBeforeMount(async () => {
-    installedPlugins.value = await window.ipcApi.pluginList()
-})
+import { installedPkg } from '../../../../utils/installedPkg';
+import { formatDateNow } from '../../../../utils/timeFormat';
+import { ElScrollbar, ElIcon } from 'element-plus';
+import { MoreFilled } from '@element-plus/icons-vue';
 
 const externalPlugins = computed(() => {
     const plugins: PluginMetadata[] = []
-    for (const key in installedPlugins.value) {
-        if (!installedPlugins.value[key].internal) {
-            plugins.push(installedPlugins.value[key])
+    for (const key in installedPkg.value) {
+        if (!installedPkg.value[key].internal) {
+            plugins.push(installedPkg.value[key])
         }
     }
     return plugins
 })
 
-function showDetail(pluginId) {
-    emit('show-detail', pluginId)
+function toggleDisabled(plugin: PluginMetadata) {
+    if (plugin.disabled) {
+        window.ipcApi.pluginEnable(plugin.id)
+    } else {
+        window.ipcApi.pluginDisable(plugin.id)
+    }
 }
 
-
+function uninstallPlugin(plugin: PluginMetadata) {
+    window.ipcApi.pluginRemove(plugin.id, plugin.version)
+}
 </script>
 
 <style scoped>
 .sidebar-container {
     width: 240px;
-    background: white;
-    padding: 20px;
-    height: 100%;
+    background: var(--el-bg-color);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 100%;
 }
 
 .sidebar-header {
-    padding-bottom: 15px;
-    margin-bottom: 15px;
+    padding: 16px 16px 0 16px;
 }
 
 .sidebar-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1a1a1a;
+    font-size: 15px;
+    color: var(--el-text-color-regular);
     display: flex;
     align-items: center;
 }
 
 .divider {
     height: 1px;
-    background-color: #eaedf3;
-    margin: 20px 0;
+    background-color: var(--el-border-color-light);
+    margin-top: 16px;
 }
 
 .plugin-list {
@@ -91,67 +102,52 @@ function showDetail(pluginId) {
 }
 
 .plugin-item {
-    padding: 10px 15px;
+    padding: 4px 8px;
     border-radius: 8px;
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: #555;
+    color: var(--el-text-color-primary);
 }
 
-.plugin-item:hover {
-    background-color: #f0f5ff;
-    color: #1a73e8;
+.sidebar-section {
+    flex: 1;
+    padding: 0 16px;
 }
 
-.plugin-item.active {
-    background-color: #e8f0fe;
-    color: #1a73e8;
-    font-weight: 500;
-}
-
-.plugin-logo {
-    margin-right: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.user-profile {
-    display: flex;
-    align-items: center;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #eaedf3;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    margin-right: 10px;
-}
-
-.user-info {
-    line-height: 1.3;
-}
-
-.user-name {
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.user-email {
+.plugin-usedAt {
     font-size: 12px;
-    color: #7f7f7f;
+    color: var(--el-text-color-secondary);
+    text-wrap: nowrap;
+}
+
+.plugin-disabled-label {
+    font-size: 12px;
+    color: var(--el-color-warning);
+    display: flex;
+    align-items: center;
+}
+
+.plugin-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+
+    >* {
+        margin: 2px 0
+    }
+}
+
+.plugin-dropdown {
+    cursor: pointer;
+}
+
+.plugin-info {
+    flex: 1;
+    margin: 0 8px;
+}
+
+.plugin-version {
+    font-size: 14px;
+    color: var(--el-text-color-secondary);
 }
 </style>
