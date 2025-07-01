@@ -195,6 +195,14 @@ export class IpcApi {
   }
 
   /**
+   * 在终端执行命令
+    * @param command 要执行的命令
+   */
+  async execCommand(command: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('exec-command', command);
+  }
+
+  /**
    * 广播需要更改界面的配置项变更事件
     * @param key 
     * @param value

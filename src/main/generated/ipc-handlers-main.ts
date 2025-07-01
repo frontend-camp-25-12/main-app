@@ -156,6 +156,12 @@ app.on('ready', () => {
   ipcMain.handle('floating-button-mouse-up', async (_event, ) => {
     return await serviceInstance.onFloatingButtonMouseUp();
   });
+
+
+  // onExecCommand(command: string) -> Promise<void>
+  ipcMain.handle('exec-command', async (_event, command: string) => {
+    return await serviceInstance.onExecCommand(command);
+  });
 });
     
 export namespace ipcEmit {

@@ -11,7 +11,8 @@ export enum BuiltinPluginId {
   PLUGINSTORE = 'builtin.pluginStore',
   HOTKEYS = 'builtin.hotkeys',
   USER_DEV = 'builtin.userDev',
-  FLOAT_BUTTON = 'builtin.floatButton'
+  FLOAT_BUTTON = 'builtin.floatButton',
+  OPEN_TERMINAL = 'builtin.openTerminal',
 }
 /**
  * 内置插件的元数据
@@ -20,7 +21,7 @@ export enum BuiltinPluginId {
  * 然后在logo中直接给出文件名
  * @see PluginManager.resolveLogo
  */
-export const builtinPlugins: PluginRuntimeInfo[]  = [
+export const builtinPlugins: PluginRuntimeInfo[] = [
   {
     id: BuiltinPluginId.ENTRANCE,
     name: '插件入口',
@@ -87,13 +88,13 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
     dist: 'pluginStore',
     internal: {}
   },
-  {
-    id: BuiltinPluginId.USER_DEV,
-    name: '用户系统测试',
-    version: '1.0.0',
-    dist: 'userDev',
-    internal: {},
-  },
+  // {
+  //   id: BuiltinPluginId.USER_DEV,
+  //   name: '用户系统测试',
+  //   version: '1.0.0',
+  //   dist: 'userDev',
+  //   internal: {},
+  // },
   {
     id: BuiltinPluginId.FLOAT_BUTTON,
     name: '',  // 由于当前electron的issue，无框透明窗口仍会有标题栏，只能用空名称来“降低”视觉干扰。https://github.com/electron/electron/pull/47386
@@ -112,5 +113,40 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
       alwaysOnTop: true,
       disableTransition: true,
     }
+  },
+  {
+    id: BuiltinPluginId.OPEN_TERMINAL,
+    name: '系统终端',
+    description: '快速访问终端命令行',
+    version: '1.0.0',
+    dist: 'openTerminal',
+    logo: 'icon-terminal.png',
+    internal: {
+    },
+    window: {
+      transparent: true,
+      frame: false,
+      disableTransition: true,
+      resizable: false,
+      width: 1,
+      height: 1,
+      skipTaskbar: true
+    },
+    features: [
+      {
+        code: 'open',
+        label: '打开终端',
+        hotKey: true,
+        searchable: false,
+        cmds: []
+      },
+      {
+        code: 'run',
+        label: '在终端中运行',
+        cmds: [
+          { type: 'any' }
+        ]
+      }
+    ]
   }
 ] as PluginMetadata[]

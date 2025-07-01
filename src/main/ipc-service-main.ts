@@ -17,6 +17,8 @@ import { changeLanguage } from './locales/i18n'
 import { ipcEmitPlugin } from './generated/ipc-handlers-plugin'
 import { userManager } from './user'
 import { floatButtonManager } from './floatButton'
+import { execCommand } from './utils/execCmd'
+
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
@@ -256,6 +258,14 @@ export class IpcService {
    */
   async onFloatingButtonMouseUp(): Promise<void> {
     floatButtonManager.onMouseUp()
+  }
+
+  /**
+   * 在终端执行命令
+   * @param command 要执行的命令
+   */
+  async onExecCommand(command: string): Promise<void> {
+    await execCommand(command);
   }
 
   /**
