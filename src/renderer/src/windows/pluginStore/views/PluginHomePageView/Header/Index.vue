@@ -19,6 +19,7 @@
 import { useTemplateRef } from "vue";
 import { useRoute } from "vue-router";
 import { pluginListReload } from "../../../utils/pluginListReload";
+import { HOST } from "../../../api/plugin";
 
 const route = useRoute()
 
@@ -54,7 +55,7 @@ async function handlePluginUpload(e): Promise<void> {
     formData.append("plugin", file, file.name);
 
     try {
-        const response = await fetch("http://localhost:8080/plugin", {
+        const response = await fetch(`http://${HOST}/plugin`, {
             method: "POST",
             body: formData
         });

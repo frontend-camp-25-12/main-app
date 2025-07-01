@@ -19,6 +19,7 @@ import { userManager } from './user'
 import { floatButtonManager } from './floatButton'
 import { execCommand } from './utils/execCmd'
 import { pluginPackageManager } from './plugins/packageManager'
+import { HOST } from './api'
 
 /**
  * 插件服务类
@@ -268,6 +269,13 @@ export class IpcService {
    */
   async onExecCommand(command: string): Promise<void> {
     await execCommand(command);
+  }
+
+  /**
+   * 获取服务器主机名
+   */
+  async onGetServerHost(): Promise<string> {
+    return HOST;
   }
 
   /**

@@ -204,6 +204,13 @@ export class IpcApi {
   }
 
   /**
+   * 获取服务器主机名
+   */
+  async getServerHost(): Promise<string> {
+    return electronAPI.ipcRenderer.invoke('get-server-host');
+  }
+
+  /**
    * 广播需要更改界面的配置项变更事件
     * @param key 
     * @param value

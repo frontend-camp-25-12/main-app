@@ -162,6 +162,12 @@ app.on('ready', () => {
   ipcMain.handle('exec-command', async (_event, command: string) => {
     return await serviceInstance.onExecCommand(command);
   });
+
+
+  // onGetServerHost() -> Promise<string>
+  ipcMain.handle('get-server-host', async (_event, ) => {
+    return await serviceInstance.onGetServerHost();
+  });
 });
     
 export namespace ipcEmit {

@@ -1,8 +1,8 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { userManager } from '../user';
-
-const BASE_URL = 'http://localhost:8080/api/';
-const BASE_URL_PLUGIN = 'http://localhost:8080/plugin/';
+export const HOST = 'localhost:8080';
+const BASE_URL = `http://${HOST}/api/`;
+const BASE_URL_PLUGIN = `http://${HOST}/plugin/`;
 
 class AuthApiClient {
   private client: AxiosInstance;
