@@ -14,6 +14,26 @@ let initialHotkeyOptions: HotkeyOption[] = [];
 
 // 不可用的快捷键组合列表
 const invalidHotkeyPatterns = [
+  'Alt', // 仅Alt键
+  'Shift', // 仅Shift键
+  'CmdOrCtrl', // 仅Cmd或Ctrl键
+  'Meta', // 仅Meta键（Windows键或Mac Command键）
+  'Super', // 仅Super键（部分Linux桌面）
+  'Win',   // 仅Win键（Windows）
+  'Esc',                 // Escape键
+  'Delete',              // Delete键
+  'Backspace',          // Backspace键
+  'Enter',               // Enter键
+  'Space',               // 空格键
+  'Tab',                 // Tab键
+  'Home',                // Home键
+  'End',                 // End键
+  'PageUp',             // Page Up键
+  'PageDown',           // Page Down键
+  'ArrowUp',            // 上箭头键
+  'ArrowDown',          // 下箭头键
+  'ArrowLeft',          // 左箭头键
+  'ArrowRight',         // 右箭头键
   'Alt+Shift',           // 系统输入法切换
   'Alt+Tab',             // 系统窗口切换
   'CmdOrCtrl+Alt+Delete', // 系统任务管理器（Windows）
