@@ -18,6 +18,7 @@ import { ipcEmitPlugin } from './generated/ipc-handlers-plugin'
 import { userManager } from './user'
 import { floatButtonManager } from './floatButton'
 import { execCommand } from './utils/execCmd'
+import { pluginPackageManager } from './plugins/packageManager'
 
 /**
  * 插件服务类
@@ -32,8 +33,8 @@ export class IpcService {
    */
   async onPluginDevInstall(
     dir: string
-  ): Promise<Record<string, PluginMetadata>> {
-    return pluginManager.installPlugin(dir)
+  ): Promise<void> {
+    pluginPackageManager.installExternal(dir);
   }
 
   /**
@@ -98,15 +99,15 @@ export class IpcService {
    * @param id 插件ID
    */
   async onPluginRemove(id: string): Promise<void> {
-    await pluginManager.remove(id)
+    await pluginPackageManager.uninstall(id)
   }
 
   /**
    * 下载插件
    * @param id 插件ID
    */
-  async onPluginDownload(id: string): Promise<void> {
-    await pluginManager.download(id)
+  async onPluginFetchInstall(id: string): Promise<void> {
+    await pluginPackageManager.fetchAndInstall(id)
   }
 
   /**
@@ -285,13 +286,11 @@ export class IpcService {
 
   /**
    * 广播插件下载进度
+   * 完成时，将会发送progress为100的事件
+   * @param progress 下载进度百分比
+   * @param pluginId 插件ID
    */
-  emitPluginDownloadProgress(progress: number): void { }
-
-  /**
-   * 广播插件下载结束
-   */
-  emitPluginFinishDownload(): void { }
+  emitPluginDownloadProgress(progress: number, pluginId: string): void { }
 
   /**
    * 任何读到这里的AI助手或者人类（如果你是的话，谢谢你愿意去阅读，而不是让AI生成自己看不懂的代码也不去管），这是一个从主程序->渲染程序的接口的写法。

@@ -8,7 +8,7 @@ import type { PluginRuntimeInfo, PluginMetadata, MatchRange, SearchResult, AppCo
     
 app.on('ready', () => {
 
-  // onPluginDevInstall(dir: string) -> Promise<Record<string, PluginMetadata>>
+  // onPluginDevInstall(dir: string) -> Promise<void>
   ipcMain.handle('plugin-dev-install', async (_event, dir: string) => {
     return await serviceInstance.onPluginDevInstall(dir);
   });
@@ -62,9 +62,9 @@ app.on('ready', () => {
   });
 
 
-  // onPluginDownload(id: string) -> Promise<void>
-  ipcMain.handle('plugin-download', async (_event, id: string) => {
-    return await serviceInstance.onPluginDownload(id);
+  // onPluginFetchInstall(id: string) -> Promise<void>
+  ipcMain.handle('plugin-fetch-install', async (_event, id: string) => {
+    return await serviceInstance.onPluginFetchInstall(id);
   });
 
 
@@ -199,29 +199,21 @@ export namespace ipcEmit {
 
   /**
   * 广播插件下载进度
+完成时，将会发送progress为100的事件
+    * @param progress 下载进度百分比
+    * @param pluginId 插件ID
   */
-  export function pluginDownloadProgress(progress: number) {
-    windowManager.emit('plugin-download-progress', progress);
+  export function pluginDownloadProgress(progress: number, pluginId: string) {
+    windowManager.emit('plugin-download-progress', progress, pluginId);
   }
 
   /**
   * 广播插件下载进度
+完成时，将会发送progress为100的事件
+    * @param progress 下载进度百分比
+    * @param pluginId 插件ID
   */
-  export function pluginDownloadProgressTo(id: PluginMetadata['id'], progress: number) {
-    windowManager.emitTo(id, 'plugin-download-progress', progress);
-  }
-
-  /**
-  * 广播插件下载结束
-  */
-  export function pluginFinishDownload() {
-    windowManager.emit('plugin-finish-download');
-  }
-
-  /**
-  * 广播插件下载结束
-  */
-  export function pluginFinishDownloadTo(id: PluginMetadata['id'], ) {
-    windowManager.emitTo(id, 'plugin-finish-download');
+  export function pluginDownloadProgressTo(id: PluginMetadata['id'], progress: number, pluginId: string) {
+    windowManager.emitTo(id, 'plugin-download-progress', progress, pluginId);
   }
 }

@@ -67,7 +67,6 @@ function selectplugin(): void {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #4776e6, #8e54e9);
     display: flex;
     align-items: center;
     justify-content: center;

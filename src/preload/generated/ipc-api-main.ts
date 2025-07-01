@@ -9,7 +9,7 @@ export class IpcApi {
    * 添加插件
     * @param dir 插件目录，允许绝对路径和相对路径
    */
-  async pluginDevInstall(dir: string): Promise<Record<string, PluginMetadata>> {
+  async pluginDevInstall(dir: string): Promise<void> {
     return electronAPI.ipcRenderer.invoke('plugin-dev-install', dir);
   }
 
@@ -79,8 +79,8 @@ export class IpcApi {
    * 下载插件
     * @param id 插件ID
    */
-  async pluginDownload(id: string): Promise<void> {
-    return electronAPI.ipcRenderer.invoke('plugin-download', id);
+  async pluginFetchInstall(id: string): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('plugin-fetch-install', id);
   }
 
   /**
@@ -220,16 +220,12 @@ export class IpcApi {
 
   /**
    * 广播插件下载进度
+完成时，将会发送progress为100的事件
+    * @param progress 下载进度百分比
+    * @param pluginId 插件ID
    */
-  onPluginDownloadProgress(callback: (progress: number) => void) {
-    electronAPI.ipcRenderer.on('plugin-download-progress', (_event, progress) => callback(progress));
-  }
-
-  /**
-   * 广播插件下载结束
-   */
-  onPluginFinishDownload(callback: () => void) {
-    electronAPI.ipcRenderer.on('plugin-finish-download', (_event) => callback());
+  onPluginDownloadProgress(callback: (progress: number, pluginId: string) => void) {
+    electronAPI.ipcRenderer.on('plugin-download-progress', (_event, progress, pluginId) => callback(progress, pluginId));
   }
 }
 

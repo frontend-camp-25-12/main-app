@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError, InternalAxiosRequestCo
 import { userManager } from '../user';
 
 const BASE_URL = 'http://localhost:8080/api/';
+const BASE_URL_PLUGIN = 'http://localhost:8080/plugin/';
 
 class AuthApiClient {
   private client: AxiosInstance;
@@ -71,6 +72,10 @@ export const publicClient = axios.create({
   },
 });
 
+export const pluginDownloadClient = axios.create({
+  baseURL: BASE_URL_PLUGIN,
+  timeout: 10000,
+});
 
 // 带认证的api实例
 export const authClient = new AuthApiClient().getClient();

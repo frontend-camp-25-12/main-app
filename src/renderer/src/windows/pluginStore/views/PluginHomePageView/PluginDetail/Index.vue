@@ -196,19 +196,11 @@ async function handleDownload() {
     window.ipcApi.onPluginDownloadProgress((progress) => {
         downloadProgress.value = progress
     })
-
-    window.ipcApi.onPluginFinishDownload(() => {
-        isDownloading.value = false
-        installed.value = true
-    })
-    await window.ipcApi.pluginDownload(pluginId)
+    await window.ipcApi.pluginFetchInstall(pluginId)
 }
 
 async function handleEnablePlugin() {
     await window.ipcApi.pluginEnable(pluginId)
-    if (pluginMetadata.value.window.frame) {
-        await window.ipcApi.pluginOpen(pluginId)
-    }
     await isInstalled(pluginId)
 }
 
