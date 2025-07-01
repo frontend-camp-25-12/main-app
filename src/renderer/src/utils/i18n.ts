@@ -36,3 +36,4 @@ export function getLocale(): string {
 export const t = i18n.global.t;
 
 export default i18n;
+import './uiChange'

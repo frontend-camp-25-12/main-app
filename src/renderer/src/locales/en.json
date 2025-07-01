@@ -35,7 +35,7 @@
     "pleaseInput": "Please press the shortcut keys",
     "outsideClickEmpty": "Click outside to finish (Currently set to empty)",
     "outsideClick": "Click outside to finish",
-    "empty": "No shortcut set",    
+    "empty": "No shortcut set",
     "undo": "Undo Changes",
     "modified": "Modified",
     "conflictTitle": "Hotkey Conflict",
@@ -44,7 +44,7 @@
     "invalidMessage": "The hotkey \"{hotkey}\" is a system reserved key combination and cannot be used. Please choose another hotkey."
   },
   "pluginStore": {
-    "title": "Plugin Store",
+    "title": "Plugin Center",
     "uploadPlugin": "Upload Plugin",
     "searchPlaceholder": "Search plugins...",
     "fileSelectError": "Please select a file",
@@ -60,6 +60,8 @@
     "notEnabled": "Disabled",
     "enable": "Enable",
     "disable": "Disable",
-    "uninstall": "Uninstall"
+    "uninstall": "Uninstall",
+    "networkDisconnected": "Network connection has been disconnected",
+    "retry": "Retry"
   }
 }

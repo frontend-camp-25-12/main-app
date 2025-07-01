@@ -80,8 +80,10 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
   },
   {
     id: BuiltinPluginId.PLUGINSTORE,
-    name: '插件市场',
+    name: '插件中心',
+    description: '浏览和获取各种实用插件，管理已安装的插件',
     version: '1.0.0',
+    logo: 'icon-plugin-store.png',
     window: {
     },
     dist: 'pluginStore',

@@ -7,7 +7,7 @@
             </div>
             <div class="divider"></div>
         </div>
-        <ElScrollbar class="sidebar-section">
+        <ElScrollbar class="sidebar-section" >
             <ul class="plugin-list">
                 <li v-for="plugin in externalPlugins" class="plugin-item" :key="plugin.id + plugin.version">
                     <img width="36" height="36" :src="plugin.logoPath" alt="">
@@ -103,6 +103,7 @@ function uninstallPlugin(plugin: PluginMetadata) {
 
 .plugin-list {
     list-style: none;
+    max-width: 100%;
 }
 
 .plugin-item {

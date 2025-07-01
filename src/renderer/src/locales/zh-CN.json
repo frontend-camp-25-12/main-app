@@ -35,15 +35,16 @@
     "pleaseInput": "请输入快捷键",
     "outsideClickEmpty": "点击空白处确认（当前设置为空）",
     "outsideClick": "点击空白处确认",
-    "empty": "未设置快捷键",    
+    "empty": "未设置快捷键",
     "undo": "取消更改",
     "modified": "已修改",
     "conflictTitle": "快捷键冲突",
     "conflictMessage": "快捷键 \"{hotkey}\" 已被 \"{pluginName}\" 的 \"{feature}\" 功能使用，无法重复设置。",
     "invalidTitle": "不可用的快捷键",
     "invalidMessage": "快捷键 \"{hotkey}\" 是系统保留的组合键，无法使用。请选择其他快捷键。"
-  },  "pluginStore": {
-    "title": "插件市场",
+  },
+  "pluginStore": {
+    "title": "插件中心",
     "uploadPlugin": "上传插件",
     "searchPlaceholder": "搜索插件...",
     "fileSelectError": "请选择文件",
@@ -71,6 +72,8 @@
     "recommended": "推荐",
     "popular": "热门",
     "newest": "最新",
-    "loading": "加载中..."
+    "loading": "加载中...",
+    "networkDisconnected": "网络连接已断开",
+    "retry": "重试"
   }
 }

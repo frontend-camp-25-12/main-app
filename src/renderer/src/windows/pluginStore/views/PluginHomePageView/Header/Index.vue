@@ -1,14 +1,14 @@
 <template>
     <nav class="nav-bar">
         <div class="logo">
-            <i class="fas fa-plug"></i>
+            <img width="36" height="36" src="/icon/icon-plugin-store.png" alt="Logo" style="margin: 8px;"/>
             <span>{{ t('pluginStore.title') }}</span>
         </div>
         <template v-if="route.name === 'PluginList'">
             <div class="upload-btn" @click="invokeFileChooseDialog">{{ t('pluginStore.uploadPlugin') }}</div>
             <input ref="fileInput" style="display: none" type="file" accept=".asar" @change="handlePluginUpload" />
             <div class="search-bar">
-                <i class="fas fa-search"></i>
+                <el-icon><Search /></el-icon>
                 <input type="text" :placeholder="t('pluginStore.searchPlaceholder')" />
             </div>
         </template>
@@ -21,6 +21,8 @@ import { useRoute } from "vue-router";
 import { pluginListReload } from "../../../utils/pluginListReload";
 import { HOST } from "../../../api/plugin";
 import { t } from '../../../../../utils/i18n';
+import { ElIcon } from "element-plus";
+import { Search } from "@element-plus/icons-vue";
 
 const route = useRoute()
 
