@@ -174,7 +174,30 @@ export class IpcApi {
   }
 
   /**
+   * 悬浮球mousedown事件
+   */
+  async floatingButtonMouseDown(): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('floating-button-mouse-down');
+  }
+
+  /**
+   * 悬浮球mousemove事件
+   */
+  async floatingButtonMouseMove(): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('floating-button-mouse-move');
+  }
+
+  /**
+   * 悬浮球mouseup事件
+   */
+  async floatingButtonMouseUp(): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('floating-button-mouse-up');
+  }
+
+  /**
    * 广播需要更改界面的配置项变更事件
+    * @param key 
+    * @param value
    */
   onUiConfigChange<K extends keyof AppConfigSchema>(callback: (key: K, value: AppConfigSchema[K]) => void) {
     electronAPI.ipcRenderer.on('ui-config-change', (_event, key, value) => callback(key, value));

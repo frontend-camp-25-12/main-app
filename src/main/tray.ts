@@ -5,6 +5,7 @@ import { trayIcon } from './icon'
 import i18next from './locales/i18n';
 import { pluginManager } from './plugins/loader';
 import { appExit } from '.';
+import { floatButtonManager } from './floatButton';
 
 let tray: Tray | null = null;
 
@@ -16,6 +17,10 @@ export function updateTrayMenu() {
     {
       label: i18next.t('tray.showHideMain'),
       click: () => toggleMainWindow()
+    },
+    {
+      label: i18next.t('tray.showHideFloat'),
+      click: () => floatButtonManager.toggle()
     },
     {
       label: i18next.t('tray.openSettings'),

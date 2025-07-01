@@ -16,6 +16,7 @@ import { ipcEmit } from './generated/ipc-handlers-main'
 import { changeLanguage } from './locales/i18n'
 import { ipcEmitPlugin } from './generated/ipc-handlers-plugin'
 import { userManager } from './user'
+import { floatButtonManager } from './floatButton'
 /**
  * 插件服务类
  * 在这里定义的on开头方法，将自动生成ipcMain.handle和ipcRenderer.invoke方法
@@ -237,7 +238,30 @@ export class IpcService {
   }
 
   /**
+   * 悬浮球mousedown事件
+   */
+  async onFloatingButtonMouseDown(): Promise<void> {
+    floatButtonManager.onMouseDown()
+  }
+
+  /**
+   * 悬浮球mousemove事件
+   */
+  async onFloatingButtonMouseMove(): Promise<void> {
+    floatButtonManager.onMouseMove()
+  }
+
+  /**
+   * 悬浮球mouseup事件
+   */
+  async onFloatingButtonMouseUp(): Promise<void> {
+    floatButtonManager.onMouseUp()
+  }
+
+  /**
    * 广播需要更改界面的配置项变更事件
+   * @param key 
+   * @param value 
    */
   emitUiConfigChange<K extends keyof AppConfigSchema>(
     key: K,

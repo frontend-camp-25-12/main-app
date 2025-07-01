@@ -34,6 +34,7 @@ export interface AppConfigSchema {
   colorMode: "light" | "dark" | "system";
   locale: "en" | "zh-CN";
   entrance_viewMode: "list" | "grid";
+  floatWindow: boolean; // 是否启用悬浮窗口
 }
 
 export interface PluginUsageInfoSchema {

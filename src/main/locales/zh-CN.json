@@ -4,6 +4,7 @@
   "myTools": "我的工具",
   "tray": {
     "showHideMain": "显示/隐藏主窗口",
+    "showHideFloat": "显示/隐藏悬浮球",
     "openSettings": "打开设置",
     "colorMode": {
       "system": "配色方案：跟随系统",

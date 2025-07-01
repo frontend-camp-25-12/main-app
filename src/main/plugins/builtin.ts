@@ -11,6 +11,7 @@ export enum BuiltinPluginId {
   PLUGINSTORE = 'builtin.pluginStore',
   HOTKEYS = 'builtin.hotkeys',
   USER_DEV = 'builtin.userDev',
+  FLOAT_BUTTON = 'builtin.floatButton'
 }
 /**
  * 内置插件的元数据
@@ -92,5 +93,24 @@ export const builtinPlugins: PluginRuntimeInfo[]  = [
     version: '1.0.0',
     dist: 'userDev',
     internal: {},
+  },
+  {
+    id: BuiltinPluginId.FLOAT_BUTTON,
+    name: '',  // 由于当前electron的issue，无框透明窗口仍会有标题栏，只能用空名称来“降低”视觉干扰。https://github.com/electron/electron/pull/47386
+    version: '1.0.0',
+    dist: 'floatButton',
+    internal: {
+      hidden: true
+    },
+    window: {
+      width: 50,
+      height: 50,
+      resizable: false,
+      frame: false,
+      skipTaskbar: true,
+      transparent: true,
+      alwaysOnTop: true,
+      disableTransition: true,
+    }
   }
 ] as PluginMetadata[]

@@ -138,11 +138,31 @@ app.on('ready', () => {
   ipcMain.handle('user-info', async (_event, ) => {
     return await serviceInstance.onUserInfo();
   });
+
+
+  // onFloatingButtonMouseDown() -> Promise<void>
+  ipcMain.handle('floating-button-mouse-down', async (_event, ) => {
+    return await serviceInstance.onFloatingButtonMouseDown();
+  });
+
+
+  // onFloatingButtonMouseMove() -> Promise<void>
+  ipcMain.handle('floating-button-mouse-move', async (_event, ) => {
+    return await serviceInstance.onFloatingButtonMouseMove();
+  });
+
+
+  // onFloatingButtonMouseUp() -> Promise<void>
+  ipcMain.handle('floating-button-mouse-up', async (_event, ) => {
+    return await serviceInstance.onFloatingButtonMouseUp();
+  });
 });
     
 export namespace ipcEmit {
   /**
   * 广播需要更改界面的配置项变更事件
+    * @param key 
+    * @param value
   */
   export function uiConfigChange<K extends keyof AppConfigSchema>(key: K, value: AppConfigSchema[K]) {
     windowManager.emit('ui-config-change', key, value);
@@ -150,6 +170,8 @@ export namespace ipcEmit {
 
   /**
   * 广播需要更改界面的配置项变更事件
+    * @param key 
+    * @param value
   */
   export function uiConfigChangeTo<K extends keyof AppConfigSchema>(id: PluginMetadata['id'], key: K, value: AppConfigSchema[K]) {
     windowManager.emitTo(id, 'ui-config-change', key, value);

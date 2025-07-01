@@ -4,6 +4,7 @@
   "myTools": "My Tools",
   "tray": {
     "showHideMain": "Show/Hide Main Window",
+    "showHideFloat": "Show/Hide Float Button",
     "openSettings": "Open Settings",
     "colorMode": {
       "system": "Current: Follow System",

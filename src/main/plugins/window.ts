@@ -69,7 +69,8 @@ class PluginWindow {
       icon: plugin.logo || appIcon,
       alwaysOnTop: plugin.window?.alwaysOnTop ?? false,
       skipTaskbar: plugin.window?.skipTaskbar ?? false,
-      backgroundColor: windowColor.backgroundColor(),
+      backgroundColor: plugin.window?.transparent ? undefined : windowColor.backgroundColor(),
+      focusable: plugin.window?.focusable ?? true,
       webPreferences: {
         preload: windowContent.preload,
         sandbox: false,
@@ -159,6 +160,13 @@ class PluginWindow {
       this.hide();
     } else {
       this.show();
+    }
+  }
+
+  updateWindowColor() {
+    const win = this.getWindow();
+    if (win && this.plugin.window?.transparent !== true) {
+      win.setBackgroundColor(windowColor.backgroundColor());
     }
   }
 }
@@ -277,6 +285,15 @@ class WindowManager {
       window.window.webContents.send(channel, ...args);
     }
   }
+
+  /**
+   * 更新所有窗口的颜色主题
+   */
+  updateWindowColor() {
+    for (const win of Object.values(this.windows)) {
+      win.updateWindowColor?.();
+    }
+  }
 }
 
 export const windowManager = new WindowManager();
@@ -288,11 +305,7 @@ class WindowColor {
     this.shouldDark = nativeTheme.shouldUseDarkColors;
     nativeTheme.on('updated', () => {
       this.shouldDark = nativeTheme.shouldUseDarkColors;
-      BrowserWindow.getAllWindows().forEach((win) => {
-        if (!win.isDestroyed()) {
-          win.setBackgroundColor(this.backgroundColor());
-        }
-      });
+      windowManager.updateWindowColor();
     });
   }
 
