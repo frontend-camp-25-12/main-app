@@ -165,7 +165,7 @@ class PluginWindow {
 
   updateWindowColor() {
     const win = this.getWindow();
-    if (win && this.plugin.window?.transparent !== true) {
+    if (win && !win.isDestroyed() && this.plugin.window?.transparent !== true) {
       win.setBackgroundColor(windowColor.backgroundColor());
     }
   }
