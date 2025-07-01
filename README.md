@@ -252,7 +252,8 @@ import { PluginApi } from '@types/plugin-api-types';
     "resizable": true,                     // （可选）是否允许调整窗口大小，默认true
     "alwaysOnTop": false,                  // （可选）是否总在顶层显示，默认false
     "closeOnBlur": false,                  // （可选）是否在失去焦点时关闭窗口，默认为false
-    "skipTaskbar": false                   // （可选）是否在任务栏中隐藏窗口，默认为false（windows和linux下有效）
+    "skipTaskbar": false,                   // （可选）是否在任务栏中隐藏窗口，默认为false（windows和linux下有效）
+    "focusable": true,                       // （可选）是否允许窗口获取焦点，默认为true。透明窗口时设置为false可以避免透明窗口上出现灰色背景的窗口标题
   },
   "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入，支持拼音搜索和拼音首字母搜索
     {
