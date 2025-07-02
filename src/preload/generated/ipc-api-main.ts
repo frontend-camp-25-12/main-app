@@ -164,6 +164,29 @@ export class IpcApi {
   }
 
   /**
+   * 切换悬浮球显示状态
+   */
+  async floatingButtonToggle(): Promise<void> {
+    return electronAPI.ipcRenderer.invoke('floating-button-toggle');
+  }
+
+  /**
+   * 设置/获取命令入口背景图片
+如果imagePath为undefined，则返回当前背景图片路径
+   */
+  async entranceBackgroundFile(imagePath: string | undefined): Promise<string | undefined> {
+    return electronAPI.ipcRenderer.invoke('entrance-background-file', imagePath);
+  }
+
+  /**
+   * 设置/获取窗口背景白色蒙版强度
+如果level为undefined，则返回当前透明度
+   */
+  async entranceBackgroundImageOpacity(level: number | undefined): Promise<number> {
+    return electronAPI.ipcRenderer.invoke('entrance-background-image-opacity', level);
+  }
+
+  /**
    * 在终端执行命令
     * @param command 要执行的命令
    */

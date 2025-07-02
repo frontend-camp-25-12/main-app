@@ -1,9 +1,13 @@
 import { is } from "@electron-toolkit/utils"
-import { BrowserWindow, nativeTheme } from "electron"
+import { app, BrowserWindow, nativeTheme } from "electron"
 import path, { join } from "path"
 import { PluginMetadata } from "../../share/plugins/type"
 import { AppConfig } from "../config/app"
 import { appIcon } from "../icon"
+import fs from 'fs'
+import { ipcEmit } from "../generated/ipc-handlers-main"
+import { BuiltinPluginId } from "./builtin"
+import { fileURLToPath, pathToFileURL } from "url"
 
 /**
  * 加载窗口内容，针对当前多窗口应用的打包格式，供打开内部插件的窗口时使用
@@ -329,3 +333,60 @@ class WindowColor {
   }
 }
 export const windowColor = new WindowColor();
+
+/**
+ * 命令入口的窗口背景管理
+ */
+class EntranceWindowBackground {
+  getFile() {
+    const fileName = AppConfig.get('windowBackgroundFileName', '');
+    if (!fileName) {
+      return undefined;
+    }
+    const userDataPath = app.getPath('userData');
+    const destPath = path.join(userDataPath, fileName);
+    if (fs.existsSync(destPath)) {
+      return pathToFileURL(destPath).toString();
+    }
+    return undefined;
+  }
+
+  setFile(imagePath: string) {
+    console.log('Setting entrance window background file:', imagePath);
+    let fileName = '';
+    let fileUrl: string | undefined = undefined;
+    if (!imagePath) {
+    } else {
+      const prevFile = this.getFile();
+      const userDataPath = app.getPath('userData');
+      if (prevFile) {
+        fs.rmSync(fileURLToPath(prevFile), { force: true, recursive: true });
+      }
+      const ext = path.extname(imagePath);
+      fileName = `background${ext}`;
+      const destPath = path.join(userDataPath, fileName);
+      if (fs.existsSync(destPath)) {
+        fs.unlinkSync(destPath);
+      }
+      fs.copyFileSync(imagePath, destPath);
+      fileUrl = pathToFileURL(destPath).toString();
+    }
+    this.setValAndEmit('windowBackgroundFileName', fileName);
+    return fileUrl;
+  }
+
+  setImageOpacity(opacity: number) {
+    this.setValAndEmit('windowBackgroundImageOpacity', opacity);
+  }
+
+  getImageOpacity(): number {
+    return AppConfig.get('windowBackgroundImageOpacity', 1);
+  }
+
+  private setValAndEmit(key: 'windowBackgroundFileName' | 'windowBackgroundImageOpacity', value: any) {
+    AppConfig.set(key, value);
+    ipcEmit.uiConfigChangeTo(BuiltinPluginId.ENTRANCE, key, value);
+  }
+}
+
+export const entranceWindowBackground = new EntranceWindowBackground();

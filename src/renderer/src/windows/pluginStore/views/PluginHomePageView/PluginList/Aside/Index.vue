@@ -79,7 +79,7 @@ function uninstallPlugin(plugin: PluginMetadata) {
 
 <style scoped>
 .sidebar-container {
-    width: 240px;
+    width: 260px;
     background: var(--el-bg-color);
     display: flex;
     flex-direction: column;

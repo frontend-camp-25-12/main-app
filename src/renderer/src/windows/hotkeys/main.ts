@@ -4,6 +4,8 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import '../shared.css'
 import App from './App.vue'
 import i18n from '../../utils/i18n'
+import '../../utils/themeColor'
+import '../../utils/uiChange'
 
 
 const app = createApp(App)

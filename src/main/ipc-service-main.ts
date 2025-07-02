@@ -11,7 +11,7 @@ import { hotkeyManager } from './plugins/hotkeys'
 import { pluginManager } from './plugins/loader'
 import { pluginSearch } from './plugins/search'
 import { nativeTheme } from 'electron'
-import { windowColor } from './plugins/window'
+import { entranceWindowBackground, windowColor } from './plugins/window'
 import { ipcEmit } from './generated/ipc-handlers-main'
 import { changeLanguage } from './locales/i18n'
 import { ipcEmitPlugin } from './generated/ipc-handlers-plugin'
@@ -163,7 +163,9 @@ export class IpcService {
     key: K,
     value: AppConfigSchema[K]
   ): Promise<void> {
+    // 告知其它窗口需要重新获取ui相关的配置项
     ipcEmit.uiConfigChange(key, value)
+    // 如果是语言配置项变更，更新主应用语言，然后向外部插件告知
     if (key === 'locale') {
       await changeLanguage(value as AppConfigSchema['locale'])
       ipcEmitPlugin.localePreferenceChange(value as AppConfigSchema['locale'])
@@ -214,6 +216,40 @@ export class IpcService {
    */
   async onFloatingButtonMouseUp(): Promise<void> {
     floatButtonManager.onMouseUp()
+  }
+
+  /**
+   * 切换悬浮球显示状态
+   */
+  async onFloatingButtonToggle(): Promise<void> {
+    AppConfig.set('floatWindow', !AppConfig.get('floatWindow', false));
+    floatButtonManager.toggle();
+  }
+
+  /**
+   * 设置/获取命令入口背景图片
+   * 如果imagePath为undefined，则返回当前背景图片路径
+   * @return file:/// 路径 | undefined
+   */
+  async onEntranceBackgroundFile(imagePath: string | undefined): Promise<string | undefined> {
+    if (imagePath !== undefined) {
+      return entranceWindowBackground.setFile(imagePath);
+    } else {
+      return entranceWindowBackground.getFile();
+    }
+  }
+
+  /**
+   * 设置/获取窗口背景白色蒙版强度
+   * 如果level为undefined，则返回当前透明度
+   */
+  async onEntranceBackgroundImageOpacity(level: number | undefined): Promise<number> {
+    if (level === undefined) {
+      return entranceWindowBackground.getImageOpacity();
+    } else {
+      entranceWindowBackground.setImageOpacity(level);
+      return level;
+    }
   }
 
   /**

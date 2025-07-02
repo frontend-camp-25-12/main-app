@@ -72,7 +72,11 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
     version: '1.0.0',
     dist: 'settings',
     logo: 'icon-settings.png',
-    internal: {}
+    internal: {},
+    window: {
+      width: 460,
+      height: 760
+    }
   },
   {
     id: BuiltinPluginId.HOTKEYS,
@@ -113,6 +117,7 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
     version: '1.0.0',
     logo: 'icon-plugin-store.png',
     window: {
+      width: 900
     },
     dist: 'pluginStore',
     internal: {}

@@ -35,6 +35,9 @@ export interface AppConfigSchema {
   locale: "en" | "zh-CN";
   entrance_viewMode: "list" | "grid";
   floatWindow: boolean; // 是否启用悬浮窗口
+  themeColor: string; // 主题色
+  windowBackgroundFileName: string | ''; // 自定义窗口背景文件名，为空表示不起用
+  windowBackgroundImageOpacity: number; // 窗口背景图片透明度
 }
 
 export interface PluginUsageInfoSchema {

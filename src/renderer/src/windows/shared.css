@@ -16,6 +16,14 @@ body {
     --el-popover-border-radius: var(--el-border-radius-base);
   }
 
+  .el-color-picker {
+    width: 100%;
+
+    .el-color-picker__trigger, .el-color-picker__color, .el-color-picker__color-inner {
+      border-radius: var(--el-border-radius-base);
+    }
+  }
+
   margin: 0;
 }
 

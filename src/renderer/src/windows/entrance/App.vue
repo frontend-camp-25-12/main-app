@@ -156,33 +156,3 @@ function openFirstItem() {
   font-size: 20px;
 }
 </style>
-
-<style>
-/**
- * 如果你要实现主题换肤，查看node_modules/element-plus/dist/index.css
- * 前一百行挂在:root上的变量定义，其它组件的颜色都是引用的这些变量。
- * 然后再对应去覆盖，而不是自定义一堆变量然后再选择不同的组件类去覆盖，工作量无限增大而且代码很乱。
- *
- * 把按钮的颜色覆盖成橙色只需要在非scope style里写上：
- */
-html {
-  /* --el-color-primary: rgb(255, 124, 64) !important; */
-  /* 因为disabled的按钮色是el-button-disabled-bg-color，
-  而primary button的el-button-disabled-bg-color 
-  指向 el-color-primary-light-5 ，所以修改它 */
-  /* --el-color-primary-light-5: rgb(240, 174, 163) !important; */
-}
-
-html.dark {
-  /**
-   * 深色模式的主题色也可以对应覆盖
-   */
-  /* --el-color-primary: rgb(175, 55, 0) !important; */
-  /* --el-color-primary-light-5: rgb(100, 56, 48) !important; */
-}
-
-/**
- * 为了换肤方便，让颜色动态变化，实际应该通过代码直接在html元素上用style覆盖这些变量。
- * （另一个想法是用v-bind in css，但是它的原理是在根template上加style标签，覆盖不到html元素上，不好做。）
- */
-</style>

@@ -7,5 +7,6 @@ declare global {
     electron: ElectronAPI
     ipcApi: IpcApi
     platform: PlatformApi
+    getPathForFile: (file: File) => string
   }
 }

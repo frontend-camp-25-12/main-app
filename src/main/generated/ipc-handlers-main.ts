@@ -134,6 +134,24 @@ app.on('ready', () => {
   });
 
 
+  // onFloatingButtonToggle() -> Promise<void>
+  ipcMain.handle('floating-button-toggle', async (_event, ) => {
+    return await serviceInstance.onFloatingButtonToggle();
+  });
+
+
+  // onEntranceBackgroundFile(imagePath: string | undefined) -> Promise<string | undefined>
+  ipcMain.handle('entrance-background-file', async (_event, imagePath: string | undefined) => {
+    return await serviceInstance.onEntranceBackgroundFile(imagePath);
+  });
+
+
+  // onEntranceBackgroundImageOpacity(level: number | undefined) -> Promise<number>
+  ipcMain.handle('entrance-background-image-opacity', async (_event, level: number | undefined) => {
+    return await serviceInstance.onEntranceBackgroundImageOpacity(level);
+  });
+
+
   // onExecCommand(command: string) -> Promise<void>
   ipcMain.handle('exec-command', async (_event, command: string) => {
     return await serviceInstance.onExecCommand(command);

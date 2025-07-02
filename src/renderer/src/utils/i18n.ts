@@ -1,10 +1,10 @@
 import { createI18n } from 'vue-i18n';
 import en from '../locales/en.json';
 import zhCN from '../locales/zh-CN.json';
-import { DEFAULT_LANGUAGE } from './constants';
 
+const DEFAULT_LANGUAGE = 'zh-CN';
 const savedLanguage = await window.ipcApi.appConfigGet('locale', 'zh-CN')
-
+export type SupportedLanguage = typeof savedLanguage;
 const i18n = createI18n({
   legacy: false,
   locale: savedLanguage || DEFAULT_LANGUAGE,
