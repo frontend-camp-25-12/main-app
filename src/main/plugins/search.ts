@@ -2,6 +2,7 @@ import PinyinMatch from 'pinyin-match';
 import { SearchResult, MatchRange } from '../../share/plugins/type.js';
 import { pluginManager } from './loader.js';
 import { rMerge } from "ranges-merge";
+import i18next from 'i18next';
 
 enum MatchTypeScore {
   REGEX = 200, // 正则匹配
@@ -39,7 +40,7 @@ export class PluginSearch {
       };
 
       // 1. 匹配插件名称
-      const nameMatch = this.matchText(query, plugin.name);
+      const nameMatch = this.matchText(query, plugin.i18n && plugin.i18n[i18next.language]?.name || plugin.name);
       if (nameMatch.score > 0) {
         matchedPlugin.name = nameMatch.range;
         matchedPlugin.score += nameMatch.score;
@@ -47,7 +48,7 @@ export class PluginSearch {
 
       // 2. 匹配插件描述
       if (plugin.description) {
-        const descriptionMatch = this.matchText(query, plugin.description);
+        const descriptionMatch = this.matchText(query, plugin.i18n && plugin.i18n[i18next.language]?.description || plugin.description);
         if (descriptionMatch.score > 0) {
           matchedPlugin.description = descriptionMatch.range;
           matchedPlugin.score += descriptionMatch.score;
@@ -60,13 +61,14 @@ export class PluginSearch {
           if (feature.searchable === false) {
             continue; // 不允许搜索，跳过
           }
+          const label = feature.i18n && feature.i18n[i18next.language]?.label || feature.label;
           const matchedPluginFeature: SearchResult['feature'][number] = {
             code: feature.code,
-            label: feature.label,
+            label,
             score: 0
           };
           let match = false;
-          const featureLabelMatch = this.matchText(query, feature.label);
+          const featureLabelMatch = this.matchText(query, label);
           if (featureLabelMatch.score > 0) {
             matchedPluginFeature.labelMatch = featureLabelMatch.range;
             matchedPluginFeature.score += featureLabelMatch.score;

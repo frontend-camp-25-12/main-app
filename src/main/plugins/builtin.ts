@@ -53,6 +53,12 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
     id: BuiltinPluginId.SETTINGS,
     name: '设置',
     description: '管理应用本身的设置',
+    i18n: {
+      'en': {
+        name: 'Settings',
+        description: 'Manage application settings'
+      }
+    },
     version: '1.0.0',
     dist: 'settings',
     logo: 'icon-settings.png',
@@ -62,6 +68,12 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
     id: BuiltinPluginId.HOTKEYS,
     name: '插件快捷键',
     description: '可配置所有快捷键功能的映射',
+    i18n: {
+      'en': {
+        name: 'Hotkeys',
+        description: 'Configure all hotkey mappings'
+      }
+    },
     version: '1.0.0',
     window: {
       width: 700
@@ -82,6 +94,12 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
     id: BuiltinPluginId.PLUGINSTORE,
     name: '插件中心',
     description: '浏览和获取各种实用插件，管理已安装的插件',
+    i18n: {
+      'en': {
+        name: 'Plugin Center',
+        description: 'Browse and get various useful plugins, manage installed plugins'
+      }
+    },
     version: '1.0.0',
     logo: 'icon-plugin-store.png',
     window: {
@@ -119,6 +137,12 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
     id: BuiltinPluginId.OPEN_TERMINAL,
     name: '系统终端',
     description: '快速访问终端命令行',
+    i18n: {
+      'en': {
+        name: 'Open Terminal',
+        description: 'Quick access to terminal command line'
+      }
+    },
     version: '1.0.0',
     dist: 'openTerminal',
     logo: 'icon-terminal.png',
@@ -137,13 +161,24 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
       {
         code: 'open',
         label: '打开终端',
+        i18n: {
+          'en': {
+            label: 'Open Terminal'
+          }
+        },
         hotKey: true,
-        searchable: false,
-        cmds: []
+        cmds: [
+          "terminal"
+        ]
       },
       {
         code: 'run',
         label: '在终端中运行',
+        i18n: {
+          'en': {
+            label: 'Run in Terminal'
+          }
+        },
         cmds: [
           { type: 'any' }
         ]

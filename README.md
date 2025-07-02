@@ -235,43 +235,134 @@ import { PluginApi } from '@types/plugin-api-types';
 （将会保持更新，随时根据需要调整）
 ```json
 {
-  "id": "your.plugin.id",                // 插件唯一标识符
-  "name": "插件名称",                     // 插件名称
-  "description": "插件描述",              // （可选）插件描述
-  "version": "1.0.0",                    // 插件版本
-  "logo": "./logo.png",                  // （可选）插件图标，路径相对于插件目录。不建议使用svg，否则窗口的图标会无法显示。
-  "preload": "preload.js",               // （可选）插件的preload脚本路径，默认preload.js
-  "content": "index.html",               // （可选）插件的内容网页路径，默认index.html
-  "background": false,                     // （可选）是否需要保持后台运行，默认false
-  "window": {                              // （可选）窗口配置
-    "width": 800,                          // （可选）窗口宽度
-    "height": 600,                         // （可选）窗口高度
-    "disableTransition": false,            // （可选）禁用窗口动画
-    "frame": true,                         // （可选）是否显示窗口边框，默认true
-    "transparent": false,                  // （可选）是否透明窗口，默认false，设为true时需要同时设置`frame: false`才有效
-    "resizable": true,                     // （可选）是否允许调整窗口大小，默认true
-    "alwaysOnTop": false,                  // （可选）是否总在顶层显示，默认false
-    "closeOnBlur": false,                  // （可选）是否在失去焦点时关闭窗口，默认为false
-    "skipTaskbar": false,                   // （可选）是否在任务栏中隐藏窗口，默认为false（windows和linux下有效）
-    "focusable": true,                       // （可选）是否允许窗口获取焦点，默认为true。透明窗口时设置为false可以避免透明窗口上出现灰色背景的窗口标题
+  // 插件的唯一标识符，必填。建议采用反向域名格式，例如 "com.yourname.pluginname"。
+  "id": "your.plugin.id",
+
+  // 插件的名称，必填。将显示在插件列表和搜索结果中。
+  "name": "插件名称",
+
+  // (可选) 插件的描述信息，用于详细说明插件的功能。
+  "description": "这是一个很棒的插件，它能做...",
+
+  // 插件的版本号，必填。必须严格遵循 SemVer (语义化版本) 规范，例如 "1.0.0", "2.1.3-beta.1"。
+  "version": "1.0.0",
+
+  // (可选) 插件的 logo 图片路径，相对于插件根目录。推荐使用 png 或 jpg。
+  // 如果使用 svg，可能会导致窗口图标无法正常显示。
+  "logo": "logo.png",
+
+  // (可选) 插件的 preload 脚本路径，相对于插件根目录。
+  // 默认为 "preload.js"。
+  "preload": "preload.js",
+
+  // (可选) 插件的内容网页路径 (GUI)，相对于插件根目录。
+  // 默认为 "index.html"。
+  "content": "index.html",
+
+  // (可选) 是否为后台插件。默认为 false。
+  // 如果为 true，则插件窗口关闭后，preload 脚本仍会保持运行，适用于需要持续执行任务的插件。
+  "background": false,
+
+  // (可选) 国际化配置，用于提供多语言的插件名称和描述。
+  // 目前支持的语言代码为 "en" (英文) 和 "zh-CN" (简体中文)。
+  "i18n": {
+    "en": {
+      "name": "Plugin Name",
+      "description": "This is an awesome plugin that can do..."
+    },
+    "zh-CN": { // 如果你在之前配置的name和description中使用了中文，它们已经作为默认值了，不需要重复编写zh-CN版本。
+      "name": "插件名称",
+      "description": "这是一个很棒的插件，它能做..."
+    }
   },
-  "features": [                            // （可选）插件功能定义，未定义时，插件也可以通过名称和描述来被检索进入，支持拼音搜索和拼音首字母搜索
+
+  // (可选) 自定义窗口配置。
+  "window": {
+    // (可选) 窗口初始宽度。
+    "width": 800,
+    // (可选) 窗口初始高度。
+    "height": 600,
+    // (可选) 是否禁用窗口打开和关闭时的过渡动画。默认为 false。
+    "disableTransition": false,
+    // (可选) 是否显示窗口边框和标题栏。默认为 true。
+    "frame": true,
+    // (可选) 是否启用透明窗口。默认为 false。
+    // 注意：启用时必须同时设置 "frame": false 才有效。
+    "transparent": false,
+    // (可选) 是否允许用户调整窗口大小。默认为 true。
+    "resizable": true,
+    // (可选) 窗口是否总在所有其他窗口之上。默认为 false。
+    "alwaysOnTop": false,
+    // (可选) 窗口是否在失去焦点时自动关闭。默认为 false。
+    "closeOnBlur": false,
+    // (可选) 是否在操作系统的任务栏中隐藏窗口图标 (在 Windows 和 Linux 下有效)。默认为 false。
+    "skipTaskbar": false,
+    // (可选) 是否允许窗口获得焦点。默认为 true。
+    // 对于透明窗口，设置为 false 可以避免在窗口上方显示灰色的标题栏背景。
+    "focusable": true,
+  },
+
+  // (可选) 定义插件提供的具体功能列表，默认为空数组 []。
+  // 即使用户不定义 features，插件依然可以通过其 "name" 和 "description" 被搜索到。
+  "features": [
     {
-      "code": "featureCode",             // 功能代码，用于在onPluginEnter时，区分不同功能
-      "label": "功能名称",                // 功能名称，注意它会参与命令检索。可以通过cmds来定义这个feature其它的匹配指令。
-      "hotKey": false,                     // （可选）是否启用热键，默认false。设为true后，可在”快捷键管理”中查看对应的热键设置，通过热键进入时，action.from = 'hotkey'
-      "searchable": true,                  // （可选）是否可被搜索到，默认true。与hotkey结合可以提供仅能通过热键进入的功能
-      "cmds": [                            // 可触发这个feature的命令列表, 一共支持三种类型的命令
-        "search",                          // 定义一个命令叫search
-        {                                   // 也可以定义正则匹配的命令
-          "type": "regex",               // 对于正则匹配命令，固定为'regex'
-          "match": "\\d+"              // 正则匹配字符串（不含/和flag）
+      // 功能的唯一代码，必填。用于在代码 (如 onPluginEnter) 中识别用户从哪个功能入口进入插件。
+      // 如果用户是通过点击插件主入口进入，则此 feature 不会被匹配。
+      "code": "feature_translate",
+      
+      // 功能的显示名称，必填。此名称会参与命令检索，支持拼音和拼音首字母搜索。
+      "label": "翻译文本",
+
+      // (可选) 是否可为此功能设置全局快捷键。默认为 false。
+      // 设置为 true 后，用户可在“快捷键管理”中为其分配一个快捷键。
+      "hotKey": false,
+
+      // (可选) 此功能是否可以被搜索到。默认为 true。
+      // 如果设置为 false，并与 "hotKey": true 结合，可以创建只能通过快捷键访问的隐藏功能。
+      "searchable": true,
+
+      // (可选) 国际化配置，用于提供多语言的功能名称。
+      "i18n": {
+        "en": {
+          "label": "Translate Text"
         },
+        "zh-CN": {
+          "label": "翻译文本"
+        }
+      },
+      
+      // 触发此功能的命令列表，必填。支持三种类型的命令。
+      "cmds": [
+        // 1. 字符串命令：用户输入完全匹配 "翻译" 或 "translate" 时触发。
+        "翻译",
+        "translate",
+
+        // 2. 正则表达式命令：匹配一个或多个数字。
         {
-          "type": "any"                  // 也可以定义匹配任意输入的命令
+          "type": "regex", // 类型固定为 "regex"
+          // 正则匹配字符串，无需添加两边的斜杠 `/` 和 flag 标志。默认 flag 为 "gi"。
+          // 例如，输入 "123" 会匹配，payload 为 "123"。
+          "match": "\\d+"
+        },
+
+        // 3. 任意匹配命令：匹配任何非空输入。
+        // 这通常应放在 cmds 列表的末尾，因为它会捕获所有之前未匹配的输入。
+        {
+          "type": "any" // 类型固定为 "any"
         }
       ]
+    },
+    {
+      "code": "feature_ocr",
+      "label": "屏幕截图OCR",
+      "hotKey": true, // 示例：一个可以通过快捷键触发的功能
+      "searchable": false, // 示例：一个无法被搜索到，只能通过快捷键触发的功能
+      "i18n": {
+        "en": { "label": "Screenshot OCR" },
+        "zh-CN": { "label": "屏幕截图OCR" }
+      },
+      "cmds": [] // 此功能没有命令词，只能通过快捷键或其他方式（如其他插件调用）进入
     }
-  ]
+  ],
 }
 ```

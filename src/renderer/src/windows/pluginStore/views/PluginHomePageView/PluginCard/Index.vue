@@ -8,9 +8,9 @@
         </div>
         <div class="plugin-info">
             <div class="plugin-title">
-                <span>{{ plugin.name }}</span>
+                <span>{{ tPluginName(plugin) }}</span>
             </div>
-            <div class="plugin-description">{{ plugin.description || t('pluginStore.noDescription') }}</div>
+            <div class="plugin-description">{{ tPluginDescription(plugin) || t('pluginStore.noDescription') }}</div>
             <div class="plugin-footer">
                 <span>{{ installedPkg[plugin.id] && updateAvaliable(plugin) ? `${installedPkg[plugin.id].version} →` :
                     '' }}{{
@@ -39,6 +39,7 @@ import { ElIcon } from 'element-plus';
 import { SuccessFilled } from '@element-plus/icons-vue';
 import { compareVersions } from 'compare-versions';
 import { t } from '../../../../../utils/i18n';
+import { tPluginDescription, tPluginName } from '../../../utils/plugin-i18n';
 
 defineProps<{
     plugin: PluginStoreInfo

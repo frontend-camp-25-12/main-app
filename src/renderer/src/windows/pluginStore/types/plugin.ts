@@ -1,11 +1,21 @@
+
 /**
  * 插件商店相关类型定义
  */
-
+export interface PluginI18n {
+  name: string;
+  description?: string;
+  i18n?: {
+    [locale: string]: {
+      name: string;
+      description?: string;
+    }
+  };
+}
 /**
  * 插件商店插件信息
  */
-export interface PluginStoreInfo {
+export type PluginStoreInfo = PluginI18n & {
   id: string;
   name: string;
   description: string | null;

@@ -15,6 +15,7 @@ window.platform = new PlatformApi(pluginId);
 console.log(`Plugin Preload Path: ${pluginPreloadPath}, Plugin ID: ${pluginId}`);
 
 if (pluginPreloadPath) {
+  console.log(`Loading plugin preload script from: ${pluginPreloadPath}`);
   require(pluginPreloadPath);
 } else {
   console.error('No plugin preload path specified.');

@@ -12,7 +12,7 @@
                 <li v-for="plugin in externalPlugins" class="plugin-item" :key="plugin.id + plugin.version">
                     <img width="36" height="36" :src="plugin.logoPath" alt="">
                     <div class=" plugin-info">
-                        <div class="plugin-name">{{ plugin.name }}</div>
+                        <div class="plugin-name">{{ tPluginName(plugin) }}</div>
                         <div class="plugin-version">{{ plugin.version }}</div>
                         <div class="plugin-usedAt" v-if="plugin.usedAt && plugin.usedAt !== 0">
                             {{ t('pluginStore.lastUsed', { time: formatDateNow(new Date(plugin.usedAt)) }) }}</div>
@@ -50,6 +50,7 @@ import { formatDateNow } from '../../../../utils/timeFormat';
 import { ElScrollbar, ElIcon } from 'element-plus';
 import { MoreFilled } from '@element-plus/icons-vue';
 import { t } from '../../../../../../utils/i18n';
+import { tPluginName } from '../../../../utils/plugin-i18n'
 
 const externalPlugins = computed(() => {
     const plugins: PluginMetadata[] = []

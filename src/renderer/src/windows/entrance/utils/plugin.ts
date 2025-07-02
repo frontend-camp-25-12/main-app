@@ -1,8 +1,10 @@
-import { MatchRange, PluginEnterAction, PluginMetadata, SearchResult } from "../../../../../share/plugins/type";
+import { computed, ComputedRef } from "vue";
+import { MatchRange, PluginMetadata, SearchResult } from "../../../../../share/plugins/type";
+import { getLocale } from "../../../utils/i18n";
 
 export class PluginView {
-  name: string; // 插件名称
-  description?: string; // 插件描述
+  name: string | ComputedRef<string>; // 插件名称
+  description?: string | ComputedRef<string>; // 插件描述
   id: string; // 插件ID
   logoPath?: string; // 插件logo路径
 
@@ -17,9 +19,17 @@ export class PluginView {
 
   constructor(plugin: PluginMetadata) {
     this.name = plugin.name;
+    this.description = plugin.description;
+    if (plugin.i18n) {
+      this.name = computed(() => {
+        return plugin.i18n![getLocale()]?.name || plugin.name;
+      })
+      this.description = computed(() => {
+        return plugin.i18n![getLocale()]?.description || plugin.description;
+      });
+    }
     this.id = plugin.id;
     this.logoPath = plugin.logoPath;
-    this.description = plugin.description;
   }
 
   static fromSearchResult(pluginList: PluginMetadata[], search: SearchResult[]): PluginView[] {

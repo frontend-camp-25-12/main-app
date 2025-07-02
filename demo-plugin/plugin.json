@@ -2,6 +2,12 @@
     "id": "com.example.clipboard",
     "name": "剪贴板",
     "description": "记录您的剪贴板历史",
+    "i18n": {
+        "en": {
+            "name": "Clipboard",
+            "description": "Records your clipboard history"
+        }
+    },
     "version": "1.0.1",
     "logo": "./logo.png",
     "preload": "main/preload.js",
@@ -10,35 +16,16 @@
         {
             "code": "search",
             "label": "搜索",
+            "i18n": {
+                "en": {
+                    "label": "Search"
+                }
+            },
             "hotKey": true,
             "cmds": [
                 "搜索剪贴板",
                 {
                     "type": "any"
-                }
-            ]
-        },
-        {
-            "code": "clear",
-            "label": "清空",
-            "cmds": [
-                "清空剪贴板"
-            ]
-        },
-        {
-            "code": "copy",
-            "label": "复制最新",
-            "cmds": [
-                "复制最新"
-            ]
-        },
-        {
-            "code": "regexTest",
-            "label": "正则命令",
-            "cmds": [
-                {
-                    "type": "regex",
-                    "match": "\\d+"
                 }
             ]
         }
