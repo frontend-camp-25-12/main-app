@@ -31,6 +31,15 @@ const pendingSkin = ref(currentSkin.value);
 const pendingCustomColor = ref(customColor.value);
 const backgroundImage = ref(localStorage.getItem('app_bg') || '');
 const pendingBackgroundImage = ref(backgroundImage.value);
+const maskOpacity = ref(Number(localStorage.getItem('app_bg_mask_opacity') || 60));
+const pendingMaskOpacity = ref(maskOpacity.value);
+
+// 没有背景图片时，pendingMaskOpacity 强制为 1
+watch(pendingBackgroundImage, (val) => {
+  if (!val) {
+    pendingMaskOpacity.value = 1;
+  }
+});
 
 const handleLanguageChange = (lang: string) => {
   setLocale(lang);
@@ -95,11 +104,21 @@ const applySkin = async () => {
     setSkin(pendingSkin.value);
   }
   currentSkin.value = pendingSkin.value;
+  // 写入 localStorage，保证 entrance 页面能实时读取
+  localStorage.setItem('skin_color', pendingSkin.value);
+  window.dispatchEvent(new Event('skin_color_change'));
 };
 
 function applyBackground() {
   backgroundImage.value = pendingBackgroundImage.value;
+  maskOpacity.value = pendingMaskOpacity.value;
   localStorage.setItem('app_bg', backgroundImage.value);
+  localStorage.setItem('app_bg_mask_opacity', String(maskOpacity.value));
+  // 通知其它窗口刷新配置
+  window.ipcApi.appConfigSet('app_bg', backgroundImage.value);
+  window.ipcApi.appConfigSet('app_bg_mask_opacity', maskOpacity.value);
+  window.ipcApi.requireUiConfigReload('app_bg', backgroundImage.value);
+  window.ipcApi.requireUiConfigReload('app_bg_mask_opacity', maskOpacity.value);
 }
 
 const settingsLayoutStyle = computed(() => {
@@ -116,6 +135,10 @@ const settingsLayoutStyle = computed(() => {
   //   background: 'linear-gradient(135deg, #f5f7fa 0%, #e3e8ee 100%)'
   // };
 });
+
+function onMaskOpacityInput(val: number) {
+  window.ipcApi.appConfigSet('app_bg_mask_opacity', val);
+}
 </script>
 
 <template>
@@ -123,7 +146,11 @@ const settingsLayoutStyle = computed(() => {
     class="settings-layout"
     :style="settingsLayoutStyle"
   >
-    <div v-if="backgroundImage" class="bg-mask"></div>
+    <div
+      v-if="pendingBackgroundImage"
+      class="bg-mask"
+      :style="{ background: `rgba(255,255,255,${pendingMaskOpacity/100})` }"
+    ></div>
     <aside class="settings-sidebar">
       <ul>
         <li :class="{active: tab==='theme'}" @click="tab='theme'">
@@ -198,6 +225,19 @@ const settingsLayoutStyle = computed(() => {
         <h2>{{ t('background') }}</h2>
         <ElDivider />
         <BackgroundUploader v-model="pendingBackgroundImage" />
+        <div style="margin:16px 0;">
+          <span style="font-size:13px;">白色蒙版透明度</span>
+          <el-slider
+            v-model="pendingMaskOpacity"
+            :min="0"
+            :max="100"
+            :step="1"
+            style="width:180px;display:inline-block;margin:0 8px;"
+            @input="onMaskOpacityInput"
+            :disabled="!pendingBackgroundImage"
+          />
+          <span style="font-size:13px;">{{ pendingBackgroundImage ? pendingMaskOpacity : 1 }}%</span>
+        </div>
         <ElButton type="primary" @click="applyBackground">{{ t('applyBackground') }}</ElButton>
       </section>
     </main>
