@@ -8,6 +8,14 @@ body {
     --el-messagebox-border-radius: 16px;
   }
 
+  .el-popper__arrow {
+    display: none;
+  }
+
+  .el-popper {
+    --el-popover-border-radius: var(--el-border-radius-base);
+  }
+
   margin: 0;
 }
 

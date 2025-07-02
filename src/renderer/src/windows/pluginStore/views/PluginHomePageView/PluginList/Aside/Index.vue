@@ -7,21 +7,23 @@
             </div>
             <div class="divider"></div>
         </div>
-        <ElScrollbar class="sidebar-section" >
+        <ElScrollbar class="sidebar-section">
             <ul class="plugin-list">
                 <li v-for="plugin in externalPlugins" class="plugin-item" :key="plugin.id + plugin.version">
                     <img width="36" height="36" :src="plugin.logoPath" alt="">
                     <div class=" plugin-info">
                         <div class="plugin-name">{{ tPluginName(plugin) }}</div>
-                        <div class="plugin-version">{{ plugin.version }}</div>
+                        <div class="plugin-version">
+                            {{ plugin.version }}
+                            <span class="plugin-disabled-label"
+                                :style="{ visibility: plugin.disabled ? 'visible' : 'hidden' }">
+                                <span>{{ t('pluginStore.notEnabled') }}</span>
+                            </span>
+                        </div>
                         <div class="plugin-usedAt" v-if="plugin.usedAt && plugin.usedAt !== 0">
                             {{ t('pluginStore.lastUsed', { time: formatDateNow(new Date(plugin.usedAt)) }) }}</div>
                     </div>
                     <div class="plugin-actions">
-                        <div class="plugin-disabled-label"
-                            :style="{ visibility: plugin.disabled ? 'visible' : 'hidden' }">
-                            <span>{{ t('pluginStore.notEnabled') }}</span>
-                        </div>
                         <el-dropdown trigger="click" class="plugin-dropdown">
                             <el-icon>
                                 <MoreFilled />
@@ -31,7 +33,7 @@
                                     <el-dropdown-item @click="toggleDisabled(plugin)">{{ plugin.disabled ?
                                         t('pluginStore.enable') : t('pluginStore.disable') }}</el-dropdown-item>
                                     <el-dropdown-item @click="uninstallPlugin(plugin)">{{ t('pluginStore.uninstall')
-                                        }}</el-dropdown-item>
+                                    }}</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
@@ -127,10 +129,8 @@ function uninstallPlugin(plugin: PluginMetadata) {
 }
 
 .plugin-disabled-label {
-    font-size: 12px;
     color: var(--el-color-warning);
-    display: flex;
-    align-items: center;
+    margin-left: 6px;
 }
 
 .plugin-actions {

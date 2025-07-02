@@ -7,10 +7,10 @@
         <template v-if="route.name === 'PluginList'">
             <div class="upload-btn" @click="invokeFileChooseDialog">{{ t('pluginStore.uploadPlugin') }}</div>
             <input ref="fileInput" style="display: none" type="file" accept=".asar" @change="handlePluginUpload" />
-            <div class="search-bar">
+            <!-- <div class="search-bar">
                 <el-icon><Search /></el-icon>
                 <input type="text" :placeholder="t('pluginStore.searchPlaceholder')" />
-            </div>
+            </div> -->
         </template>
     </nav>
 </template>
