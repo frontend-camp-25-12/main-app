@@ -1,11 +1,11 @@
-import { defineComponent, h, PropType, VNode } from "vue";
+import { defineComponent, h, PropType, VNode, ComputedRef } from "vue";
 import { MatchRange } from "../../../../../share/plugins/type";
 
 export default defineComponent({
   name: "TextHighlight",
   props: {
     text: {
-      type: String,
+      type: [String, Object] as PropType<string | ComputedRef<string>>,
       required: true,
     },
     ranges: {
@@ -16,7 +16,8 @@ export default defineComponent({
   },
   setup(props) {
     return () => {
-      const { text, ranges } = props;
+      let { text, ranges } = props;
+      if (typeof text === 'object') text = text.value;
       if (!ranges || ranges.length === 0) return h('span', text);
 
       let curr = 0;

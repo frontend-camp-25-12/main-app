@@ -166,7 +166,7 @@ export class IpcService {
   ): Promise<void> {
     ipcEmit.uiConfigChange(key, value)
     if (key === 'locale') {
-      changeLanguage(value as AppConfigSchema['locale'])
+      await changeLanguage(value as AppConfigSchema['locale'])
       ipcEmitPlugin.localePreferenceChange(value as AppConfigSchema['locale'])
     }
   }

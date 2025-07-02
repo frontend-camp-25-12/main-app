@@ -3,6 +3,7 @@ import en from "./en.json";
 import zh from "./zh-CN.json";
 import { updateTrayMenu } from "../tray";
 import { AppConfig } from "../config/app";
+import { hotkeyManager } from "../plugins/hotkeys";
 
 export const defaultNS = "translation";
 
@@ -25,7 +26,8 @@ i18next.init({
 
 export default i18next;
 
-export function changeLanguage(lang: "en" | "zh-CN") {
+export async function changeLanguage(lang: "en" | "zh-CN") {
   i18next.changeLanguage(lang);
   updateTrayMenu();
+  await hotkeyManager.updateHotkeyLabelLocale(lang);
 }

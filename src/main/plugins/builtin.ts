@@ -25,6 +25,11 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
   {
     id: BuiltinPluginId.ENTRANCE,
     name: '插件入口',
+    i18n: {
+      'en': {
+        name: 'Entrance'
+      }
+    },
     version: '1.0.0',
     dist: 'entrance',
     logo: 'icon-app-drawer.png',
@@ -44,6 +49,11 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
       {
         code: 'open',
         label: '打开插件面板',
+        i18n: {
+          'en': {
+            label: 'Open Plugin Entrance Panel'
+          }
+        },
         hotKey: true,
         cmds: []
       }

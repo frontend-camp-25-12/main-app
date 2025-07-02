@@ -4,6 +4,7 @@ import { BuiltinPluginId } from "./builtin";
 import { pluginManager } from "./loader";
 import { HotkeyOption } from "../../share/plugins/hotkeys.type";
 import { PluginMetadata } from "../../share/plugins/type";
+import i18next from "i18next";
 /**
  * 热键管理器
  */
@@ -94,7 +95,10 @@ export class HotkeyManager {
     if (!plugin.features || plugin.disabled) return;
     for (const feature of plugin.features) {
       if (feature.hotKey) {
-        this.registerHotkeyOption(plugin.id, feature.code, feature.label, plugin.name);
+        this.registerHotkeyOption(plugin.id,
+          feature.code,
+          feature.i18n?.[i18next.language]?.label || feature.label,
+          plugin.i18n?.[i18next.language]?.name || plugin.name);
       }
     }
   }
@@ -166,6 +170,24 @@ export class HotkeyManager {
         }));
       HotkeyConfig.set('hotkeys', config);
     }
+  }
+
+  /**
+   * 更新用于显示的插件标签的语言
+   */
+  async updateHotkeyLabelLocale(lang: string) {
+    const pluginList = await pluginManager.list()
+    for (const option of this.configuredHotkeys.values()) {
+      const plugin = pluginList[option.id];
+      if (plugin) {
+        const feature = plugin.features?.find(f => f.code === option.code);
+        if (feature) {
+          option.label = feature.i18n?.[lang]?.label || feature.label;
+          option.pluginName = plugin.i18n?.[lang]?.name || plugin.name;
+        }
+      }
+    }
+
   }
 
   openHotkeySettings(id: string, code: string) {

@@ -1,6 +1,6 @@
 import { computed } from "vue";
-import { getLocale } from "../../../utils/i18n";
-import { PluginI18n } from "../types/plugin";
+import { getLocale } from "./i18n";
+import { PluginI18n } from "../windows/pluginStore/types/plugin";
 
 
 

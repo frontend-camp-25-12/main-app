@@ -50,7 +50,7 @@ import { formatDateNow } from '../../../../utils/timeFormat';
 import { ElScrollbar, ElIcon } from 'element-plus';
 import { MoreFilled } from '@element-plus/icons-vue';
 import { t } from '../../../../../../utils/i18n';
-import { tPluginName } from '../../../../utils/plugin-i18n'
+import { tPluginName } from '../../../../../../utils/plugin-i18n'
 
 const externalPlugins = computed(() => {
     const plugins: PluginMetadata[] = []

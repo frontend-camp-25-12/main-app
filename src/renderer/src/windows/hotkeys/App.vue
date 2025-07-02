@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, Ref, computed } from 'vue';
+import { ref, onMounted, Ref, computed, watch } from 'vue';
 import { ElButton, ElFormItem, ElForm, ElTag, ElMessageBox } from 'element-plus';
 import HotkeyInput from './components/HotkeyInput.vue';
 import { HotkeyOption } from '../../../../share/plugins/hotkeys.type';
-import { t } from '../../utils/i18n';
+import { getLocale, t } from '../../utils/i18n';
 import icon from '../../../../../resources/icon/icon.png';
 import { PluginEnterAction } from '../../../../share/plugins/api.type';
 
@@ -181,6 +181,11 @@ async function undoChanges() {
   dirtyPluginKeys.value.clear();
   await fetchHotkeyOptions();
 }
+
+watch(() => getLocale(), async () => {
+  // 切换语言时重新获取热键选项
+  await fetchHotkeyOptions();
+});
 </script>
 
 <template>
@@ -231,6 +236,7 @@ h2 {
 
 .option-plugin-name {
   color: var(--el-text-color-secondary);
+  line-height: unset;
 }
 
 .option-label-container {

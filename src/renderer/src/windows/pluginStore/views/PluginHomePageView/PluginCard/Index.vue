@@ -39,7 +39,7 @@ import { ElIcon } from 'element-plus';
 import { SuccessFilled } from '@element-plus/icons-vue';
 import { compareVersions } from 'compare-versions';
 import { t } from '../../../../../utils/i18n';
-import { tPluginDescription, tPluginName } from '../../../utils/plugin-i18n';
+import { tPluginDescription, tPluginName } from '../../../../../utils/plugin-i18n';
 
 defineProps<{
     plugin: PluginStoreInfo
