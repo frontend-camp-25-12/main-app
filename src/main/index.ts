@@ -1,11 +1,10 @@
-import { app, globalShortcut, session } from 'electron'
+import { app, globalShortcut } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createTray } from './tray'
 import './plugins/index'
 import './generated/ipc-handlers-main'
 import './generated/ipc-handlers-plugin'
 import './config/service'
-import './user'
 import { windowManager } from './plugins/window'
 
 // 当前窗口的加载在src\main\plugins\loader.ts中处理

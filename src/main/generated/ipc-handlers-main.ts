@@ -116,30 +116,6 @@ app.on('ready', () => {
   });
 
 
-  // onUserLogin(username: string, password: string) -> Promise<boolean>
-  ipcMain.handle('user-login', async (_event, username: string, password: string) => {
-    return await serviceInstance.onUserLogin(username, password);
-  });
-
-
-  // onUserRegister(username: string, password: string) -> Promise<boolean>
-  ipcMain.handle('user-register', async (_event, username: string, password: string) => {
-    return await serviceInstance.onUserRegister(username, password);
-  });
-
-
-  // onUserLogout() -> Promise<void>
-  ipcMain.handle('user-logout', async (_event, ) => {
-    return await serviceInstance.onUserLogout();
-  });
-
-
-  // onUserInfo() -> Promise<User | undefined>
-  ipcMain.handle('user-info', async (_event, ) => {
-    return await serviceInstance.onUserInfo();
-  });
-
-
   // onFloatingButtonMouseDown() -> Promise<void>
   ipcMain.handle('floating-button-mouse-down', async (_event, ) => {
     return await serviceInstance.onFloatingButtonMouseDown();

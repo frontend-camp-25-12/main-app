@@ -15,7 +15,6 @@ import { windowColor } from './plugins/window'
 import { ipcEmit } from './generated/ipc-handlers-main'
 import { changeLanguage } from './locales/i18n'
 import { ipcEmitPlugin } from './generated/ipc-handlers-plugin'
-import { userManager } from './user'
 import { floatButtonManager } from './floatButton'
 import { execCommand } from './utils/execCmd'
 import { pluginPackageManager } from './plugins/packageManager'
@@ -194,52 +193,6 @@ export class IpcService {
    */
   async onGetColorMode(): Promise<AppConfigSchema['colorMode']> {
     return windowColor.mode
-  }
-
-  /**
-   * 发起用户登录
-   * @param username 用户名
-   * @param password 密码
-   * @return 是否登录成功
-   */
-  async onUserLogin(username: string, password: string): Promise<boolean> {
-    return await userManager.login({
-      username,
-      password
-    })
-  }
-
-  /**
-   * 发起用户注册
-   * @param username 用户名
-   * @param password 密码
-   * @return 是否注册成功
-   */
-  async onUserRegister(username: string, password: string): Promise<boolean> {
-    return await userManager.register({
-      username,
-      password
-    })
-  }
-
-  /**
-   * 用户登出
-   */
-  async onUserLogout(): Promise<void> {
-    return userManager.logout()
-  }
-
-  /**
-   * 用户获取个人信息
-   * @returns 用户信息对象
-   * 如果用户未登录，则返回undefined
-   */
-  async onUserInfo(): Promise<User | undefined> {
-    const user = await userManager.getCurrentUser()
-    if (user) {
-      return user
-    }
-    return undefined
   }
 
   /**

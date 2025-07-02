@@ -143,38 +143,6 @@ export class IpcApi {
   }
 
   /**
-   * 发起用户登录
-    * @param username 用户名
-    * @param password 密码
-   */
-  async userLogin(username: string, password: string): Promise<boolean> {
-    return electronAPI.ipcRenderer.invoke('user-login', username, password);
-  }
-
-  /**
-   * 发起用户注册
-    * @param username 用户名
-    * @param password 密码
-   */
-  async userRegister(username: string, password: string): Promise<boolean> {
-    return electronAPI.ipcRenderer.invoke('user-register', username, password);
-  }
-
-  /**
-   * 用户登出
-   */
-  async userLogout(): Promise<void> {
-    return electronAPI.ipcRenderer.invoke('user-logout');
-  }
-
-  /**
-   * 用户获取个人信息
-   */
-  async userInfo(): Promise<User | undefined> {
-    return electronAPI.ipcRenderer.invoke('user-info');
-  }
-
-  /**
    * 悬浮球mousedown事件
    */
   async floatingButtonMouseDown(): Promise<void> {
