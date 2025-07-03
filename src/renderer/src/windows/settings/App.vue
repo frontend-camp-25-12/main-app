@@ -113,6 +113,7 @@ onMounted(async () => {
         </ElCol>
       </ElRow>
     </section>
+    <div class="section-divider"></div>
 
     <!-- 主题设置 -->
     <section class="setting-section">
@@ -127,6 +128,7 @@ onMounted(async () => {
         </ElCol>
       </ElRow>
     </section>
+    <div class="section-divider"></div>
 
     <!-- 颜色设置 -->
     <section class="setting-section">
@@ -146,6 +148,7 @@ onMounted(async () => {
         </ElCol>
       </ElRow>
     </section>
+    <div class="section-divider"></div>
 
     <!-- 背景设置 -->
     <section class="setting-section">
@@ -181,6 +184,7 @@ onMounted(async () => {
         </ElCol>
       </ElRow>
     </section>
+    <div class="section-divider"></div>
 
     <!-- 悬浮球设置 -->
     <section class="setting-section">
@@ -195,6 +199,7 @@ onMounted(async () => {
         </ElCol>
       </ElRow>
     </section>
+    <div class="section-divider"></div>
 
     <!-- 命令窗口失去焦点后关闭 -->
     <section class="setting-section">
@@ -218,17 +223,30 @@ onMounted(async () => {
   padding: 20px;
   margin: 0 auto;
   overflow-x: hidden;
+  font-weight: bold;
+  font-size: 1rem;
 
   :deep(.el-scrollbar__bar.is-horizontal) {
     display: none;
   }
 }
 
+.section-divider {
+  border: none;
+  border-top: 4px solid var(--el-border-color-lighter, #ebeef5);
+  margin: 32px 0 24px 0;
+  height: 0;
+  width: 100%;
+  background: none;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
 .settings-card h2 {
   margin: 0;
   color: var(--el-text-color-primary);
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .setting-section {
@@ -243,14 +261,15 @@ onMounted(async () => {
   margin: 0 0 16px 0;
   color: var(--el-text-color-regular);
   font-size: 1.1rem;
-  font-weight: 500;
+  font-weight: bold;
   border-bottom: 1px solid var(--el-border-color-lighter);
   padding-bottom: 8px;
 }
 
 .setting-label {
-  font-weight: 500;
+  font-weight: bold;
   color: var(--el-text-color-regular);
+  font-size: 1.1rem;
 }
 
 .background-controls {
