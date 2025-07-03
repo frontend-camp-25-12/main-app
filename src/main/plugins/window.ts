@@ -8,6 +8,7 @@ import fs from 'fs'
 import { ipcEmit } from "../generated/ipc-handlers-main"
 import { BuiltinPluginId } from "./builtin"
 import { fileURLToPath, pathToFileURL } from "url"
+import i18next from "i18next"
 
 /**
  * 加载窗口内容，针对当前多窗口应用的打包格式，供打开内部插件的窗口时使用
@@ -63,7 +64,7 @@ class PluginWindow {
       throw new Error(`Plugin ${plugin.name} does not have valid window content.`);
     }
     const window = new BrowserWindow({
-      title: plugin.name,
+      title: plugin.i18n?.[i18next.language]?.name || plugin.name,
       width: plugin.window?.width ?? 900,
       height: plugin.window?.height ?? 670,
       transparent: plugin.window?.transparent ?? false,
@@ -171,6 +172,13 @@ class PluginWindow {
     const win = this.getWindow();
     if (win && !win.isDestroyed() && this.plugin.window?.transparent !== true) {
       win.setBackgroundColor(windowColor.backgroundColor());
+    }
+  }
+
+  updateWindowTitleLocale(lang: 'en' | 'zh-CN') {
+    const win = this.getWindow();
+    if (win && !win.isDestroyed()) {
+      win.setTitle(this.plugin.i18n && this.plugin.i18n[lang] ? this.plugin.i18n[lang].name : this.plugin.name);
     }
   }
 }
@@ -296,6 +304,15 @@ class WindowManager {
   updateWindowColor() {
     for (const win of Object.values(this.windows)) {
       win.updateWindowColor?.();
+    }
+  }
+
+  /**
+   * 更新所有窗口的标题
+   */
+  updateWindowTitleLocale(lang: 'en' | 'zh-CN') {
+    for (const win of Object.values(this.windows)) {
+      win.updateWindowTitleLocale?.(lang);
     }
   }
 }
