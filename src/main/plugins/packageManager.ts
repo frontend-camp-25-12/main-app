@@ -90,9 +90,7 @@ class PluginPackageManager {
         }
       }
     }
-    for (const orphan of orphanPackage.keys()) {
-      PluginPackageStorePersist.set(storedPackages.filter(pkg => pkg.path !== orphan));
-    }
+    PluginPackageStorePersist.set(storedPackages.filter(pkg => !orphanPackage.has(pkg.path)));
     for (const basename of newPackages) {
       this.install(basename)
     }
@@ -130,7 +128,7 @@ class PluginPackageManager {
     // 为了处理更新和重新安装，需要找出安装记录中相同id的且版本最大的插件。
     const sameIdPkg = existingPkgs.filter(pkg => pkg.id === pluginDef.id)
       .sort((a, b) => compareVersions(b.version, a.version))[0];
-    
+
     let isDowngrade = false;
     if (sameIdPkg) {
       const compareResult = compareVersions(pluginDef.version, sameIdPkg.version);
