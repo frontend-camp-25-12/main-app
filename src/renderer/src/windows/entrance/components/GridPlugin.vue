@@ -2,25 +2,34 @@
 import { PluginView } from '../utils/plugin';
 import icon from '../../../../../../resources/icon/icon.png';
 import { t } from '../../../utils/i18n';
+import usePluginNumber from './usePluginNumber';
 
-defineProps<{
+const props = defineProps<{
   plugins: PluginView[]
 }>()
 
 const emit = defineEmits<{
   (e: 'open-plugin', id: string, feat: PluginView['feature']): void
 }>();
+
+const { showNumbers } = usePluginNumber(
+  (id, feature) => emit('open-plugin', id, feature),
+  props
+);
 </script>
 
 <template>
   <div v-if="plugins.length" class="plugin-grid">
-    <template v-for="plugin in plugins" :key="plugin.id + plugin.feature?.code">
+    <template v-for="(plugin, index) in plugins" :key="plugin.id + plugin.feature?.code">
       <div class="plugin-item" tabindex="0" role="button"
         :aria-label="`${plugin.name}${plugin.feature ? ' - ' + plugin.feature.label : ''}`"
         @click="emit('open-plugin', plugin.id, plugin.feature)"
         @keydown.enter="emit('open-plugin', plugin.id, plugin.feature)"
         @keydown.space.prevent="emit('open-plugin', plugin.id, plugin.feature)">
-        <img width="48" :src="plugin.logoPath ? `${plugin.logoPath}` : icon" alt="logo" class="plugin-icon" />
+        <div class="plugin-icon-container">
+          <img width="48" :src="plugin.logoPath ? `${plugin.logoPath}` : icon" alt="logo" class="plugin-icon" />
+          <div v-if="showNumbers" class="plugin-number">{{ index + 1 }}</div>
+        </div>
         <ElText :line-clamp="2">{{ plugin.name }}</ElText>
         <div class="search-label" v-if="plugin.feature">
           {{ plugin.feature.label }}

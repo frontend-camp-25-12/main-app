@@ -1,0 +1,24 @@
+.plugin-icon-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.plugin-icon {
+  border-radius: var(--el-border-radius-base);
+}
+
+.plugin-number {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--el-color-primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+}

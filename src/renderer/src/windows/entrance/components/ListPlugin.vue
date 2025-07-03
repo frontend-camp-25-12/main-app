@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
 import { PluginView } from '../utils/plugin';
 import icon from '../../../../../../resources/icon/icon.png';
 import { t } from '../../../utils/i18n';
 import TextHighlight from './TextHighlight';
+import usePluginNumber from './usePluginNumber';
 
 const props = defineProps<{
   plugins: PluginView[]
@@ -14,40 +15,15 @@ const emit = defineEmits<{
 }>();
 
 const activeIndex = ref(-1);
-const showNumbers = ref(false);
-
 
 const setActiveItem = (index: number) => {
   activeIndex.value = index;
 };
 
-const handleAltKey = (event: KeyboardEvent) => {
-  if (event.key === 'Alt') {
-    showNumbers.value = event.type === 'keydown';
-  }
-};
-
-
-const handleNumberKey = (event: KeyboardEvent) => {
-  if (!showNumbers.value) return;
-  const num = parseInt(event.key);
-  if (!isNaN(num) && num > 0 && num <= props.plugins.length) {
-    const plugin = props.plugins[num - 1];
-    emit('open-plugin', plugin.id, plugin.feature);
-  }
-};
-
-onMounted(() => {
-  window.addEventListener('keydown', handleAltKey);
-  window.addEventListener('keyup', handleAltKey);
-  window.addEventListener('keydown', handleNumberKey);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleAltKey);
-  window.removeEventListener('keyup', handleAltKey);
-  window.removeEventListener('keydown', handleNumberKey);
-});
+const { showNumbers } = usePluginNumber(
+  (id, feature) => emit('open-plugin', id, feature),
+  props
+);
 
 
 </script>
@@ -110,32 +86,6 @@ onUnmounted(() => {
 .plugin-item:focus,
 .plugin-item.is-active {
   background-color: var(--el-fill-color-light);
-}
-
-.plugin-icon-container {
-  position: relative;
-  margin-right: 16px;
-  flex-shrink: 0;
-}
-
-.plugin-icon {
-  border-radius: var(--el-border-radius-base);
-}
-
-.plugin-number {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  width: 20px;
-  height: 20px;
-  background-color: var(--el-color-primary);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 12px;
-  font-weight: bold;
 }
 
 .plugin-info {
