@@ -1,5 +1,5 @@
 <template>
-    <div class="plugin-card-container">
+    <div class="plugin-card-container" :style="{ '--download-progress': (downloadProgress[plugin.id] || 0) + '%' }">
         <div class="plugin-image">
             <img v-if="plugin.logo" :src="plugin.logo" :alt="plugin.name" class="plugin-logo" />
             <div v-else class="default-icon">
@@ -16,8 +16,9 @@
                     '' }}{{
                         plugin.version }}</span>
                 <span style="margin-left: auto; margin-right: 6px;">{{ formatFileSize(plugin.size) }}</span>
-                <ElButton size="small" v-if="!installedPkg[plugin.id]" @click="installPlugin(plugin)">{{ t('pluginStore.install') }}</ElButton>
-                <ElButton size="small" type="primary" v-else-if="updateAvaliable(plugin)" @click="updatePlugin(plugin)">
+                <ElButton v-if="!installedPkg[plugin.id]" @click="installPlugin(plugin)">{{
+                    t('pluginStore.install') }}</ElButton>
+                <ElButton type="primary" v-else-if="updateAvaliable(plugin)" @click="updatePlugin(plugin)">
                     {{ t('pluginStore.update') }}</ElButton>
                 <div v-else class="plugin-installed">
                     <el-icon size="18">
@@ -40,6 +41,7 @@ import { SuccessFilled } from '@element-plus/icons-vue';
 import { compareVersions } from 'compare-versions';
 import { t } from '../../../../../utils/i18n';
 import { tPluginDescription, tPluginName } from '../../../../../utils/plugin-i18n';
+import { downloadProgress } from '../../../utils/downloadProgress';
 
 defineProps<{
     plugin: PluginStoreInfo
@@ -72,6 +74,10 @@ function updatePlugin(plugin: PluginStoreInfo) {
     align-items: center;
     padding: 12px;
     align-items: stretch;
+    background-image: linear-gradient(to right, var(--el-color-primary-light-5), var(--el-color-primary-light-5));
+    background-size: var(--download-progress) 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s ease;
 }
 
 
@@ -92,7 +98,6 @@ function updatePlugin(plugin: PluginStoreInfo) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
 }
 
 .default-icon {
@@ -140,6 +145,7 @@ function updatePlugin(plugin: PluginStoreInfo) {
     align-items: center;
     color: var(--el-text-color-secondary);
     font-size: 13px;
+    height: 32px;
 }
 
 .plugin-installed {

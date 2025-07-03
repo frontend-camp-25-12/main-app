@@ -7,10 +7,6 @@
         <template v-if="route.name === 'PluginList'">
             <div class="upload-btn" @click="invokeFileChooseDialog">{{ t('pluginStore.uploadPlugin') }}</div>
             <input ref="fileInput" style="display: none" type="file" accept=".asar" @change="handlePluginUpload" />
-            <!-- <div class="search-bar">
-                <el-icon><Search /></el-icon>
-                <input type="text" :placeholder="t('pluginStore.searchPlaceholder')" />
-            </div> -->
         </template>
     </nav>
 </template>
@@ -21,9 +17,6 @@ import { useRoute } from "vue-router";
 import { pluginListReload } from "../../../utils/pluginListReload";
 import { HOST } from "../../../api/plugin";
 import { t } from '../../../../../utils/i18n';
-import { ElIcon } from "element-plus";
-import { Search } from "@element-plus/icons-vue";
-
 const route = useRoute()
 
 //隐藏的input
@@ -97,6 +90,7 @@ async function handlePluginUpload(e): Promise<void> {
     display: flex;
     align-items: center;
     position: sticky;
+    justify-content: space-between;
     top: 0;
     height: 70px;
     z-index: 100;
