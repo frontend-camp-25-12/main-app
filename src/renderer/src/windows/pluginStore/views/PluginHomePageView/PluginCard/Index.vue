@@ -16,16 +16,19 @@
                     '' }}{{
                         plugin.version }}</span>
                 <span style="margin-left: auto; margin-right: 6px;">{{ formatFileSize(plugin.size) }}</span>
-                <ElButton v-if="!installedPkg[plugin.id]" @click="installPlugin(plugin)">{{
-                    t('pluginStore.install') }}</ElButton>
-                <ElButton type="primary" v-else-if="updateAvaliable(plugin)" @click="updatePlugin(plugin)">
-                    {{ t('pluginStore.update') }}</ElButton>
-                <div v-else class="plugin-installed">
-                    <el-icon size="18">
-                        <SuccessFilled color="var(--el-color-success)" />
-                    </el-icon>
-                    {{ t('pluginStore.installed') }}
-                </div>
+                <template v-if="!downloadProgress[plugin.id]">
+                    <ElButton v-if="!installedPkg[plugin.id]" @click="installPlugin(plugin)">{{
+                        t('pluginStore.install') }}</ElButton>
+                    <ElButton type="primary" v-else-if="updateAvaliable(plugin)" @click="updatePlugin(plugin)">
+                        {{ t('pluginStore.update') }}</ElButton>
+
+                    <div v-else class="plugin-installed">
+                        <el-icon size="18">
+                            <SuccessFilled color="var(--el-color-success)" />
+                        </el-icon>
+                        {{ t('pluginStore.installed') }}
+                    </div>
+                </template>
             </div>
         </div>
     </div>
