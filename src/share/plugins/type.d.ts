@@ -34,6 +34,7 @@ export interface AppConfigSchema {
   colorMode: "light" | "dark" | "system";
   locale: "en" | "zh-CN";
   entrance_viewMode: "list" | "grid";
+  entrance_closeOnBlur: boolean; // 是否在点击其他地方时关闭插件入口
   floatWindow: boolean; // 是否启用悬浮窗口
   themeColor: string; // 主题色
   windowBackgroundFileName: string | ''; // 自定义窗口背景文件名，为空表示不起用

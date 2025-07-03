@@ -11,7 +11,7 @@ import { hotkeyManager } from './plugins/hotkeys'
 import { pluginManager } from './plugins/loader'
 import { pluginSearch } from './plugins/search'
 import { nativeTheme } from 'electron'
-import { entranceWindowBackground, windowColor } from './plugins/window'
+import { entranceWindowManager, windowColor } from './plugins/window'
 import { ipcEmit } from './generated/ipc-handlers-main'
 import { changeLanguage } from './locales/i18n'
 import { ipcEmitPlugin } from './generated/ipc-handlers-plugin'
@@ -233,9 +233,9 @@ export class IpcService {
    */
   async onEntranceBackgroundFile(imagePath: string | undefined): Promise<string | undefined> {
     if (imagePath !== undefined) {
-      return entranceWindowBackground.setFile(imagePath);
+      return entranceWindowManager.setFile(imagePath);
     } else {
-      return entranceWindowBackground.getFile();
+      return entranceWindowManager.getFile();
     }
   }
 
@@ -245,10 +245,23 @@ export class IpcService {
    */
   async onEntranceBackgroundImageOpacity(level: number | undefined): Promise<number> {
     if (level === undefined) {
-      return entranceWindowBackground.getImageOpacity();
+      return entranceWindowManager.getImageOpacity();
     } else {
-      entranceWindowBackground.setImageOpacity(level);
+      entranceWindowManager.setImageOpacity(level);
       return level;
+    }
+  }
+
+  /**
+   * 设置/获取入口是否在失去焦点时关闭
+   * 如果value为undefined，则返回当前值
+   */
+  async onEntranceCloseOnBlur(value: boolean | undefined): Promise<boolean> {
+    if (value === undefined) {
+      return entranceWindowManager.getCloseOnBlur();
+    } else {
+      entranceWindowManager.setCloseOnBlur(value);
+      return value;
     }
   }
 

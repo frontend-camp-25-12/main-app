@@ -152,6 +152,12 @@ app.on('ready', () => {
   });
 
 
+  // onEntranceCloseOnBlur(value: boolean | undefined) -> Promise<boolean>
+  ipcMain.handle('entrance-close-on-blur', async (_event, value: boolean | undefined) => {
+    return await serviceInstance.onEntranceCloseOnBlur(value);
+  });
+
+
   // onExecCommand(command: string) -> Promise<void>
   ipcMain.handle('exec-command', async (_event, command: string) => {
     return await serviceInstance.onExecCommand(command);

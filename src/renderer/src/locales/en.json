@@ -21,7 +21,7 @@
     },
     "floatButton": "Float Button For Entrance",
     "backgroundOpacity": "Background Opacity",
-    "closeCommandWindowOnBlur": "Close command window on blur"
+    "closeEntranceWindowOnBlur": "Close command window on blur"
   },
   "entrance": {
     "searchPlaceholder": "Hi, enter a command to search",

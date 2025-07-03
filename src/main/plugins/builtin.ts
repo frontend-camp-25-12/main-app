@@ -3,6 +3,7 @@
  */
 
 import { PluginMetadata, PluginRuntimeInfo } from '../../share/plugins/type'
+import { AppConfig } from '../config/app'
 import type { PluginManager } from './loader'
 
 export enum BuiltinPluginId {
@@ -41,7 +42,7 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
       height: 400,
       resizable: false,
       frame: false,
-      closeOnBlur: true,
+      closeOnBlur: AppConfig.get('entrance_closeOnBlur', true),
       skipTaskbar: true,
     },
     background: true,
@@ -62,7 +63,7 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
   {
     id: BuiltinPluginId.SETTINGS,
     name: '设置',
-    description: '管理应用本身的设置',
+    description: '调整应用个性化设置',
     i18n: {
       'en': {
         name: 'Settings',
@@ -81,11 +82,11 @@ export const builtinPlugins: PluginRuntimeInfo[] = [
   {
     id: BuiltinPluginId.HOTKEYS,
     name: '插件快捷键',
-    description: '可配置所有快捷键功能的映射',
+    description: '配置插件使用功能的快捷键映射',
     i18n: {
       'en': {
-        name: 'Hotkeys',
-        description: 'Configure all hotkey mappings'
+        name: 'Plugin Hotkeys',
+        description: 'Configure hotkey mappings for plugin features'
       }
     },
     version: '1.0.0',

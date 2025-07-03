@@ -31,7 +31,7 @@ interface PluginWindowContent {
 class PluginWindow {
   window: BrowserWindow | undefined;
   private windowContent: PluginWindowContent | undefined;
-  private plugin: PluginMetadata;
+  plugin: PluginMetadata;
   internal: boolean;
   private additionalArguments: string[] = [];
   constructor(plugin: PluginMetadata) {
@@ -105,14 +105,14 @@ class PluginWindow {
       });
     }
 
-    if (plugin.window?.closeOnBlur) {
-      // 失去焦点时关闭窗口
-      window.on('blur', () => {
+    window.on('blur', () => {
+      if (plugin.window?.closeOnBlur) {
+        // 失去焦点时关闭窗口
         if (window.isVisible()) {
           window.close();
         }
-      });
-    }
+      }
+    });
   }
 
   private getWindowOrCreate() {
@@ -352,9 +352,9 @@ class WindowColor {
 export const windowColor = new WindowColor();
 
 /**
- * 命令入口的窗口背景管理
+ * 命令入口的窗口管理
  */
-class EntranceWindowBackground {
+class EntranceWindowManager {
   getFile() {
     const fileName = AppConfig.get('windowBackgroundFileName', '');
     if (!fileName) {
@@ -400,10 +400,22 @@ class EntranceWindowBackground {
     return AppConfig.get('windowBackgroundImageOpacity', 1);
   }
 
+  setCloseOnBlur(blur: boolean) {
+    AppConfig.set('entrance_closeOnBlur', blur);
+    const windowConfig = windowManager.getWindow(BuiltinPluginId.ENTRANCE)?.plugin.window;
+    if (windowConfig) {
+      windowConfig.closeOnBlur = blur;
+    }
+  }
+
+  getCloseOnBlur(): boolean {
+    return AppConfig.get('entrance_closeOnBlur', true);
+  }
+
   private setValAndEmit(key: 'windowBackgroundFileName' | 'windowBackgroundImageOpacity', value: any) {
     AppConfig.set(key, value);
     ipcEmit.uiConfigChangeTo(BuiltinPluginId.ENTRANCE, key, value);
   }
 }
 
-export const entranceWindowBackground = new EntranceWindowBackground();
+export const entranceWindowManager = new EntranceWindowManager();

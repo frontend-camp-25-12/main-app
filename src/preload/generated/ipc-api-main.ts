@@ -187,6 +187,14 @@ export class IpcApi {
   }
 
   /**
+   * 设置/获取入口是否在失去焦点时关闭
+如果value为undefined，则返回当前值
+   */
+  async entranceCloseOnBlur(value: boolean | undefined): Promise<boolean> {
+    return electronAPI.ipcRenderer.invoke('entrance-close-on-blur', value);
+  }
+
+  /**
    * 在终端执行命令
     * @param command 要执行的命令
    */

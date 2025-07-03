@@ -82,12 +82,19 @@ const handleFloatButtonChange = () => {
   window.ipcApi.floatingButtonToggle();
 };
 
+// 失去焦点后关闭命令窗口
+const enableCloseOnBlur = ref<boolean>(false);
+const handleCloseOnBlurChange = () => {
+  window.ipcApi.entranceCloseOnBlur(enableCloseOnBlur.value);
+};
+
 
 onMounted(async () => {
   customColor.value = await window.ipcApi.appConfigGet('themeColor', '');
   enableFloatButton.value = await window.ipcApi.appConfigGet('floatWindow', true);
   backgroundImage.value = await window.ipcApi.entranceBackgroundFile(undefined) ?? '';
   backgroundOpacity.value = await window.ipcApi.entranceBackgroundImageOpacity(undefined) ?? 1;
+  enableCloseOnBlur.value = await window.ipcApi.entranceCloseOnBlur(undefined) ?? false;
 });
 </script>
 
@@ -188,6 +195,21 @@ onMounted(async () => {
         </ElCol>
       </ElRow>
     </section>
+
+    <!-- 命令窗口失去焦点后关闭 -->
+    <section class="setting-section">
+      <ElRow :gutter="4">
+        <ElCol :span="16">
+          <span class="setting-label">{{ t('settings.closeEntranceWindowOnBlur') }}</span>
+        </ElCol>
+        <ElCol :span="8">
+          <div style="float: right;">
+            <ElSwitch v-model="enableCloseOnBlur" @change="handleCloseOnBlurChange" />
+          </div>
+        </ElCol>
+      </ElRow>
+    </section>
+
   </div>
 </template>
 

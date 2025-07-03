@@ -21,7 +21,7 @@
     },
     "floatButton": "悬浮球入口",
     "backgroundOpacity": "不透明度",
-    "closeCommandWindowOnBlur": "命令窗口失焦后立即关闭"
+    "closeEntranceWindowOnBlur": "命令窗口失焦后立即关闭"
   },
   "entrance": {
     "searchPlaceholder": "Hi，输入命令以搜索",
