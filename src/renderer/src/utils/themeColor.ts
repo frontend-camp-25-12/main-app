@@ -12,19 +12,20 @@ function parseRgbOrRgba(color: string): string {
   return '';
 }
 
-export const themeColorDefault = '#409eff';
+export const themeColorDefault = 'rgb(64, 158, 255)';
 /**
  * 应用新的主题色，并使用 CSS color-mix() 自动生成衍生颜色进行覆盖。
  * @param primaryColor - 新的主题色，rgb() rgba() 格式
  * @param styleId - 注入的 style 标签的 ID，用于更新或移除。
  */
-export function handleThemeColorChange(primaryColor: string, styleId: string = 'el-theme-color-override'): void {
+export function handleThemeColorChange(primaryColor: string): void {
+  const styleId: string = 'el-theme-color-override';
   if (!primaryColor || primaryColor == '' || primaryColor == themeColorDefault) {
     let styleElement = document.getElementById(styleId);
     if (styleElement) {
       styleElement.remove();
-      return;
     }
+    return;
   }
   const rgbColor = parseRgbOrRgba(primaryColor);
   const css = `
@@ -56,4 +57,4 @@ export function setThemeColor(color: string): void {
   window.ipcApi.requireUiConfigReload('themeColor', color);
 }
 
-handleThemeColorChange(await window.ipcApi.appConfigGet('themeColor', '#409eff'))
+handleThemeColorChange(await window.ipcApi.appConfigGet('themeColor', themeColorDefault))
