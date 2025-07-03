@@ -76,7 +76,8 @@ onMounted(() => {
   });
 });
 
-if (import.meta.env.DEV) {
+const DEV_FLAG = import.meta.env.DEV
+if (DEV_FLAG) {
   ElNotification({
     title: '当前是vite dev server环境',
     message: '插件的logo将无法正常加载显示，可通过使用npm run start启动部署环境的应用来解决。'
@@ -113,7 +114,7 @@ function openFirstItem() {
 
 <template>
   <div class="plugin-container">
-    <div style="display: flex; gap: 8px;">
+    <div style="display: flex; gap: 8px;" v-if="DEV_FLAG">
       <ElInput v-model="pluginPath" :placeholder="t('entrance.pluginPathPlaceholder')" @keyup.enter="handleAddPlugin"
         style="flex: 1" tabindex="-1"/>
       <ElButton type="primary" :disabled="!pluginPath.trim()" @click="handleAddPlugin" tabindex="-1">
@@ -153,6 +154,6 @@ function openFirstItem() {
 }
 
 .cmd-input {
-  font-size: 20px;
+  font-size: 24px;
 }
 </style>

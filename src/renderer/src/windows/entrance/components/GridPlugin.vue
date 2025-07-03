@@ -54,7 +54,7 @@ const { showNumbers } = usePluginNumber(
 
 .plugin-item {
   position: relative;
-  height: 86px;
+  height: 90px;
   cursor: pointer;
   padding: 12px 4px;
   border-radius: var(--el-border-radius-base);

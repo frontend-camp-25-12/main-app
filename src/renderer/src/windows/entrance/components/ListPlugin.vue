@@ -116,6 +116,10 @@ const { showNumbers } = usePluginNumber(
   font-size: 16px;
 }
 
+.plugin-icon-container {
+  margin-right: 12px;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

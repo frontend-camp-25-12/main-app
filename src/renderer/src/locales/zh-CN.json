@@ -24,7 +24,7 @@
     "closeCommandWindowOnBlur": "命令窗口失焦后立即关闭"
   },
   "entrance": {
-    "searchPlaceholder": "Hi",
+    "searchPlaceholder": "Hi，输入命令以搜索",
     "addPlugin": "添加插件",
     "commandMatch": "命令匹配",
     "installedPlugins": "已安装插件",

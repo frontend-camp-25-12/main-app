@@ -24,7 +24,7 @@
     "closeCommandWindowOnBlur": "Close command window on blur"
   },
   "entrance": {
-    "searchPlaceholder": "Hi",
+    "searchPlaceholder": "Hi, enter a command to search",
     "addPlugin": "Add Plugin",
     "commandMatch": "Command Match",
     "installedPlugins": "Installed Plugins",
