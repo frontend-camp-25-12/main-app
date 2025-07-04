@@ -261,7 +261,8 @@ export class PluginManager {
     windowManager.open(plugin)
     ipcEmitPlugin.pluginEnterTo(plugin.id, action)
     plugin.lastEnterAction = action
-    pluginUsageInfoManager.onOpen(plugin.id)
+    pluginUsageInfoManager.onOpen(plugin)
+    ipcEmit.pluginListChange()
   }
 
   /**

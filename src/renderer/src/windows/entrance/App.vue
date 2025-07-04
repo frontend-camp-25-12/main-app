@@ -95,7 +95,6 @@ function handleOpenPlugin(id: string, feat: PluginView['feature']) {
     action.code = feat.code
   }
   window.ipcApi.pluginOpen(id, action);
-  fetchPlugins();
   searchInput.value = '';
 };
 

@@ -32,12 +32,13 @@ class PluginUsageInfoManager {
     plugin.disabled = info.disabled ?? false;
   }
 
-  onOpen(pluginId: PluginMetadata['id']) {
-    const info = this.info.get(pluginId);
+  onOpen(plugin: PluginMetadata) {
+    const info = this.info.get(plugin.id);
     if (info) {
       info.usedAt = Date.now();
-      this.info.set(pluginId, info);
+      this.info.set(plugin.id, info);
       this.saveState();
+      plugin.usedAt = info.usedAt;
     }
   }
 
