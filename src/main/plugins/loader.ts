@@ -202,11 +202,16 @@ export class PluginManager {
    */
   async remove(id: string) {
     const pluginList = await this.plugins
-    const plugin = await this.get(id)
+    let plugin: PluginMetadata
+    try {
+      plugin = await this.get(id)
+    } catch (e) {
+      console.warn(`Plugin ${id} does not exist, cannot remove`)
+      return
+    }
     if (plugin.internal) {
       return
     }
-
     windowManager.remove(id)
     hotkeyManager.remove(id)
     pluginUsageInfoManager.remove(id)
